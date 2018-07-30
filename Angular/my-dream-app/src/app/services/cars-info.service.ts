@@ -9,8 +9,12 @@ import {Cars} from './../models/cars';
 export class CarsInfoService {
 
    arr: Cars[] = [
-    { "brand": "asd", "year":2000, "color":"rojo","vin":"asdas" },
-    { "brand": "asd", "year":2000, "color":"rojo","vin":"asdas" }
+    { "brand": "aaaaa", "year":1991, "color":"amarillo","vin":"wasd" },
+    { "brand": "eeeee", "year":2012, "color":"rojo","vin":"aasss" },
+    { "brand": "iiiii", "year":2002, "color":"azul","vin":"asdasd" },
+    { "brand": "aaaaa", "year":2003, "color":"amarillo","vin":"aaaaaa" },
+    { "brand": "ooooo", "year":2001, "color":"azul","vin":"dadsa" },
+    { "brand": "uuuu", "year":2019, "color":"amarillo","vin":"adsss" }
 ];
 
   webApiUrl: string='https://www.primefaces.org/primeng/assets/showcase/data/cars-small.json';

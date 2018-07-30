@@ -5,7 +5,9 @@ import {HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { CarsListComponent } from './components/cars-list/cars-list.component';
 import { CarsInfoService } from './services/cars-info.service';
-import {DataTableModule,SharedModule} from 'primeng/primeng'
+import {DataTableModule,SharedModule, ButtonModule, DialogModule} from 'primeng/primeng'
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -15,7 +17,10 @@ import {DataTableModule,SharedModule} from 'primeng/primeng'
     BrowserModule,
     HttpClientModule,
     DataTableModule,
-    SharedModule
+    SharedModule,
+    ButtonModule,
+    DialogModule,
+    BrowserAnimationsModule
 
   ],
   providers: [CarsInfoService],

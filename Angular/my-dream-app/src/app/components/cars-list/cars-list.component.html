@@ -10,8 +10,30 @@
 </ul>
 
 <p-dataTable [value]="carsList">
-  <p-header>Listas</p-header>
+  <p-header>
+    Lista
+      <div class="ui-helper-clearfix">
+       
+          <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add" 
+           style="float:right"></button>
+      </div>
+
+  </p-header>
+  <p-column field="brand" header="brand"></p-column>
  <p-column field="color" header="color"></p-column>
  <p-column field="year" header="year"></p-column>
+ <p-column field="vin" header="vin"></p-column>
+ 
+ <p-column styleClass="col-button">
+   <ng-template let-car="rowData" pTemplate="body">
+      <button type="button" pButton icon="fa fa-edit"></button>
+   </ng-template>
+ </p-column>
+
+ <p-column styleClass="col-button">
+    <ng-template let-car="rowData" pTemplate="body">
+       <button type="button" pButton icon="fa fa-trash" class="ui-button-danger"></button>
+    </ng-template>
+  </p-column>
 
 </p-dataTable>
