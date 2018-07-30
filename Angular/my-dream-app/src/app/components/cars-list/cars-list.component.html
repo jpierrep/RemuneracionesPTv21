@@ -26,7 +26,7 @@
  
  <p-column styleClass="col-button">
    <ng-template let-car="rowData" pTemplate="body">
-      <button type="button" pButton icon="fa fa-edit"></button>
+      <button type="button" pButton icon="fa fa-edit" (click)="selectedCar(car)"></button>
    </ng-template>
  </p-column>
 
@@ -37,3 +37,29 @@
   </p-column>
 
 </p-dataTable>
+
+<p-dialog header="Cars Detail" [(visible)]="display" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+
+        <form>
+          <div class="form-group">
+            <div class="ui-inputgroup">
+                <span class="ui-float-label">
+                    <input id="car-brand" type="text" size="30" pInputText [(ngModel)]="carOne.color" name="brand"> 
+                    <label for="car-brand">Car Brand</label>
+                </span>
+
+            </div>
+
+          </div>
+        </form>
+        <p-footer>
+            <button type="button" pButton icon="pi pi-check" (click)="display=false" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
+</p-dialog>
+
+
+
+
+

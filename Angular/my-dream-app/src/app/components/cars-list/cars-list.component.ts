@@ -10,11 +10,17 @@ import { Cars} from '../../models/cars';
 })
 export class CarsListComponent implements OnInit {
     carsList:Cars[];
+    carOne:Cars;
+    display:boolean;
   constructor(private carService:CarsInfoService) { }
   
   ngOnInit() {
-    console.log("pepepepepepe");
+    //testing popup
+    this.carOne=new Cars(); //importante que exista este objeto creado
     this.getAllCars();
+    this.display=false;
+    
+
   }
 
   /*
@@ -29,9 +35,11 @@ export class CarsListComponent implements OnInit {
   
  getAllCars(){
  this.carsList=this.carService.getAllCars();
- console.log(this.carsList);
- console.log("asdasdsdadasdasds");
 }
 
+ selectedCar(car:Cars){
+  this.display=true; // cuando se selecciona uno, se mustra el dialog
+ this.carOne=car;
+ }
 
 }
