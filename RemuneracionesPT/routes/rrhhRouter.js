@@ -10,7 +10,8 @@ rrhhRouter.route('/')
     next();
 })
 .get((req, res)=> {
-   
+   // const fruit = request.params.parame;
+   // console.log(fruit);
     var sql = require("mssql");
 
     // config for your database
@@ -30,7 +31,8 @@ rrhhRouter.route('/')
         var request = new sql.Request();
            
         // query to the database and get the records
-        request.query('select 1 as hola', function (err, recordset) {
+        request.query(`SELECT *   FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO]  where VARIABLE_CODI='D066' and FECHA='20180701'  and DIA='01'`
+    , function (err, recordset) {
             
             if (err) console.log(err)
 
