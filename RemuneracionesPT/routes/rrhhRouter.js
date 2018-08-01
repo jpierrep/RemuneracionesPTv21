@@ -3,24 +3,19 @@ const bodyParser = require('body-parser');
 const rrhhRouter = express.Router();
 rrhhRouter.use(bodyParser.json());
 
-rrhhRouter.route('/')
-.all((req,res,next) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    next();
-})
-.get((req, res)=> {
-   // const fruit = request.params.parame;
-   // console.log(fruit);
-    var sql = require("mssql");
+var sql = require("mssql");
 
-    // config for your database
-    var config = {
-        user: 'targit',
-        password: 'targit2015*',
-        server: '192.168.100.14', 
-        database: 'Inteligencias' 
-    };
+// config for your database
+var config = {
+    user: 'targit',
+    password: 'targit2015*',
+    server: '192.168.100.14', 
+    database: 'Inteligencias' 
+};
+  var recordsetfinal;
+ function entrega_result(micallback){
+   
+  // const fruit = request.params.parame;
 
     // connect to your database
     sql.connect(config, function (err) {
@@ -35,12 +30,46 @@ rrhhRouter.route('/')
     , function (err, recordset) {
             
             if (err) console.log(err)
+        
+            micallback(recordset);
+          
 
-            // send records as a response
-            res.send(recordset);
-            
         });
+        
     });
+
+}
+  
+
+rrhhRouter.route('/')
+.all((req,res,next) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    next();
+})
+.get((req, res)=> {
+   // send records as a response
+   //var result=this.entrega_result();
+   //console.log(entrega_result());
+   entrega_result(
+     function (result){
+     res.send(result);
+     console.log(result);
+       });
+   
 });
+
+
+
+rrhhRouter.route('/:id')
+.all((req,res,next) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    next();
+})
+.get((req, res)=> {
+ console.log("holaa")
+});
+
 
 module.exports = rrhhRouter;
