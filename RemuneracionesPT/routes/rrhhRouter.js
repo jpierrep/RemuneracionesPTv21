@@ -13,7 +13,7 @@ var config = {
     database: 'Inteligencias' 
 };
   var recordsetfinal;
- function entrega_result(micallback){
+ function entrega_result(queryDB,micallback){
    
   // const fruit = request.params.parame;
 
@@ -26,7 +26,7 @@ var config = {
         var request = new sql.Request();
            
         // query to the database and get the records
-        request.query(`SELECT *   FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO]  where VARIABLE_CODI='D066' and FECHA='20180701'  and DIA='01'`
+        request.query(queryDB
     , function (err, recordset) {
             
             if (err) console.log(err)
@@ -49,26 +49,35 @@ rrhhRouter.route('/')
 })
 .get((req, res)=> {
    // send records as a response
-   //var result=this.entrega_result();
-   //console.log(entrega_result());
-   entrega_result(
+var query=`SELECT *   FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO]  where VARIABLE_CODI='D066' and FECHA='20180701'  and DIA='01'`
+
+   entrega_result(query,
      function (result){
      res.send(result);
-     console.log(result);
+   //  console.log(result);
        });
    
 });
 
 
 
-rrhhRouter.route('/:id')
+rrhhRouter.route('/:variable/:fecha')
 .all((req,res,next) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
     next();
 })
 .get((req, res)=> {
- console.log("holaa")
+   // send records as a response
+   var query=`SELECT *   FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO]  where VARIABLE_CODI='`+req.params.variable+`' and FECHA='`+req.params.fecha+`'  and DIA='01'`
+  console.log( req.params.fecha);
+  console.log( req.params.variable);
+  console.log(query);
+   entrega_result(query,
+     function (result){
+     res.send(result);
+   //  console.log(result);
+       });
 });
 
 

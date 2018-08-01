@@ -23,7 +23,7 @@ export class CarsListComponent implements OnInit {
 
   }
 
-  /*
+  
   getAllCars(){
     this.carService.getAllCars().subscribe(
       data=> {
@@ -31,11 +31,11 @@ export class CarsListComponent implements OnInit {
       }
     )
   }
-  */
+ 
   
- getAllCars(){
- this.carsList=this.carService.getAllCars();
-}
+ //getAllCars(){
+ //this.carsList=this.carService.getAllCars();
+//}
 
  selectedCar(car:Cars){
   this.display=true; // cuando se selecciona uno, se mustra el dialog

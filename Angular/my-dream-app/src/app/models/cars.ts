@@ -1,7 +1,7 @@
 export class Cars {
-    brand: string;
-    year: number;
-    color:string;
-    vin:string;
+    FICHA: string;
+    CARGO_DESC: string;
+    VARIABLE_MONTO:number;
+    CENCO2_CODI:string;
 
 }

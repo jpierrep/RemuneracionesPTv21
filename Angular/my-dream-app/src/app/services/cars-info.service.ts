@@ -8,6 +8,7 @@ import {Cars} from './../models/cars';
 })
 export class CarsInfoService {
 
+  /*
    arr: Cars[] = [
     { "brand": "aaaaa", "year":1991, "color":"amarillo","vin":"wasd" },
     { "brand": "eeeee", "year":2012, "color":"rojo","vin":"aasss" },
@@ -16,15 +17,16 @@ export class CarsInfoService {
     { "brand": "ooooo", "year":2001, "color":"azul","vin":"dadsa" },
     { "brand": "uuuu", "year":2019, "color":"amarillo","vin":"adsss" }
 ];
+*/
 
-  webApiUrl: string='https://www.primefaces.org/primeng/assets/showcase/data/cars-small.json';
-
+ // webApiUrl: string='https://www.primefaces.org/primeng/assets/showcase/data/cars-small.json';
+ webApiUrl: string='http://localhost:5000/rrhhRouter/D066/20180701';
   constructor(private http: HttpClient) { }
   
   getAllCars(){
-//return this.http.get<Cars[]>(this.webApiUrl);
-  console.log("essssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
-return this.arr;
+return this.http.get<Cars[]>(this.webApiUrl);
+  //console.log("essssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
+//return this.arr;
   }
 
 
