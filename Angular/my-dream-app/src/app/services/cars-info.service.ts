@@ -21,6 +21,7 @@ export class CarsInfoService {
 
  // webApiUrl: string='https://www.primefaces.org/primeng/assets/showcase/data/cars-small.json';
  webApiUrl: string='http://localhost:5000/rrhhRouter/D066/20180701';
+ webApiUrlPers: string='http://localhost:5000/rrhhRouterPers';
   constructor(private http: HttpClient) { }
   
   getAllCars(){
@@ -28,6 +29,13 @@ return this.http.get<Cars[]>(this.webApiUrl);
   //console.log("essssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
 //return this.arr;
   }
+    getAllPers(){
+return this.http.get<Cars[]>(this.webApiUrlPers);
+  //console.log("essssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
+//return this.arr;
+  }
+
+ 
 
 
 }
