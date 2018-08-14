@@ -5,6 +5,9 @@ rrhhRouter.use(bodyParser.json());
 const rrhhRouterPers = express.Router();
 rrhhRouterPers.use(bodyParser.json());
 
+const getDiferencias = express.Router();
+getDiferencias.use(bodyParser.json());
+
 var sql = require("mssql");
 
 // config for your database
@@ -107,5 +110,51 @@ rrhhRouterPers.route('/')
 
 
 
+function entrega_result2(queryDB){
+   
+    // const fruit = request.params.parame;
+  
+      // connect to your database
+      sql.connect(config, function (err) {
+      
+          if (err) console.log(err);
+  
+          // create Request object
+          var request = new sql.Request();
+             
+          // query to the database and get the records
+          request.query(queryDB
+      , function (err, recordset) {
+              
+        return    recordset;
+
+          });
+          
+      });
+  
+  }
+
+  getDiferencias.route('/')
+.all((req,res,next) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    next();
+})
+.get((req, res)=> {
+   // send records as a response
+let query2=`SELECT 1 as meme`;
+
+   entrega_result2(query2,rrhh=>{
+   console.log(rrhh);
+    res.send(rrhh);
+   });
+
+});
+
+
+
+
 module.exports = rrhhRouter;
 module.exports = rrhhRouterPers;
+module.exports = getDiferencias;
+
