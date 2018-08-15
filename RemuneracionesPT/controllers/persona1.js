@@ -63,7 +63,7 @@ function home (req,res){
      };
 
 
-function getPersonalAsist (){
+function getPersonalAsist (req,res){
     readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
         // `rows` is an array of rows
         // each row being an array of cells.
@@ -71,16 +71,20 @@ function getPersonalAsist (){
     let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
      convierteRutID("17.933.157-8"); 
      result=JSON.parse(result);
-     return   result;
+     return   res.status(200).send(result);
+   
     }); 
 }
 
-function getPersonalSoft(){
+function getPersonalSoft(req,res){
  let  query=`SELECT top 10 FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] `
 
  entrega_resultDB(query,(result)=>{
     //let json= JSON.parse(result); 
-    return result;
+
+
+   
+    return   res.status(200).send(result);
  
  });
 
@@ -88,23 +92,8 @@ function getPersonalSoft(){
 
 }
 
-async function  generaProcesoSueldo(){
-  let persAsist= await getPersonalAsist();
-  let persRRHH=await getPersonalSoft();
-  let persDiff=await getDiferenciasPersonal();
-  let persSueldo=await getSueldosPersonal();
-  
-}
 
-function getDiferenciasPersonal(persAsist,persRRHH){
-  
-
-
-}
-
-
-
-   function getDiferenciasPersonal1(req,res){
+   function getDiferenciasPersonal(req,res){
    
     readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
         // `rows` is an array of rows
