@@ -6,3 +6,4 @@ export class DiasTrabajados {
     CANTIDAD_HRS:number
 
 }
+

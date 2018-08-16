@@ -62,8 +62,10 @@ function home (req,res){
     console.log(req.body);
      };
 
+/*
+    function getPersonalAsist (){
 
-function getPersonalAsist (){
+
     readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
         // `rows` is an array of rows
         // each row being an array of cells.
@@ -74,30 +76,108 @@ function getPersonalAsist (){
      return   result;
     }); 
 }
+*/
+
+function getPersonalAsist (){
+  return new Promise(resolve=>{
+    readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
+    let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
+    convierteRutID("17.933.157-8"); 
+    result=JSON.parse(result);
+    resolve(result);
+    }); 
+  });
+
+}
 
 function getPersonalSoft(){
- let  query=`SELECT top 10 FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] `
+  let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CENCO2_CODI  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES]  where Estado='V'`
 
- entrega_resultDB(query,(result)=>{
-    //let json= JSON.parse(result); 
-    return result;
+return new Promise(resolve=>{
+  entrega_resultDB(query,(result)=>{
+    
+    resolve ( result);
  
  });
 
- 
+});
 
 }
 
-async function  generaProcesoSueldo(){
+async function  generaProcesoSueldo(req,res){
   let persAsist= await getPersonalAsist();
   let persRRHH=await getPersonalSoft();
-  let persDiff=await getDiferenciasPersonal();
-  let persSueldo=await getSueldosPersonal();
+  let persDiff=await getPersonalBD(persAsist,persRRHH);
+   res.status(200).send(persDiff);
+
+ // let persSueldo=await getSueldosPersonal();
   
 }
 
-function getDiferenciasPersonal(persAsist,persRRHH){
+
+function getVariablesSueldoPers(perDiff){
+
+   perdiff.forEach
+
+}
+
+function getPersonalBD(persAsist,persRRHH){
+
+  return new Promise(resolve=>{
+
+   persAsist.forEach(element => {
+    element.IN_BD="false"; 
+
+   });
+
+ 
+function getVariablesSueldo(ficha,mes,vars,callback){
+//las variables tienen que tener el formato 'H001','H105','P010'
+
+let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='2018-08-01' and FICHA='`+replaceAll(ficha,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
+console.log("la query es"+ query); 
+entrega_resultDB(query,(result)=>{
+  console.log("el resultado es "+ JSON.stringify(result));
   
+  callback(result);
+ 
+});
+
+
+
+}
+
+
+   var resultTestAsist=persAsist.map((element)=>{
+    //   console.log("el elemento es"+element.RUT);
+     let rutbuscar = convierteRutID(element.RUT);
+
+        //console.log("evaluando" +element.RUT+"y"+rutbuscar)
+  
+      let persRRHHEncontrar= persRRHH.find(x=>x.RUT_ID==rutbuscar);
+    if (persRRHHEncontrar){
+      element.IN_BD="true"
+    console.log("Se encontro"+element.IN_BD);
+      element.FICHA= persRRHHEncontrar.FICHA;
+      element.RUT=persRRHHEncontrar.RUT;
+      element.CARGO_DESC=persRRHHEncontrar.CARGO_DESC;
+      element.CENCO2_CODI=persRRHHEncontrar.CENCO2_CODI;
+     getVariablesSueldo(persRRHHEncontrar.FICHA,'aaa',`'H303','P001'`,(result)=>{
+  console.log(result);
+
+      });
+
+      
+
+    
+    }
+   
+     return element;
+ 
+    });
+    
+    resolve (resultTestAsist);
+  });
 
 
 }
@@ -114,11 +194,11 @@ function getDiferenciasPersonal(persAsist,persRRHH){
           
      resultAsist= JSON.parse(resultAsist);
 
-     let  query=`SELECT top 10 FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] `;
+     let  query=`SELECT  FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES]  where Estado='V'`;
 
      entrega_resultDB(query,(resultDB)=>{
 
-      console.log(resultAsist[0]);
+      //console.log(resultAsist[0]);
 
      
 
@@ -137,7 +217,7 @@ function getDiferenciasPersonal(persAsist,persRRHH){
    
       });
 
-      console.log("los que se encontro"+resultTestAsist[0].RUT);
+
       
       
         
@@ -168,14 +248,15 @@ function getDiferenciasPersonal(persAsist,persRRHH){
     return replaceAll(prevstring, omit, place, string)
   }
 
-  const  jsonPersona ='[{"FICHA":"113FLORI30","NOMBRES":"GONZALEZ MOYA HERNAN","RUT":"008.247.003-4","RUT_ID":10420150,"DIRECCION":"AV. CERRILLOS 7530","FECHA_INGRESO":"01/12/2015","FECHA_FINIQUITO":"10/01/2016","ESTADO":"F"},{"FICHA":"13ACJU001","NOMBRES":"LAGOS LAVIN HERMAN EUGENIO","RUT":"007.680.542-3","RUT_ID":7680542,"DIRECCION":"CERRO LA SILLA N°1029","FECHA_INGRESO":"01/02/2008","FECHA_FINIQUITO":"23/02/2009","ESTADO":"F"},{"FICHA":"13ACJU002","NOMBRES":"ASTETE VILLEGAS HECTOR JOEL","RUT":"006.445.943-0","RUT_ID":6445943,"DIRECCION":"PASAJE CARMELA CARVAJAL N°3939","FECHA_INGRESO":"01/02/2008","FECHA_FINIQUITO":"30/06/2008","ESTADO":"F"},{"FICHA":"13ACJU003","NOMBRES":"DOMINGUEZ BARRIOS JOSE EDMUNDO","RUT":"004.889.052-0","RUT_ID":4889052,"DIRECCION":"BELGICA N°1669","FECHA_INGRESO":"01/02/2008","FECHA_FINIQUITO":"25/03/2009","ESTADO":"F"},{"FICHA":"13ACJU004","NOMBRES":"GARRIDO ORELLANA ALFREDO RICARDO","RUT":"005.523.966-5","RUT_ID":5523966,"DIRECCION":"LAS CLEVIAS N°0566 V. PRIMAVERA","FECHA_INGRESO":"01/07/2008","FECHA_FINIQUITO":"25/03/2009","ESTADO":"F"},{"FICHA":"13ACJU005","NOMBRES":"ESCOBAR OSSES ALEJANDRO HERNAN","RUT":"009.926.438-1","RUT_ID":9926438,"DIRECCION":"POBLACION SANTIAGO UROFOSFATO N° 2171","FECHA_INGRESO":"28/02/2009","FECHA_FINIQUITO":"31/12/9999","ESTADO":"V"},{"FICHA":"13ACJU006","NOMBRES":"FUENTES PEÑA JOSE SEGUNDO","RUT":"005.250.203-9","RUT_ID":5250203,"DIRECCION":"PASAJE BENTONITA  N°1113 VILLA LOS INDUSTRIALES","FECHA_INGRESO":"13/03/2009","FECHA_FINIQUITO":"31/08/2009","ESTADO":"F"},{"FICHA":"13ACJU007","NOMBRES":"RIOS SOTO JUAN ALBERTO","RUT":"007.066.150-0","RUT_ID":7066150,"DIRECCION":"PASAJE LAS TENCAS N°1870","FECHA_INGRESO":"27/03/2009","FECHA_FINIQUITO":"05/04/2010","ESTADO":"F"},{"FICHA":"13ACJU008","NOMBRES":"PULGAR SALVADE HERIBERTO ANTONIO","RUT":"005.290.682-2","RUT_ID":5290682,"DIRECCION":"PASAJE SEGUNDA TRANSVERSAL Nº3061","FECHA_INGRESO":"23/08/2009","FECHA_FINIQUITO":"31/05/2014","ESTADO":"F"},{"FICHA":"13ACJU009","NOMBRES":"VIDAL FIGUEROA JORGE WASHINGTON","RUT":"006.768.259-9","RUT_ID":6768259,"DIRECCION":"ALMIRANTE LINCH Nº 1110","FECHA_INGRESO":"01/04/2010","FECHA_FINIQUITO":"31/12/2010","ESTADO":"F"}]';
-  const jsonSueldo ='[{"FICHA":"113FLORI30","VARIABLE_CODI":"H303","VARIABLE_MONTO":50000}]';
-  function entrega_resultDB(queryDB, callback){
-    return callback(JSON.parse(jsonPersona));
+  //const  jsonPersona ='[{"FICHA":"113FLORI30","NOMBRES":"GONZALEZ MOYA HERNAN","RUT":"008.247.003-4","RUT_ID":10420150,"DIRECCION":"AV. CERRILLOS 7530","FECHA_INGRESO":"01/12/2015","FECHA_FINIQUITO":"10/01/2016","ESTADO":"F"},{"FICHA":"13ACJU001","NOMBRES":"LAGOS LAVIN HERMAN EUGENIO","RUT":"007.680.542-3","RUT_ID":7680542,"DIRECCION":"CERRO LA SILLA N°1029","FECHA_INGRESO":"01/02/2008","FECHA_FINIQUITO":"23/02/2009","ESTADO":"F"},{"FICHA":"13ACJU002","NOMBRES":"ASTETE VILLEGAS HECTOR JOEL","RUT":"006.445.943-0","RUT_ID":6445943,"DIRECCION":"PASAJE CARMELA CARVAJAL N°3939","FECHA_INGRESO":"01/02/2008","FECHA_FINIQUITO":"30/06/2008","ESTADO":"F"},{"FICHA":"13ACJU003","NOMBRES":"DOMINGUEZ BARRIOS JOSE EDMUNDO","RUT":"004.889.052-0","RUT_ID":4889052,"DIRECCION":"BELGICA N°1669","FECHA_INGRESO":"01/02/2008","FECHA_FINIQUITO":"25/03/2009","ESTADO":"F"},{"FICHA":"13ACJU004","NOMBRES":"GARRIDO ORELLANA ALFREDO RICARDO","RUT":"005.523.966-5","RUT_ID":5523966,"DIRECCION":"LAS CLEVIAS N°0566 V. PRIMAVERA","FECHA_INGRESO":"01/07/2008","FECHA_FINIQUITO":"25/03/2009","ESTADO":"F"},{"FICHA":"13ACJU005","NOMBRES":"ESCOBAR OSSES ALEJANDRO HERNAN","RUT":"009.926.438-1","RUT_ID":9926438,"DIRECCION":"POBLACION SANTIAGO UROFOSFATO N° 2171","FECHA_INGRESO":"28/02/2009","FECHA_FINIQUITO":"31/12/9999","ESTADO":"V"},{"FICHA":"13ACJU006","NOMBRES":"FUENTES PEÑA JOSE SEGUNDO","RUT":"005.250.203-9","RUT_ID":5250203,"DIRECCION":"PASAJE BENTONITA  N°1113 VILLA LOS INDUSTRIALES","FECHA_INGRESO":"13/03/2009","FECHA_FINIQUITO":"31/08/2009","ESTADO":"F"},{"FICHA":"13ACJU007","NOMBRES":"RIOS SOTO JUAN ALBERTO","RUT":"007.066.150-0","RUT_ID":7066150,"DIRECCION":"PASAJE LAS TENCAS N°1870","FECHA_INGRESO":"27/03/2009","FECHA_FINIQUITO":"05/04/2010","ESTADO":"F"},{"FICHA":"13ACJU008","NOMBRES":"PULGAR SALVADE HERIBERTO ANTONIO","RUT":"005.290.682-2","RUT_ID":5290682,"DIRECCION":"PASAJE SEGUNDA TRANSVERSAL Nº3061","FECHA_INGRESO":"23/08/2009","FECHA_FINIQUITO":"31/05/2014","ESTADO":"F"},{"FICHA":"13ACJU009","NOMBRES":"VIDAL FIGUEROA JORGE WASHINGTON","RUT":"006.768.259-9","RUT_ID":6768259,"DIRECCION":"ALMIRANTE LINCH Nº 1110","FECHA_INGRESO":"01/04/2010","FECHA_FINIQUITO":"31/12/2010","ESTADO":"F"}]';
+  //const jsonSueldo ='[{"FICHA":"113FLORI30","VARIABLE_CODI":"H303","VARIABLE_MONTO":50000}]';
+  
+  //function entrega_resultDB(queryDB, callback){
+  //  return callback(JSON.parse(jsonPersona));
 
-  }
+  //}
 
-  /*
+
  function entrega_resultDB(queryDB, callback){
    
   // const fruit = request.params.parame;
@@ -203,6 +284,6 @@ function getDiferenciasPersonal(persAsist,persRRHH){
 
 }
 
-*/
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,getDiferenciasPersonal}
+
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo}

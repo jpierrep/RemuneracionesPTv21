@@ -9,6 +9,7 @@ var api=express.Router();
 api.get('/home',PerController.home);
 api.get('/perSoft',PerController.getPersonalSoft);
 api.get('/perAsist',PerController.getPersonalAsist);
-api.get('/perDiferencias',PerController.getDiferenciasPersonal);
+//api.get('/perDiferencias',PerController.getDiferenciasPersonal);
+api.get('/generaProceso',PerController.generaProcesoSueldo);
 
 module.exports=api;
