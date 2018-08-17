@@ -3,7 +3,7 @@
 
 
 
-
+var async= require('async');
 
 var readXlsxFile=require ('read-excel-file/node');
 var stringify = require('json-stringify');
@@ -108,16 +108,78 @@ async function  generaProcesoSueldo(req,res){
   let persAsist= await getPersonalAsist();
   let persRRHH=await getPersonalSoft();
   let persDiff=await getPersonalBD(persAsist,persRRHH);
-   res.status(200).send(persDiff);
+   
+   let persVar=await getVariablesSueldoPers(persDiff);
+   res.status(200).send(persVar);
 
- // let persSueldo=await getSueldosPersonal();
+
   
 }
 
 
-function getVariablesSueldoPers(perDiff){
 
-   perdiff.forEach
+function getVariablesSueldoPers(persDiff){
+
+
+  return new Promise(resolve=>{
+   
+ 
+   async.eachOf(persDiff,(value,key,callback)=>{
+     //for each
+     console.log(value.FICHA);
+     //console.log("holaa");
+    callback();
+    /*
+     if(value.IN_BD=="true"){
+     console.log(value.FICHA);
+     let vars=`'H303','P001'`;
+     let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='2018-08-01' and FICHA='`+replaceAll(value.FICHA,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
+     console.log("la query es"+ query);  
+    //  entrega_resultDB(query,(result)=>{
+    //  console.log(result);
+    //});
+    //entrega_resultDB2(query,null);
+    
+   
+
+    }
+     */
+ 
+    
+   },(err)=>{
+     //hacer algo
+   console.log("termino todo");
+   console.log(err);
+    }  );
+
+
+  /*
+    perDiff.forEach(element=>{
+      if(element.IN_BD=="true"){
+        console.log("es true");
+      let vars=`'H303','P001'`;
+      let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='2018-08-01' and FICHA='`+replaceAll(element.FICHA,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
+      console.log("la query es"+ query); 
+      entrega_resultDB(query,(result)=>{
+        console.log("el resultado es "+ JSON.stringify(result));
+        
+       
+       
+      });
+
+      //getVariablesSueldo(element.FICHA,'aaa',`'H303','P001'`,(result)=>{
+      //  console.log(result);
+      
+     //      });
+
+     }
+    });
+   */
+
+    resolve (persDiff);
+  });
+
+  
 
 }
 
@@ -127,25 +189,11 @@ function getPersonalBD(persAsist,persRRHH){
 
    persAsist.forEach(element => {
     element.IN_BD="false"; 
-
+  
    });
 
  
-function getVariablesSueldo(ficha,mes,vars,callback){
-//las variables tienen que tener el formato 'H001','H105','P010'
 
-let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='2018-08-01' and FICHA='`+replaceAll(ficha,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
-console.log("la query es"+ query); 
-entrega_resultDB(query,(result)=>{
-  console.log("el resultado es "+ JSON.stringify(result));
-  
-  callback(result);
- 
-});
-
-
-
-}
 
 
    var resultTestAsist=persAsist.map((element)=>{
@@ -162,10 +210,10 @@ entrega_resultDB(query,(result)=>{
       element.RUT=persRRHHEncontrar.RUT;
       element.CARGO_DESC=persRRHHEncontrar.CARGO_DESC;
       element.CENCO2_CODI=persRRHHEncontrar.CENCO2_CODI;
-     getVariablesSueldo(persRRHHEncontrar.FICHA,'aaa',`'H303','P001'`,(result)=>{
-  console.log(result);
+   // getVariablesSueldo(persRRHHEncontrar.FICHA,'aaa',`'H303','P001'`,(result)=>{
+  //console.log(result);
 
-      });
+  //    });
 
       
 
@@ -181,6 +229,22 @@ entrega_resultDB(query,(result)=>{
 
 
 }
+
+function getVariablesSueldo(ficha,mes,vars,callback){
+  //las variables tienen que tener el formato 'H001','H105','P010'
+  
+  let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='2018-08-01' and FICHA='`+replaceAll(ficha,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
+  console.log("la query es"+ query); 
+  entrega_resultDB(query,(result)=>{
+    console.log("el resultado es "+ JSON.stringify(result));
+    
+    callback(result);
+   
+  });
+  
+  
+  
+  }
 
 
 
@@ -262,7 +326,7 @@ entrega_resultDB(query,(result)=>{
   // const fruit = request.params.parame;
 
     // connect to your database
-    sql.connect(config, function (err) {
+   sql.connect(config, function (err) {
     
         if (err) console.log(err);
 
@@ -275,7 +339,7 @@ entrega_resultDB(query,(result)=>{
              
             if (err) console.log(err)
          
-            return  callback(recordset);
+            callback(recordset);
           
 
         });
@@ -283,6 +347,25 @@ entrega_resultDB(query,(result)=>{
     });
 
 }
+
+function entrega_resultDB2(queryDB, callback){
+   
+  // const fruit = request.params.parame;
+
+    // connect to your database
+   sql.connect(config).then((pool)=>{
+     return pool.request().query(queryDB)
+   }).then(result=>{console.log(result)}).catch(err=>{
+     console.log(err);
+   })
+
+
+
+
+
+
+}
+
 
 
 
