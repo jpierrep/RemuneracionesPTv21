@@ -5,16 +5,22 @@
 
 <p>
   Lista de Personal!
+  {{idPlantilla}}
 </p>
 
-<ul>
-<li *ngFor="let car of diasTrabajados">
-  {{car.NOMBRE}}
-</li>
+<!-- <ul>
+  <li *ngFor="let car of diasTrabajados">
+    {{car.NOMBRE}}
+  </li>
+  
+  </ul>
+-->
 
-</ul>
+<div *ngIf="  idPlantilla=='1' ; then thenBlock else elseBlock"></div>
 
-<p-dataTable [value]="diasTrabajados">
+
+<ng-template #thenBlock>
+<p-dataTable [value]="diasTrabajadosExiste">
   <p-header>
     Lista
       <div class="ui-helper-clearfix">
@@ -28,6 +34,9 @@
  <p-column field="RUT" header="RUT"></p-column>
  <p-column field="TIPO" header="TIPO"></p-column>
  <p-column field="CANTIDAD_HRS" header="CANT_HRS"></p-column>
+ <p-column field="SUELDO_MONTO" header="MONTO"></p-column>
+ <p-column field="DESCUENTO" header="DESCUENTOS"></p-column>
+ <p-column field="OTROS_DESCUENTOS" header="OTROS DESCUENTOS"></p-column>
  
  <p-column styleClass="col-button">
    <ng-template let-diaTrab="rowData" pTemplate="body">
@@ -64,7 +73,34 @@
         </p-footer>
 </p-dialog>
 
+</ng-template>
+
+
+<ng-template #elseBlock>
+
+    <p-dataTable [value]="diasTrabajadosNoExiste">
+        <p-header>
+          Lista
+            <div class="ui-helper-clearfix">
+             
+                <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add" 
+                 style="float:right"></button>
+            </div>
+      
+        </p-header>
+        <p-column field="NOMBRE" header="NOMBRE"></p-column>
+       <p-column field="RUT" header="RUT"></p-column>
+       <p-column field="TIPO" header="TIPO"></p-column>
+       <p-column field="CANTIDAD_HRS" header="CANT_HRS"></p-column>
+       <p-column field="SUELDO_MONTO" header="MONTO"></p-column>
+       <p-column field="DESCUENTO" header="DESCUENTOS"></p-column>
+       <p-column field="OTROS_DESCUENTOS" header="OTROS DESCUENTOS"></p-column>
+       
+     
+      
+      </p-dataTable>
+      
 
 
 
-
+ </ng-template>

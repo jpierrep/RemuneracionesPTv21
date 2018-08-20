@@ -107,15 +107,57 @@ return new Promise(resolve=>{
 async function  generaProcesoSueldo(req,res){
   let persAsist= await getPersonalAsist();
   let persRRHH=await getPersonalSoft();
-  let persDiff=await getPersonalBD(persAsist,persRRHH);
-   
-   let persVar=await getVariablesSueldoPers(persDiff);
-   res.status(200).send(persVar);
+  let persDiff=await getPersonalBD(persAsist,persRRHH);   
+  let persVar=await getVariablesSueldoPers(persDiff);
+  let persCalcula=await getCalculaSueldo(persVar);  
+   res.status(200).send(persCalcula);
 
 
   
 }
 
+
+
+function getCalculaSueldo(persDiff){
+  return new Promise(resolve=>{
+
+    persDiff.forEach((element,index,array)=>{
+      element.SUELDO_MONTO=0;
+      element.DESCUENTO=0;
+      element.OTROS_DESCUENTOS=0;
+
+      let sueldoBase=0;
+      if(element.IN_BD=="true"){
+        if(element.CANTIDAD_HRS==12){
+          element.SUELDO_MONTO=25000
+        }else if(element.CANTIDAD_HRS==8){
+          element.SUELDO_MONTO=19000
+        }else{
+           sueldoBase= element.SUELDO.find(x=>x.VARIABLE_CODI=="P001");
+          if (sueldoBase){
+            element.SUELDO_MONTO=sueldoBase*0.0077777*0.8*element.CANTIDAD_HRS;
+          }else{
+            element.SUELDO_MONTO=-1;
+          }
+        }
+  
+        
+        let liquidoPago=element.SUELDO.find(x=>x.VARIABLE_CODI=="H303");
+        if(liquidoPago){
+          if (liquidoPago<0 && liquidoPago*-1>=SUELDO_MONTO) element.DESCUENTO= SUELDO_MONTO+liquidoPago;  
+       
+        }
+  
+      }
+       
+  
+     });
+  
+    resolve(persDiff);
+
+  });
+
+}
 
 
 function getVariablesSueldoPers(persDiff){
@@ -386,6 +428,5 @@ function entrega_resultDB2(queryDB, callback){
 
      module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo}
 
-     var obj = {dev: "/dev.json", test: "/test.json", prod: "/prod.json"};
-     var configs = {};
+   
      

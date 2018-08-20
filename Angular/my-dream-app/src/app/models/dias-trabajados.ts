@@ -4,6 +4,10 @@ export class DiasTrabajados {
     TIPO:string;
     FECHA:string;
     CANTIDAD_HRS:number
+    IN_BD:string;
+    SUELDO_MONTO:number;
+    DESCUENTO:number;
+    OTROS_DESCUENTOS:number;
 
 }
 

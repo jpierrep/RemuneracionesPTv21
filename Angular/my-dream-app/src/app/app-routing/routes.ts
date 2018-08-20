@@ -4,6 +4,6 @@ import { DiasTrabajadosComponent } from '../components/dias-trabajados/dias-trab
 
 export const routes:Routes=[
 {  path:'cars',component:CarsListComponent},
-{  path:'diasTrabajados',component:DiasTrabajadosComponent},
+{  path:'diasTrabajados/:id',component:DiasTrabajadosComponent},
 {  path:'',redirectTo:'/cars',pathMatch:'full'} // por defecto
 ];

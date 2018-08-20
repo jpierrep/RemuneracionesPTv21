@@ -20,7 +20,7 @@ export class InfoDiasTrabajadosService {
 */
 
  // webApiUrl: string='https://www.primefaces.org/primeng/assets/showcase/data/cars-small.json';
- webApiUrl: string='http://localhost:5000/asistDiasTrab';
+ webApiUrl: string='http://localhost:3800/api/generaProceso';
   constructor(private http: HttpClient) { }
   
   getAllDiasTrab(){

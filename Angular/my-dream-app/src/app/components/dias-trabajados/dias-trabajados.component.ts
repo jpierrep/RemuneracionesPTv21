@@ -4,23 +4,28 @@ import { DiasTrabajados} from '../../models/dias-trabajados';
 import { Utils} from '../../models/utils';
 import {Cars} from '../../models/cars';
 import {CarsInfoService} from '../../services/cars-info.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-dias-trabajados',
   templateUrl: './dias-trabajados.component.html',
   styleUrls: ['./dias-trabajados.component.css']
 })
+
 export class DiasTrabajadosComponent implements OnInit {
 
   diasTrabajados:DiasTrabajados[];
+  diasTrabajadosNoExiste:DiasTrabajados[];
+  diasTrabajadosExiste:DiasTrabajados[];
   diasTrabajadosOne:DiasTrabajados;
   display:boolean;
   personalSoft:Cars[];
   utils:Utils;
+  idPlantilla:String;
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
-  
+    ,private route: ActivatedRoute
   ) {  }
 
   
@@ -31,9 +36,13 @@ export class DiasTrabajadosComponent implements OnInit {
     this.diasTrabajadosOne=new DiasTrabajados(); //importante que exista este objeto creado
     this.diasTrabajados=[];
     this.personalSoft=[];
+    this.diasTrabajadosNoExiste=[];
     //this.personalSoft=new Array<Cars>();
    this. getAllDiasTrabajados();
-  
+   this.idPlantilla=this.route.snapshot.paramMap.get('id');
+   
+
+   
 
     this.display=false;
 
@@ -45,15 +54,9 @@ export class DiasTrabajadosComponent implements OnInit {
     this.InfoDiasTrabajadosService.getAllDiasTrab().subscribe(
       data=> {
               this.diasTrabajados=data;
-            
-              this.InfoPersonalSoftService.getAllPers().subscribe(
-                data=> {
-                         this.personalSoft=data;
-                        console.log("mamama"+this.personalSoft[0].FICHA);
-                        console.log("mamama"+this.diasTrabajados[0].NOMBRE);
-                        this.utils.calculaNoExiste(this.diasTrabajados,this.personalSoft);
-                }
-              )
+             this.getNoExisteEnBD();
+             this.getExisteEnBD();
+             
 
             }
       
@@ -63,11 +66,16 @@ export class DiasTrabajadosComponent implements OnInit {
 
   
  
-entregaDiferencias(){
+getNoExisteEnBD(){
 
-
+ this.diasTrabajadosNoExiste =this.diasTrabajados.filter(x=>x.IN_BD=="false");
+   
 }
 
+getExisteEnBD(){
+ 
+  this.diasTrabajadosExiste =this.diasTrabajados.filter(x=>x.IN_BD=="true");
+}
 
 
 
