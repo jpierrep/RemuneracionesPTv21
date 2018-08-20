@@ -119,38 +119,51 @@ async function  generaProcesoSueldo(req,res){
 
 
 function getVariablesSueldoPers(persDiff){
+ 
 
 
   return new Promise(resolve=>{
-   
- 
+
+
+
    async.eachOf(persDiff,(value,key,callback)=>{
      //for each
      console.log(value.FICHA);
      //console.log("holaa");
-    callback();
-    /*
+    //callback();
+    console.log(key);
      if(value.IN_BD=="true"){
      console.log(value.FICHA);
      let vars=`'H303','P001'`;
      let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='2018-08-01' and FICHA='`+replaceAll(value.FICHA,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
-     console.log("la query es"+ query);  
-    //  entrega_resultDB(query,(result)=>{
-    //  console.log(result);
-    //});
-    //entrega_resultDB2(query,null);
     
-   
-
-    }
-     */
  
+    entrega_resultDB2(query,null).then(result=>{
+      if (result){ 
+       // console.log(result); 
+       console.log("hay result");
+          value.SUELDO=result;
+         // console.log(value);
+         callback();
+       
+     }else{ console.log("no hay");
+     callback();
+    }
+     
+     });
     
+
+    }else{
+    callback();
+    }
    },(err)=>{
+    if (err) console.error(err.message); 
      //hacer algo
    console.log("termino todo");
-   console.log(err);
-    }  );
+   
+   resolve (persDiff);
+   //console.log(err);
+    } );
 
 
   /*
@@ -176,10 +189,9 @@ function getVariablesSueldoPers(persDiff){
     });
    */
 
-    resolve (persDiff);
+  
   });
 
-  
 
 }
 
@@ -349,18 +361,21 @@ function getVariablesSueldo(ficha,mes,vars,callback){
 }
 
 function entrega_resultDB2(queryDB, callback){
-   
+  return new Promise(resolve=>{ 
   // const fruit = request.params.parame;
 
     // connect to your database
    sql.connect(config).then((pool)=>{
      return pool.request().query(queryDB)
-   }).then(result=>{console.log(result)}).catch(err=>{
+   }).then(result=>{
+    resolve(result);
+
+    }).catch(err=>{
      console.log(err);
    })
 
 
-
+   }); 
 
 
 
@@ -370,3 +385,7 @@ function entrega_resultDB2(queryDB, callback){
 
 
      module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo}
+
+     var obj = {dev: "/dev.json", test: "/test.json", prod: "/prod.json"};
+     var configs = {};
+     
