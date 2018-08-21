@@ -82,7 +82,7 @@ function home (req,res){
 function getPersonalAsist (){
   return new Promise(resolve=>{
    // readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
-    readXlsxFile('/uploads/personas/'+ExcelFilename,{schema}).then((rows) => {
+    readXlsxFile('uploads/personas/'+ExcelFilename,{schema}).then((rows) => {
    let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
     convierteRutID("17.933.157-8"); 
     result=JSON.parse(result);
@@ -107,7 +107,8 @@ return new Promise(resolve=>{
 
 }
 
-async function  generaProcesoSueldo(req,res){
+async function  generaProcesoSueldo(){
+  console.log("entra en proceso sueldo");
   let persAsist= await getPersonalAsist();
   let persRRHH=await getPersonalSoft();
   let persDiff=await getPersonalBD(persAsist,persRRHH);   
@@ -431,7 +432,7 @@ function entrega_resultDB2(queryDB, callback){
 
     //subir archivos de usuario avatar
 
-    function uploadFile(req,res){
+   async function uploadFile(req,res){
 
     //  var userId=req.params.id;
       
@@ -446,7 +447,7 @@ function entrega_resultDB2(queryDB, callback){
          //en la posicion 2 entrega el nombre del archivo
          var file_name=file_split[2]
          //seteamos la variable global con el nombre del archivo a leer
-         //ExcelFilename=filename;
+         ExcelFilename=file_name;
          //extencion del archivo
          var ext_split=file_name.split('\.');
          var file_ext=ext_split[1];
@@ -456,10 +457,12 @@ function entrega_resultDB2(queryDB, callback){
          if(  file_ext=='xls'||file_ext=='xlsx'){
             //Actualizar documento de usuario logeado
           
-                 return res.status(200).send({message:"se cargo el archivo"});
-            
+                // return res.status(200).send({message:"se cargo el archivo"});
+                console.log("holaaa");
+                generaProcesoSueldo();
  
-         }else{
+        
+              }else{
          return  removeFilesOfUploads(res,file_path,"error en la extencion"); //lleva return para no mandar respuestas seguidas y nos de error no se pueden enviar varias cabeceras a la vez
  
          }
