@@ -1,14 +1,11 @@
-<p>
-  dias-trabajados works!
-</p>
 
 
-<p>
+<!-- <p>
   Lista de Personal!
   {{idPlantilla}}
 </p>
 
-<!-- <ul>
+<ul>
   <li *ngFor="let car of diasTrabajados">
     {{car.NOMBRE}}
   </li>
@@ -20,7 +17,12 @@
 
 
 <ng-template #thenBlock>
-<p-dataTable [value]="diasTrabajadosExiste">
+
+    <h3 class="first">Seleccione zona a mostrar</h3>
+    <p-dropdown [options]="zonas" [(ngModel)]="optionSelectedZona" placeholder="Seleccione una zona" optionLabel="name" [showClear]="true"></p-dropdown>
+    <p>Zona seleccionada: {{optionSelectedZona? optionSelectedZona.name : 'ninguna'}}</p>
+
+<p-dataTable [value]="getFiltered(optionSelectedZona? optionSelectedZona.name : undefined)">
   <p-header>
     Lista
       <div class="ui-helper-clearfix">

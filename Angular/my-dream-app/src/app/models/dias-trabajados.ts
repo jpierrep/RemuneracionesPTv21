@@ -8,6 +8,9 @@ export class DiasTrabajados {
     SUELDO_MONTO:number;
     DESCUENTO:number;
     OTROS_DESCUENTOS:number;
+    CENCO2_CODI:string;
+    CENCO1_DESC:string;
+    CENCO2_DESC:string;
 
 }
 

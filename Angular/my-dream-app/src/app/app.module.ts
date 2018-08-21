@@ -10,7 +10,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { FormsModule } from '../../node_modules/@angular/forms';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { InfoDiasTrabajadosService } from './services/info-dias-trabajados.service';
-
+import {DropdownModule} from 'primeng/dropdown';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,8 +28,8 @@ import { InfoDiasTrabajadosService } from './services/info-dias-trabajados.servi
     BrowserAnimationsModule,
     InputTextModule,
     FormsModule,
-    AppRoutingModule
-
+    AppRoutingModule,
+    DropdownModule
 
   ],
   providers: [CarsInfoService,InfoDiasTrabajadosService],

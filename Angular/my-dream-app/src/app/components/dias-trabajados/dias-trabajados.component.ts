@@ -22,6 +22,8 @@ export class DiasTrabajadosComponent implements OnInit {
   personalSoft:Cars[];
   utils:Utils;
   idPlantilla:String;
+  optionSelectedZona:String
+  zonas:any[];
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
@@ -56,6 +58,7 @@ export class DiasTrabajadosComponent implements OnInit {
               this.diasTrabajados=data;
              this.getNoExisteEnBD();
              this.getExisteEnBD();
+             this.getZonas();
              
 
             }
@@ -78,11 +81,41 @@ getExisteEnBD(){
 }
 
 
+getZonas(){
+
+  
+
+  let cenco1=  this.diasTrabajadosExiste.map(value=>{
+     return value.CENCO1_DESC;
+   });
 
 
- //getAllCars(){
- //this.carsList=this.carService.getAllCars();
-//}
+  let unique = (value, index, self) => {
+
+    return self.indexOf(value) == index;
+}
+
+let distinctZonas = cenco1.filter(unique);
+
+let zonasJson=[];
+distinctZonas.map(element => {
+   zonasJson.push({"name":element});
+ });
+
+this.zonas=zonasJson;
+
+
+
+}
+
+
+getFiltered(zona){
+
+  if(zona)
+   return this.diasTrabajados.filter(x=>x.CENCO1_DESC==zona);
+  else
+  return this.diasTrabajados;
+  }
 
  selectedDiasTrabajados(diasTrabajados:DiasTrabajados){
   this.display=true; // cuando se selecciona uno, se mustra el dialog

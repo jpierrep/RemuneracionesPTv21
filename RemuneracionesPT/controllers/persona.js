@@ -13,6 +13,7 @@ var fs=require('fs');
 var path=require('path');
 
 var sql = require("mssql");
+var ExcelFilename;
 
 // config for your database
 var config = {
@@ -80,8 +81,9 @@ function home (req,res){
 
 function getPersonalAsist (){
   return new Promise(resolve=>{
-    readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
-    let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
+   // readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
+    readXlsxFile('/uploads/personas/'+ExcelFilename,{schema}).then((rows) => {
+   let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
     convierteRutID("17.933.157-8"); 
     result=JSON.parse(result);
     resolve(result);
@@ -91,7 +93,8 @@ function getPersonalAsist (){
 }
 
 function getPersonalSoft(){
-  let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CENCO2_CODI  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES]  where Estado='V'`
+  let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
+  on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'`
 
 return new Promise(resolve=>{
   entrega_resultDB(query,(result)=>{
@@ -264,6 +267,8 @@ function getPersonalBD(persAsist,persRRHH){
       element.RUT=persRRHHEncontrar.RUT;
       element.CARGO_DESC=persRRHHEncontrar.CARGO_DESC;
       element.CENCO2_CODI=persRRHHEncontrar.CENCO2_CODI;
+      element.CENCO2_DESC=persRRHHEncontrar.CENCO2_DESC;
+      element.CENCO1_DESC=persRRHHEncontrar.CENCO1_DESC;
    // getVariablesSueldo(persRRHHEncontrar.FICHA,'aaa',`'H303','P001'`,(result)=>{
   //console.log(result);
 
@@ -424,9 +429,58 @@ function entrega_resultDB2(queryDB, callback){
 }
 
 
+    //subir archivos de usuario avatar
+
+    function uploadFile(req,res){
+
+    //  var userId=req.params.id;
+      
+         //request trae archivos si es que son subidos
+       if(req.files){
+           //campo path del campo imagen enviado por post
+         var file_path=req.files.file.path;
+         //obtneemos el nombre del archivo
+         var file_split=file_path.split('\\');
+         console.log(file_split);
+         //[ 'uploads', 'users', 'LmkbKFCxtEqb4Ij6eeppHipB.jpg' ]
+         //en la posicion 2 entrega el nombre del archivo
+         var file_name=file_split[2]
+         //seteamos la variable global con el nombre del archivo a leer
+         //ExcelFilename=filename;
+         //extencion del archivo
+         var ext_split=file_name.split('\.');
+         var file_ext=ext_split[1];
+         //comprobar que las extenciones son correctas
+ //puede subir usuarios solamente el dueño de la cuenta
+
+         if(  file_ext=='xls'||file_ext=='xlsx'){
+            //Actualizar documento de usuario logeado
+          
+                 return res.status(200).send({message:"se cargo el archivo"});
+            
+ 
+         }else{
+         return  removeFilesOfUploads(res,file_path,"error en la extencion"); //lleva return para no mandar respuestas seguidas y nos de error no se pueden enviar varias cabeceras a la vez
+ 
+         }
+     }else{
+           return res.status(200).send({message:'No se han subido archivos'});
+       }
+ 
+      }
+
+    function  removeFilesOfUploads(res, file_path,message_print){
+       //si no es correcto, se elimina el archivo subido, pues la libreria lo sube de todas maneras
+       fs.unlink(file_path,(err)=>{
+         //hay error
+           return res.status(200).send({message:message_print});
+       });
+      }
+ 
 
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo}
+
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile}
 
    
      
