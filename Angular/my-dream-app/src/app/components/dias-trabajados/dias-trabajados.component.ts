@@ -50,18 +50,28 @@ export class DiasTrabajadosComponent implements OnInit {
     this.display=false;
 
   }
+ evento1(event){
+ console.log("antes de enviar");
+ console.log(event);
+ 
+ }
 
-  onUpload(event) {
+  evento(event) {
+    console.log("on Uploaded");
+    console.log(event);
     for(let file of event.files) {
         this.uploadedFiles.push(file);
     }
   console.log("se subio");
+  console.log(this.uploadedFiles[0]);
+  this.FilesgetAllDiasTrabajados();
   }
     
   getAllDiasTrabajados(){
     
-    this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
-      data=> {
+   // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
+    this.InfoDiasTrabajadosService.getAllDiasTrab().subscribe(  
+   data=> {
               this.diasTrabajados=data;
              this.getNoExisteEnBD();
              this.getExisteEnBD();
@@ -73,6 +83,20 @@ export class DiasTrabajadosComponent implements OnInit {
     )
 
   }
+  FilesgetAllDiasTrabajados(){
+    
+    // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
+     this.InfoDiasTrabajadosService.subeArchivos(this.uploadedFiles[0]).subscribe(  
+    data=> {
+               this.diasTrabajados=data;
+ 
+              
+ 
+             }
+       
+     )
+ 
+   }
 
   
  

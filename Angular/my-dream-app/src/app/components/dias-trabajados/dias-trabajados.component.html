@@ -12,10 +12,11 @@
   
   </ul>
 -->
+<p-fileUpload mode="basic" name="demo[]"  (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
 
-<div *ngIf="  idPlantilla=='1' ; then thenBlock else elseBlock"></div>
+<div *ngIf="  idPlantilla=='2' ; then thenBlock else elseBlock"></div>
 
-<p-fileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUpload($event)"></p-fileUpload>
+
 <ng-template #thenBlock>
 
     <h3 class="first">Seleccione zona a mostrar</h3>

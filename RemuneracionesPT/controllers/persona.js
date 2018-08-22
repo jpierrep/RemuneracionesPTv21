@@ -92,6 +92,19 @@ function getPersonalAsist (){
 
 }
 
+function TESTgetPersonalAsist (){
+  return new Promise(resolve=>{
+    //readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
+    readXlsxFile('uploads/personas/'+ExcelFilename,{schema}).then((rows) => {
+   let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
+    convierteRutID("17.933.157-8"); 
+    result=JSON.parse(result);
+    resolve(result);
+    }); 
+  });
+
+}
+
 function getPersonalSoft(){
   let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'`
@@ -122,6 +135,17 @@ async function generaProcesoSueldo(req,res){
   
 }
 
+async function TESTgeneraProcesoSueldo(req,res){
+
+  
+  await uploadFile(req,res);
+  let persAsist= await TESTgetPersonalAsist();
+  console.log(persAsist);
+  res.status(200).send(persAsist);
+
+
+  
+}
 
 
 function getCalculaSueldo(persDiff){
@@ -487,7 +511,7 @@ function entrega_resultDB2(queryDB, callback){
 
 
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile}
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,TESTgeneraProcesoSueldo}
 
    
      

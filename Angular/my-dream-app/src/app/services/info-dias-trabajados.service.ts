@@ -34,5 +34,16 @@ export class InfoDiasTrabajadosService {
 //return this.arr;
   }
 
+  subeArchivos(dataForm){
+    //console.log(this.http.get<DiasTrabajados[]>(this.webApiUrl));
+   const fd=new  FormData();
+   fd.append('file',dataForm);
+    return this.http.post<DiasTrabajados[]>("http://localhost:3800/api/testGeneraProceso",fd);
+   // return this.http.post<DiasTrabajados[]>(this.webApiUrl,formdata);
+
+
+//return this.arr;
+  }
+
 
 }
