@@ -12,11 +12,14 @@
   
   </ul>
 -->
-<p-fileUpload mode="basic" name="demo[]"  (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
-
-<div *ngIf="  idPlantilla=='2' ; then thenBlock else elseBlock"></div>
+<p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
 
 
+
+
+<div *ngIf="  idPlantilla=='1' ; then thenBlock else elseBlock"></div>
+
+<p-button label="Elimina Lista" (onClick)="eliminaDiasTrab($event)"></p-button>
 <ng-template #thenBlock>
 
     <h3 class="first">Seleccione zona a mostrar</h3>

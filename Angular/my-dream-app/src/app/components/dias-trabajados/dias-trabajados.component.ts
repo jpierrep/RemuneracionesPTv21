@@ -5,6 +5,7 @@ import { Utils} from '../../models/utils';
 import {Cars} from '../../models/cars';
 import {CarsInfoService} from '../../services/cars-info.service';
 import { ActivatedRoute } from '@angular/router';
+import { PersistenceService } from 'angular-persistence';
 
 @Component({
   selector: 'app-dias-trabajados',
@@ -28,7 +29,7 @@ export class DiasTrabajadosComponent implements OnInit {
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
-    ,private route: ActivatedRoute
+    ,private route: ActivatedRoute,private persistenceService: PersistenceService
   ) {  }
 
   
@@ -41,20 +42,35 @@ export class DiasTrabajadosComponent implements OnInit {
     this.personalSoft=[];
     this.diasTrabajadosNoExiste=[];
     //this.personalSoft=new Array<Cars>();
-   this. getAllDiasTrabajados();
+   //this. getAllDiasTrabajados();
    this.idPlantilla=this.route.snapshot.paramMap.get('id');
    
+   if(localStorage.getItem('dias')){
+    console.log("existe el objeto");
+    this.diasTrabajados=JSON.parse(localStorage.getItem('dias'));
+    this.getNoExisteEnBD();
+    this.getExisteEnBD();
+    this.getZonas();
 
+   }else{
+     console.log("no existe");
+     
+   }
+
+   if(this.persistenceService.get('dias')){
+     console.log("existe el objeto");
+     this.diasTrabajados=this.persistenceService.get('dias');
+     this.getNoExisteEnBD();
+     this.getExisteEnBD();
+     this.getZonas();
+   }else{
+     console.log("no existe el objeto");
+   }
    
 
     this.display=false;
 
   }
- evento1(event){
- console.log("antes de enviar");
- console.log(event);
- 
- }
 
   evento(event) {
     console.log("on Uploaded");
@@ -64,7 +80,14 @@ export class DiasTrabajadosComponent implements OnInit {
     }
   console.log("se subio");
   console.log(this.uploadedFiles[0]);
+  this.persistenceService.removeAll(); 
+  localStorage.removeItem('dias'); 
   this.FilesgetAllDiasTrabajados();
+  }
+  
+  eliminaDiasTrab(event){
+    localStorage.removeItem('dias'); 
+    this.diasTrabajados=[];
   }
     
   getAllDiasTrabajados(){
@@ -76,8 +99,6 @@ export class DiasTrabajadosComponent implements OnInit {
              this.getNoExisteEnBD();
              this.getExisteEnBD();
              this.getZonas();
-             
-
             }
       
     )
@@ -86,9 +107,16 @@ export class DiasTrabajadosComponent implements OnInit {
   FilesgetAllDiasTrabajados(){
     
     // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
-     this.InfoDiasTrabajadosService.subeArchivos(this.uploadedFiles[0]).subscribe(  
+     this.InfoDiasTrabajadosService.getAllDiasTrabFile(this.uploadedFiles[0]).subscribe(  
     data=> {
                this.diasTrabajados=data;
+               this.getNoExisteEnBD();
+               this.getExisteEnBD();
+               this.getZonas();
+               this.persistenceService.set('dias', this.diasTrabajados);
+               localStorage.setItem('dias', JSON.stringify(this.diasTrabajados));
+               console.log("el objeto es"+Object.keys(this.persistenceService.get('dias')));
+              // console.log(this.diasTrabajados);
  
               
  

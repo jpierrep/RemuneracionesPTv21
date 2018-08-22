@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, SystemJsNgModuleLoader } from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { CarsListComponent } from './components/cars-list/cars-list.component';
@@ -12,8 +12,10 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
 import { InfoDiasTrabajadosService } from './services/info-dias-trabajados.service';
 import {DropdownModule} from 'primeng/dropdown';
 import {FileUploadModule} from 'primeng/fileupload';
+import { PersistenceModule } from 'angular-persistence';
 
-@NgModule({
+
+@NgModule ({
   declarations: [
     AppComponent,
     CarsListComponent,
@@ -32,10 +34,12 @@ import {FileUploadModule} from 'primeng/fileupload';
     FormsModule,
     AppRoutingModule,
     DropdownModule,
-    FileUploadModule
+    FileUploadModule,
+    PersistenceModule 
 
   ],
   providers: [CarsInfoService,InfoDiasTrabajadosService],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

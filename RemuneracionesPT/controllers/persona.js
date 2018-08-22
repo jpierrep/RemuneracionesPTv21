@@ -135,13 +135,15 @@ async function generaProcesoSueldo(req,res){
   
 }
 
-async function TESTgeneraProcesoSueldo(req,res){
+async function generaProcesoSueldoUpdload(req,res){
 
-  
   await uploadFile(req,res);
   let persAsist= await TESTgetPersonalAsist();
-  console.log(persAsist);
-  res.status(200).send(persAsist);
+  let persRRHH=await getPersonalSoft();
+  let persDiff=await getPersonalBD(persAsist,persRRHH);   
+  let persVar=await getVariablesSueldoPers(persDiff);
+  let persCalcula=await getCalculaSueldo(persVar);  
+   res.status(200).send(persCalcula);
 
 
   
@@ -511,7 +513,7 @@ function entrega_resultDB2(queryDB, callback){
 
 
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,TESTgeneraProcesoSueldo}
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload}
 
    
      

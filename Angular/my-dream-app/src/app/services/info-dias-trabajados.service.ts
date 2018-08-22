@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient} from  '@angular/common/http';
 import {DiasTrabajados} from './../models/dias-trabajados';
 
 @Injectable({
@@ -34,11 +34,11 @@ export class InfoDiasTrabajadosService {
 //return this.arr;
   }
 
-  subeArchivos(dataForm){
+  getAllDiasTrabFile(dataForm){
     //console.log(this.http.get<DiasTrabajados[]>(this.webApiUrl));
    const fd=new  FormData();
    fd.append('file',dataForm);
-    return this.http.post<DiasTrabajados[]>("http://localhost:3800/api/testGeneraProceso",fd);
+    return this.http.post<DiasTrabajados[]>("http://localhost:3800/api/generaProcesoUpload",fd);
    // return this.http.post<DiasTrabajados[]>(this.webApiUrl,formdata);
 
 
