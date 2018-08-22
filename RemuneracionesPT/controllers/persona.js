@@ -81,8 +81,8 @@ function home (req,res){
 
 function getPersonalAsist (){
   return new Promise(resolve=>{
-   // readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
-    readXlsxFile('uploads/personas/'+ExcelFilename,{schema}).then((rows) => {
+    readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
+   // readXlsxFile('uploads/personas/'+ExcelFilename,{schema}).then((rows) => {
    let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
     convierteRutID("17.933.157-8"); 
     result=JSON.parse(result);
@@ -107,8 +107,10 @@ return new Promise(resolve=>{
 
 }
 
-async function  generaProcesoSueldo(){
-  console.log("entra en proceso sueldo");
+async function generaProcesoSueldo(req,res){
+
+  
+  //await uploadFile(req,res);
   let persAsist= await getPersonalAsist();
   let persRRHH=await getPersonalSoft();
   let persDiff=await getPersonalBD(persAsist,persRRHH);   
@@ -432,10 +434,11 @@ function entrega_resultDB2(queryDB, callback){
 
     //subir archivos de usuario avatar
 
-   async function uploadFile(req,res){
-
+   function uploadFile(req,res){
+    
+    return new Promise(resolve=>{
     //  var userId=req.params.id;
-      
+ 
          //request trae archivos si es que son subidos
        if(req.files){
            //campo path del campo imagen enviado por post
@@ -458,8 +461,8 @@ function entrega_resultDB2(queryDB, callback){
             //Actualizar documento de usuario logeado
           
                 // return res.status(200).send({message:"se cargo el archivo"});
-                console.log("holaaa");
-                generaProcesoSueldo();
+                console.log("se cargó el archivo");
+               resolve();
  
         
               }else{
@@ -470,7 +473,8 @@ function entrega_resultDB2(queryDB, callback){
            return res.status(200).send({message:'No se han subido archivos'});
        }
  
-      }
+      });
+    }
 
     function  removeFilesOfUploads(res, file_path,message_print){
        //si no es correcto, se elimina el archivo subido, pues la libreria lo sube de todas maneras

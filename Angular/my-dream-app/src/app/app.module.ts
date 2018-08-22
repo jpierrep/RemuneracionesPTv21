@@ -11,6 +11,8 @@ import { FormsModule } from '../../node_modules/@angular/forms';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { InfoDiasTrabajadosService } from './services/info-dias-trabajados.service';
 import {DropdownModule} from 'primeng/dropdown';
+import {FileUploadModule} from 'primeng/fileupload';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +31,8 @@ import {DropdownModule} from 'primeng/dropdown';
     InputTextModule,
     FormsModule,
     AppRoutingModule,
-    DropdownModule
+    DropdownModule,
+    FileUploadModule
 
   ],
   providers: [CarsInfoService,InfoDiasTrabajadosService],

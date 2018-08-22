@@ -24,6 +24,7 @@ export class DiasTrabajadosComponent implements OnInit {
   idPlantilla:String;
   optionSelectedZona:String
   zonas:any[];
+  uploadedFiles: any[] = [];
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
@@ -50,10 +51,16 @@ export class DiasTrabajadosComponent implements OnInit {
 
   }
 
+  onUpload(event) {
+    for(let file of event.files) {
+        this.uploadedFiles.push(file);
+    }
+  console.log("se subio");
+  }
     
   getAllDiasTrabajados(){
     
-    this.InfoDiasTrabajadosService.getAllDiasTrab().subscribe(
+    this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
       data=> {
               this.diasTrabajados=data;
              this.getNoExisteEnBD();

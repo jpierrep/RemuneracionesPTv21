@@ -23,9 +23,13 @@ export class InfoDiasTrabajadosService {
  webApiUrl: string='http://localhost:3800/api/generaProceso';
   constructor(private http: HttpClient) { }
   
-  getAllDiasTrab(){
-    console.log(this.http.get<DiasTrabajados[]>(this.webApiUrl));
-return this.http.get<DiasTrabajados[]>(this.webApiUrl);
+  //getAllDiasTrab(formdata:any){
+    getAllDiasTrab(){
+    //console.log(this.http.get<DiasTrabajados[]>(this.webApiUrl));
+
+    return this.http.get<DiasTrabajados[]>(this.webApiUrl);
+   // return this.http.post<DiasTrabajados[]>(this.webApiUrl,formdata);
+
 
 //return this.arr;
   }

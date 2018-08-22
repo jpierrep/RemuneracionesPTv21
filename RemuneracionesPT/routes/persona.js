@@ -12,7 +12,8 @@ api.get('/home',PerController.home);
 api.get('/perSoft',PerController.getPersonalSoft);
 api.get('/perAsist',PerController.getPersonalAsist);
 //api.get('/perDiferencias',PerController.getDiferenciasPersonal);
+//api.post('/generaProceso',md_upload,PerController.generaProcesoSueldo);
 api.get('/generaProceso',PerController.generaProcesoSueldo);
-api.post('/cargaArchivo',md_upload,PerController.uploadFile);
+//api.post('/cargaArchivo',md_upload,PerController.uploadFile);
 
 module.exports=api;
