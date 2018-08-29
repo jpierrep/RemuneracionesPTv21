@@ -120,6 +120,29 @@ return new Promise(resolve=>{
 
 }
 
+function getPersonalSoftOne(req,res){
+  let rut_id= req.params.rut_id;
+  console.log(rut_id);
+  let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
+  on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V' and RUT_ID=`+rut_id
+console.log(query);
+  entrega_resultDB2(query,null).then(result=>{
+    if (result.length>0){ 
+     console.log(result); 
+     console.log(result.length);
+     console.log("hay result");
+     res.status(200).send(result);
+       // console.log(value);
+       
+   }else{ console.log("no hay");
+   res.status(200).send({message:'No hay data disponible'});
+  
+  }
+   
+   });
+
+}
+
 async function generaProcesoSueldo(req,res){
 
   
@@ -143,9 +166,7 @@ async function generaProcesoSueldoUpdload(req,res){
   let persDiff=await getPersonalBD(persAsist,persRRHH);   
   let persVar=await getVariablesSueldoPers(persDiff);
   let persCalcula=await getCalculaSueldo(persVar);  
-   res.status(200).send(persCalcula);
-
-
+  res.status(200).send(persCalcula);
   
 }
 
@@ -511,9 +532,24 @@ function entrega_resultDB2(queryDB, callback){
       }
  
 
+        function downoloadFIle (req,res){
+          console.log("dentro");
+          var filepath='./uploads/personas/'+ExcelFilename;
+          var filename=ExcelFilename;
+         // return res.status(200).send({message:"asdassa"});
+          res.download(filepath,filename,(err)=>{
+            console.log(filepath);
+            console.log(filename);
+            if(err){
+              console.log(err);
+            }
+          });
+
+        }
 
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload}
+
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne}
 
    
      

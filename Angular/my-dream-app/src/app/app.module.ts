@@ -13,6 +13,7 @@ import { InfoDiasTrabajadosService } from './services/info-dias-trabajados.servi
 import {DropdownModule} from 'primeng/dropdown';
 import {FileUploadModule} from 'primeng/fileupload';
 import { PersistenceModule } from 'angular-persistence';
+//import { Angular5Csv } from 'angular5-csv/Angular5-csv';
 
 
 @NgModule ({
@@ -35,7 +36,7 @@ import { PersistenceModule } from 'angular-persistence';
     AppRoutingModule,
     DropdownModule,
     FileUploadModule,
-    PersistenceModule 
+    PersistenceModule
 
   ],
   providers: [CarsInfoService,InfoDiasTrabajadosService],

@@ -1,5 +1,6 @@
 export class DiasTrabajados {
     NOMBRE: string;
+    FICHA:string;
     RUT: string;
     TIPO:string;
     FECHA:string;

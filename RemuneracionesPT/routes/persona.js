@@ -15,5 +15,7 @@ api.get('/perAsist',PerController.getPersonalAsist);
 //api.post('/generaProceso',md_upload,PerController.generaProcesoSueldo);
 api.get('/generaProceso',PerController.generaProcesoSueldo);
 api.post('/generaProcesoUpload',md_upload,PerController.generaProcesoSueldoUpdload);
+api.get('/getArchivo',PerController.downoloadFIle);
+api.get('/getPersona/:rut_id',PerController.getPersonalSoftOne);
 
 module.exports=api;

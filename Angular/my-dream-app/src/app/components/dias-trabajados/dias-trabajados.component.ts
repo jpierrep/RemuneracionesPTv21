@@ -6,6 +6,8 @@ import {Cars} from '../../models/cars';
 import {CarsInfoService} from '../../services/cars-info.service';
 import { ActivatedRoute } from '@angular/router';
 import { PersistenceService } from 'angular-persistence';
+import { Angular5Csv } from 'angular5-csv/Angular5-csv';
+import {Message} from 'primeng/components/common/api';
 
 @Component({
   selector: 'app-dias-trabajados',
@@ -18,14 +20,20 @@ export class DiasTrabajadosComponent implements OnInit {
   diasTrabajados:DiasTrabajados[];
   diasTrabajadosNoExiste:DiasTrabajados[];
   diasTrabajadosExiste:DiasTrabajados[];
+  diasTrabajadosOtros:DiasTrabajados[];
   diasTrabajadosOne:DiasTrabajados;
+  diasTrabajadosOneSelected:DiasTrabajados;
+  diasTrabajadosOtrosOne:DiasTrabajados;
   display:boolean;
+  displayFormCreate:boolean;
+  displayEditForm:boolean;
   personalSoft:Cars[];
   utils:Utils;
   idPlantilla:String;
   optionSelectedZona:String
   zonas:any[];
   uploadedFiles: any[] = [];
+  msgs: Message[] = [];
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
@@ -38,7 +46,16 @@ export class DiasTrabajadosComponent implements OnInit {
    
     this.utils=new Utils;
     this.diasTrabajadosOne=new DiasTrabajados(); //importante que exista este objeto creado
+    this.diasTrabajadosOtrosOne=new DiasTrabajados();
+    this.diasTrabajadosOneSelected=new DiasTrabajados();
     this.diasTrabajados=[];
+    let dias:DiasTrabajados;
+    dias=new DiasTrabajados();
+    dias.NOMBRE='adasdaaa';   
+    
+    
+    this.diasTrabajadosOtros=[];
+    this.diasTrabajadosOtros.push(dias);
     this.personalSoft=[];
     this.diasTrabajadosNoExiste=[];
     //this.personalSoft=new Array<Cars>();
@@ -69,6 +86,8 @@ export class DiasTrabajadosComponent implements OnInit {
    
 
     this.display=false;
+    this.displayFormCreate=false;
+    this.displayEditForm=false;
 
   }
 
@@ -180,5 +199,168 @@ getFiltered(zona){
   this.display=true; // cuando se selecciona uno, se mustra el dialog
  this.diasTrabajadosOne=diasTrabajados;
  }
+
+
+  
+   getCSV(){
+    var fichero;
+   var data=this.diasTrabajadosExiste.map((element)=>{
+     
+   fichero={  FICHA :element.FICHA,
+    VARIABLE:'P607',
+    MES:'08/2018',
+   VALOR :element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS};
+
+ 
+     return fichero;
+   });
+   //console.log(data);
+
+    var dataTest = [
+      {
+        name: "Test 1",
+        age: 13,
+        average: 8.2,
+        approved: true,
+        description: "using 'Content here, content here' "
+      },
+      {
+        name: 'Test 2',
+        age: 11,
+        average: 8.2,
+        approved: true,
+        description: "using 'Content here, content here' "
+      },
+      {
+        name: 'Test 4',
+        age: 10,
+        average: 8.2,
+        approved: true,
+        description: "using 'Content here, content here' "
+      },
+    ];
+
+    var options = { 
+      //fieldSeparator: ',',
+      //quoteStrings: '"',
+      quoteStrings: '"'
+      //decimalseparator: '.',
+      //showLabels: true, 
+      //showTitle: true,
+      //useBom: true,
+      //noDownload: true,
+      //headers: ["First Name", "Last Name", "ID"]
+    };
+     
+  var csv =new Angular5Csv(data, 'Archivo_Softland',options);
+  
+  
+  /*//var datos= JSON.stringify(data); 
+   console.log(csv);
+   var blob=new Blob(data);
+    blob.slice(0,blob.size,'text/plain');
+    var a = document.createElement('a');
+   var url= window.URL.createObjectURL(blob);
+
+    document.body.appendChild(a);
+    a.setAttribute('style', 'display: none');
+    a.href = url;
+    a.download = 'aa.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove(); // remove the element
+  */ 
+  }
+
+
+   creaPersonalOtros(nuevaPersona:DiasTrabajados){
+
+ 
+    if(parseFloat(nuevaPersona.RUT).toString() === nuevaPersona.RUT.toString()){
+    this.existsPersona(nuevaPersona).then((existe)=>{
+     if (existe){
+       nuevaPersona.NOMBRE=existe[0].NOMBRES;
+       nuevaPersona.RUT=existe[0].RUT;
+       nuevaPersona.TIPO=existe[0].CARGO_DESC;
+       nuevaPersona.RUT=existe[0].RUT;
+      this.diasTrabajadosOtros.push(nuevaPersona);
+      this.displayFormCreate=false;
+     }else{
+      this.showError();
+     }
+
+    });
+  }else{
+    this.showError();
+  }
+   //  this.diasTrabajadosOtrosOne=new DiasTrabajados();
+   }
+
+   existsPersona(nuevaPersona:DiasTrabajados) {
+    return new Promise(resolve=>{ 
+     
+    let rut_id=nuevaPersona.RUT;
+    this.InfoDiasTrabajadosService.getOnePers(rut_id).subscribe(  
+      data=> {
+         if(!data["message"]){
+             
+             resolve(data);
+         }else{
+          resolve(false);
+         }
+               }
+         
+       )
+    });
+  }
+
+
+   creaDiasTrabajados(){
+    this.displayFormCreate=true; // cuando se selecciona uno, se mustra el dialog
+     this.diasTrabajadosOtrosOne=new DiasTrabajados();
+   }
+   
+   deleteDiasTrabajadosOtros(personaEliminar:DiasTrabajados){
+     console.log(this.diasTrabajadosOtros.indexOf(personaEliminar)); // funciona
+
+     this.diasTrabajadosOtros=this.diasTrabajadosOtros.filter((e)=>e.RUT !=personaEliminar.RUT)
+  
+     
+/*
+let someArray = [
+                 {name:"Kristian", lines:"2,5,10"},
+                 {name:"John", lines:"1,19,26,96"}
+                ];
+let arrayToRemove={name:"Kristian", lines:"2,5,10"};
+someArray=someArray.filter((e)=>e.name !=arrayToRemove.name && e.lines!= arrayToRemove.lines)
+*/   
+}
+editDiasTrabajadosOtros(personaEditar:DiasTrabajados){
+  this.diasTrabajadosOtrosOne=personaEditar // la original para saber la posicion
+  this.diasTrabajadosOneSelected=this.cloneDias(personaEditar);  // la copia para editar y luego reasignar
+this.displayEditForm=true;
+
+}
+
+saveDiasTrabajadosOtros(){
+  this.diasTrabajadosOtros[this.diasTrabajadosOtros.indexOf(this.diasTrabajadosOtrosOne)] = this.diasTrabajadosOneSelected
+  this.displayEditForm=false;
+
+}
+
+cloneDias(d: DiasTrabajados): DiasTrabajados {
+  let dia =  new DiasTrabajados();
+  for (let prop in d) {
+      dia[prop] = d[prop];
+  }
+  return dia;
+}
+
+
+
+showError() {
+  this.msgs = [];
+  this.msgs.push({severity:'error', summary:'Error Message', detail:'Validation failed'});
+}
 
 }

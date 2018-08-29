@@ -21,6 +21,7 @@ export class InfoDiasTrabajadosService {
 
  // webApiUrl: string='https://www.primefaces.org/primeng/assets/showcase/data/cars-small.json';
  webApiUrl: string='http://localhost:3800/api/generaProceso';
+ webgetPerson:string='http://localhost:3800/api/getPersona/'
   constructor(private http: HttpClient) { }
   
   //getAllDiasTrab(formdata:any){
@@ -44,6 +45,13 @@ export class InfoDiasTrabajadosService {
 
 //return this.arr;
   }
+
+
+  getOnePers(rut_id:string){
+    return this.http.get<DiasTrabajados[]>(this.webgetPerson+rut_id)
+  
+    }
+
 
 
 }
