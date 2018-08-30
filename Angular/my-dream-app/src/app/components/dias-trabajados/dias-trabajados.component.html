@@ -12,8 +12,10 @@
   
   </ul>
 -->
-<p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
 
+<p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
+<p-dropdown [options]="zonas" [(ngModel)]="optionSelectedZona" placeholder="Seleccione el Mes" optionLabel="name" [showClear]="true"></p-dropdown>
+<p-tabMenu [model]="items"></p-tabMenu>
 
 
 
@@ -32,7 +34,7 @@
 
 <p-dataTable [value]="getFiltered(optionSelectedZona? optionSelectedZona.name : undefined)">
   <p-header>
-    Lista
+     Personal a Pagar
       <div class="ui-helper-clearfix">
        
           <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add" 
@@ -90,7 +92,7 @@
 
     <p-dataTable [value]="diasTrabajadosNoExiste" >
         <p-header>
-          Lista
+          Personal No Existente o No Vigente
             <div class="ui-helper-clearfix">
              
                 <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add" 
@@ -118,7 +120,7 @@
  <ng-template #nuevosBlock>
     <p-dataTable [value]="diasTrabajadosOtros" [immutable]=false>
         <p-header>
-          Lista
+          Personal Pagos Pendientes
             <div class="ui-helper-clearfix">
              
                 <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add"  (click)="creaDiasTrabajados()"
@@ -129,10 +131,10 @@
         <p-column field="NOMBRE" header="NOMBRE"></p-column>
        <p-column field="RUT" header="RUT"></p-column>
        <p-column field="TIPO" header="TIPO"></p-column>
-       <p-column field="CANTIDAD_HRS" header="CANT_HRS"></p-column>
+       <p-column field="CENCO2_DESC" header="INSTALACION"></p-column>
        <p-column field="SUELDO_MONTO" header="MONTO"></p-column>
-       <p-column field="DESCUENTO" header="DESCUENTOS"></p-column>
-       <p-column field="OTROS_DESCUENTOS" header="OTROS DESCUENTOS"></p-column>
+       <p-column field="DESCUENTO" header="DESCUENTOS"></p-column> 
+      
        <p-column styleClass="col-button">
           <ng-template let-diaTrab="rowData" pTemplate="body">
              <button type="button" pButton icon="fa fa-edit" (click)="editDiasTrabajadosOtros(diaTrab)"></button>
@@ -150,7 +152,7 @@
       </p-dataTable>
       
  
-      <p-dialog header="Crea Personal" [(visible)]="displayFormCreate" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+      <p-dialog header="Añade Otros Pagos" [(visible)]="displayFormCreate" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
               [maximizable]="true" [baseZIndex]="10000">
       
               <form>
@@ -161,17 +163,35 @@
                         <span class="ui-float-label">
                        
                        
-                          <input id="car-brand" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.RUT" name="brand"> 
-                            <label for="car-brand">Car Brand</label>
+                          <input id="rut" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.RUT" name="rut"> 
+                            <label for="rut">Rut</label>
                        
                           </span>
-        
-                    </div>
+                        </div>
+                        <div class="ui-inputgroup">
+                          <span class="ui-float-label">
+                       
+                       
+                              <input id="monto" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.SUELDO_MONTO" name="monto"> 
+                                <label for="monto">Monto</label>
+                           
+                              </span>
+                            </div>
+
+                            <div class="ui-inputgroup">
+                                <span class="ui-float-label">
+                             
+                             
+                                    <input id="descuento" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.DESCUENTO" name="descuento"> 
+                                      <label for="descuento">Descuentos</label>
+                                 
+                                    </span>
+                                  </div>
+                    
                     <div class="ui-inputgroup">
 
-                     
                         <span class="ui-float-label">
-                            <button type="button" pButton (click)="showError()" label="Error" class="ui-button-danger"></button>
+                         <!--   <button type="button" pButton (click)="showError()" label="Error" class="ui-button-danger"></button> -->
                             <p-messages [(value)]="msgs"></p-messages>
                        
                           </span>
@@ -182,7 +202,7 @@
               </form>
               <p-footer>
                   <button type="button" pButton icon="pi pi-check" (click)="creaPersonalOtros(diasTrabajadosOtrosOne)" label="Yes"></button>
-                  <button type="button" pButton icon="pi pi-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
+                  <button type="button" pButton icon="pi pi-close" (click)="displayFormCreate=false" label="No" class="ui-button-secondary"></button>
               </p-footer>
       </p-dialog>
 
@@ -191,13 +211,47 @@
 
         <form>
           <div class="form-group">
-            <div class="ui-inputgroup">
-                <span class="ui-float-label">
-                    <input id="car-brand" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOneSelected.RUT" name="brand"> 
-                    <label for="car-brand">Car Brand</label>
-                </span>
 
-            </div>
+            <div class="ui-inputgroup">
+
+                     
+                <span class="ui-float-label">
+               
+               
+                  <input id="rut" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOneSelected.RUT" name="rut" disabled="true"> 
+                    <label for="rut">RUT</label>
+               
+                  </span>
+                </div>
+                <div class="ui-inputgroup">
+                  <span class="ui-float-label">
+               
+               
+                      <input id="monto" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOneSelected.SUELDO_MONTO" name="monto"> 
+                        <label for="monto">Monto</label>
+                   
+                      </span>
+                    </div>
+
+                    <div class="ui-inputgroup">
+                        <span class="ui-float-label">
+                     
+                     
+                            <input id="descuento" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOneSelected.DESCUENTO" name="descuento"> 
+                              <label for="descuento">Descuentos</label>
+                         
+                            </span>
+                          </div>
+                                              
+                    <div class="ui-inputgroup">
+
+                        <span class="ui-float-label">
+                         <!--   <button type="button" pButton (click)="showError()" label="Error" class="ui-button-danger"></button> -->
+                            <p-messages [(value)]="msgs"></p-messages>
+                       
+                          </span>
+        
+                    </div>
 
           </div>
         </form>

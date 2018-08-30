@@ -8,6 +8,10 @@ import { ActivatedRoute } from '@angular/router';
 import { PersistenceService } from 'angular-persistence';
 import { Angular5Csv } from 'angular5-csv/Angular5-csv';
 import {Message} from 'primeng/components/common/api';
+import { isNumeric } from '../../../../node_modules/rxjs/internal-compatibility';
+import {TabMenuModule} from 'primeng/tabmenu';
+import {MenuModule} from 'primeng/menu';
+import {MenuItem} from 'primeng/api';
 
 @Component({
   selector: 'app-dias-trabajados',
@@ -34,6 +38,7 @@ export class DiasTrabajadosComponent implements OnInit {
   zonas:any[];
   uploadedFiles: any[] = [];
   msgs: Message[] = [];
+  items: MenuItem[];
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
@@ -49,13 +54,16 @@ export class DiasTrabajadosComponent implements OnInit {
     this.diasTrabajadosOtrosOne=new DiasTrabajados();
     this.diasTrabajadosOneSelected=new DiasTrabajados();
     this.diasTrabajados=[];
-    let dias:DiasTrabajados;
-    dias=new DiasTrabajados();
-    dias.NOMBRE='adasdaaa';   
+ 
     
     
     this.diasTrabajadosOtros=[];
+    /* crea prueba
+    let dias:DiasTrabajados;
+    dias=new DiasTrabajados();
+    dias.NOMBRE='adasdaaa';   
     this.diasTrabajadosOtros.push(dias);
+    */
     this.personalSoft=[];
     this.diasTrabajadosNoExiste=[];
     //this.personalSoft=new Array<Cars>();
@@ -88,6 +96,13 @@ export class DiasTrabajadosComponent implements OnInit {
     this.display=false;
     this.displayFormCreate=false;
     this.displayEditForm=false;
+
+    this.items = [
+      {label: 'A Pagar', icon: 'fa fa-fw fa-bar-chart',command: () => {this.idPlantilla='1'}},
+      {label: 'Pagos Pendientes', icon: 'fa fa-fw fa-calendar',command: () => {this.idPlantilla='3'}},
+      {label: 'No existentes', icon: 'fa fa-fw fa-book',command: () => {this.idPlantilla='2'}}
+
+  ];
 
   }
 
@@ -275,25 +290,60 @@ getFiltered(zona){
 
    creaPersonalOtros(nuevaPersona:DiasTrabajados){
 
- 
-    if(parseFloat(nuevaPersona.RUT).toString() === nuevaPersona.RUT.toString()){
+
+     //valida que la persona exista
+   // if(parseFloat(nuevaPersona.RUT).toString() === nuevaPersona.RUT.toString()){
     this.existsPersona(nuevaPersona).then((existe)=>{
      if (existe){
+      if (!nuevaPersona.SUELDO_MONTO) nuevaPersona.SUELDO_MONTO=0;
+      if (!nuevaPersona.DESCUENTO) nuevaPersona.DESCUENTO=0;
+           //transforma a numerico los valores ya que vienen en string, al ordenar o comparar los valores 
+           //ordena por ejemplo 11111 < 2 
+      if ((isNumeric(nuevaPersona.SUELDO_MONTO)&&isNumeric(nuevaPersona.DESCUENTO))){
+        nuevaPersona.SUELDO_MONTO=parseFloat(nuevaPersona.SUELDO_MONTO.toString() )
+        nuevaPersona.DESCUENTO=parseFloat(nuevaPersona.DESCUENTO.toString() )
+      }
+      
+      //valida que los valores sean numericos
+    if (!(isNumeric(nuevaPersona.SUELDO_MONTO)&&isNumeric(nuevaPersona.DESCUENTO)&&isNumeric(nuevaPersona.RUT))){
+     console.log("valida")
+     this.showError("Ingrese valores numéricos");
+     return;
+    }
+   
+    if(this.diasTrabajadosOtros.filter((e)=>e.RUT_ID ==nuevaPersona.RUT).length>0){
+       this.showError("Persona ya existe en la lista");
+       return;
+     }
+     if(nuevaPersona.SUELDO_MONTO>300000){
+       this.showError("Monto superior al máximo permitido");
+       return;
+     }
+     if(nuevaPersona.SUELDO_MONTO<0 ||nuevaPersona.DESCUENTO<0){
+       this.showError("ingrese valores positivos");
+       return;
+     }
+     if(nuevaPersona.SUELDO_MONTO<nuevaPersona.DESCUENTO){
+       this.showError("Descuentos deben ser menores que monto");
+       return;
+     }
+
        nuevaPersona.NOMBRE=existe[0].NOMBRES;
        nuevaPersona.RUT=existe[0].RUT;
        nuevaPersona.TIPO=existe[0].CARGO_DESC;
        nuevaPersona.RUT=existe[0].RUT;
+       nuevaPersona.RUT_ID=existe[0].RUT_ID;
+       nuevaPersona.CENCO2_DESC=existe[0].CENCO2_DESC;
       this.diasTrabajadosOtros.push(nuevaPersona);
       this.displayFormCreate=false;
+      this.diasTrabajadosOtrosOne=new DiasTrabajados();
      }else{
-      this.showError();
+      this.showError("Rut no existente o no vigente");
      }
 
     });
-  }else{
-    this.showError();
-  }
-   //  this.diasTrabajadosOtrosOne=new DiasTrabajados();
+ 
+    
    }
 
    existsPersona(nuevaPersona:DiasTrabajados) {
@@ -336,6 +386,7 @@ someArray=someArray.filter((e)=>e.name !=arrayToRemove.name && e.lines!= arrayTo
 */   
 }
 editDiasTrabajadosOtros(personaEditar:DiasTrabajados){
+
   this.diasTrabajadosOtrosOne=personaEditar // la original para saber la posicion
   this.diasTrabajadosOneSelected=this.cloneDias(personaEditar);  // la copia para editar y luego reasignar
 this.displayEditForm=true;
@@ -343,8 +394,44 @@ this.displayEditForm=true;
 }
 
 saveDiasTrabajadosOtros(){
-  this.diasTrabajadosOtros[this.diasTrabajadosOtros.indexOf(this.diasTrabajadosOtrosOne)] = this.diasTrabajadosOneSelected
+  console.log(this.diasTrabajadosOneSelected.SUELDO_MONTO);
+  console.log(this.diasTrabajadosOneSelected.DESCUENTO);
+  if (!this.diasTrabajadosOneSelected.SUELDO_MONTO) this.diasTrabajadosOneSelected.SUELDO_MONTO=0;
+  if (!this.diasTrabajadosOneSelected.DESCUENTO) this.diasTrabajadosOneSelected.DESCUENTO=0;
+           
+  //transforma a numerico los valores ya que vienen en string, al ordenar o comparar los valores 
+           //ordena por ejemplo 11111 < 2 
+
+          if ((isNumeric(this.diasTrabajadosOneSelected.SUELDO_MONTO)&&isNumeric(this.diasTrabajadosOneSelected.DESCUENTO))){
+            this.diasTrabajadosOneSelected.SUELDO_MONTO=parseFloat(this.diasTrabajadosOneSelected.SUELDO_MONTO.toString() )
+            this.diasTrabajadosOneSelected.DESCUENTO=parseFloat(this.diasTrabajadosOneSelected.DESCUENTO.toString() )
+          }
+
+       //valida que los valores sean numericos
+          if (!(isNumeric(this.diasTrabajadosOneSelected.SUELDO_MONTO)&&isNumeric(this.diasTrabajadosOneSelected.DESCUENTO))){
+            console.log("valida")
+            this.showError("Ingrese valores numéricos");
+            return;
+           }
+
+           else if(this.diasTrabajadosOneSelected.SUELDO_MONTO>300000){
+              this.showError("Monto superior al máximo permitido");
+              return;
+            }
+           else if(this.diasTrabajadosOneSelected.SUELDO_MONTO<0 ||this.diasTrabajadosOneSelected.DESCUENTO<0){
+              this.showError("ingrese valores positivos");
+              return;
+            }
+          else  if(this.diasTrabajadosOneSelected.SUELDO_MONTO<this.diasTrabajadosOneSelected.DESCUENTO){
+              this.showError("Descuentos deben ser menores que monto");
+
+              return;
+            }
+ else{
+            this.diasTrabajadosOtros[this.diasTrabajadosOtros.indexOf(this.diasTrabajadosOtrosOne)] = this.diasTrabajadosOneSelected
   this.displayEditForm=false;
+
+ }
 
 }
 
@@ -358,9 +445,9 @@ cloneDias(d: DiasTrabajados): DiasTrabajados {
 
 
 
-showError() {
+showError(message:string) {
   this.msgs = [];
-  this.msgs.push({severity:'error', summary:'Error Message', detail:'Validation failed'});
+  this.msgs.push({severity:'error', summary:'Error', detail: message});
 }
 
 }

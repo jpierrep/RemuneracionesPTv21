@@ -12,6 +12,7 @@ export class DiasTrabajados {
     CENCO2_CODI:string;
     CENCO1_DESC:string;
     CENCO2_DESC:string;
+    RUT_ID: string;
 
 }
 
