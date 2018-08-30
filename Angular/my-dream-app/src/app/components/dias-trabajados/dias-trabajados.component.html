@@ -14,7 +14,9 @@
 -->
 
 <p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
-<p-dropdown [options]="zonas" [(ngModel)]="optionSelectedZona" placeholder="Seleccione el Mes" optionLabel="name" [showClear]="true"></p-dropdown>
+<p-dropdown [options]="optionMeses" [(ngModel)]="optionSelectedMes" placeholder="Seleccione el Mes" optionLabel="name" [showClear]="true"></p-dropdown>
+<p-dropdown [options]="optionProcesos" [(ngModel)]="optionSelectedProceso" placeholder="Seleccione el Proceso" optionLabel="name" [showClear]="true"></p-dropdown>
+
 <p-tabMenu [model]="items"></p-tabMenu>
 
 

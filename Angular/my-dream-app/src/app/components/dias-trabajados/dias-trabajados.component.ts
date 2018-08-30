@@ -36,6 +36,10 @@ export class DiasTrabajadosComponent implements OnInit {
   idPlantilla:String;
   optionSelectedZona:String
   zonas:any[];
+  optionSelectedMes:String
+  optionMeses:any[];
+  optionSelectedProceso:String
+  optionProcesos:any[];
   uploadedFiles: any[] = [];
   msgs: Message[] = [];
   items: MenuItem[];
@@ -103,6 +107,9 @@ export class DiasTrabajadosComponent implements OnInit {
       {label: 'No existentes', icon: 'fa fa-fw fa-book',command: () => {this.idPlantilla='2'}}
 
   ];
+
+  this.optionMeses=[{name:'Agosto', value:'08/2018'},{name:'Septiembre', value:'09/2018'}];
+  this.optionProcesos=[{name:'Primera Quincena', value:'1a'},{name:'Segunda Quincena', value:'2a'}];
 
   }
 
