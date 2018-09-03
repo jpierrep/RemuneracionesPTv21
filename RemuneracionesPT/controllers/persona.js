@@ -106,7 +106,7 @@ function TESTgetPersonalAsist (){
 }
 
 function getPersonalSoft(){
-  let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
+  let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'`
 
 return new Promise(resolve=>{
@@ -123,7 +123,7 @@ return new Promise(resolve=>{
 function getPersonalSoftOne(req,res){
   let rut_id= req.params.rut_id;
   console.log(rut_id);
-  let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
+  let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V' and RUT_ID=`+rut_id
 console.log(query);
   entrega_resultDB2(query,null).then(result=>{
@@ -159,48 +159,71 @@ async function generaProcesoSueldo(req,res){
 }
 
 async function generaProcesoSueldoUpdload(req,res){
+  
+
+  
+  console.log("dentro genera proceso")
+
+  let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
+
+  
 
   await uploadFile(req,res);
   let persAsist= await TESTgetPersonalAsist();
   let persRRHH=await getPersonalSoft();
   let persDiff=await getPersonalBD(persAsist,persRRHH);   
-  let persVar=await getVariablesSueldoPers(persDiff);
-  let persCalcula=await getCalculaSueldo(persVar);  
+  let persVar=await getVariablesSueldoPers(optionProcess,persDiff);
+  let persCalcula=await getCalculaSueldo(optionProcess,persVar);  
   res.status(200).send(persCalcula);
   
 }
 
 
-function getCalculaSueldo(persDiff){
+function getCalculaSueldo(optionProcess,persDiff){
+  let proceso=optionsProcess.proceso.value;
   return new Promise(resolve=>{
+
 
     persDiff.forEach((element,index,array)=>{
       element.SUELDO_MONTO=0;
       element.DESCUENTO=0;
       element.OTROS_DESCUENTOS=0;
+  
 
-      let sueldoBase=0;
+
+      
+
+      
       if(element.IN_BD=="true"){
-        if(element.CANTIDAD_HRS==12){
-          element.SUELDO_MONTO=25000
-        }else if(element.CANTIDAD_HRS==8){
-          element.SUELDO_MONTO=19000
-        }else{
-           sueldoBase= element.SUELDO.find(x=>x.VARIABLE_CODI=="P001");
+        if(element.CARGO_CODI=='122') {
+          console.log("calculando a partime");
+          if(element.CANTIDAD_HRS==12){
+            element.SUELDO_MONTO=25000
+          }else if(element.CANTIDAD_HRS==8){
+            element.SUELDO_MONTO=19000
+          }else{
+            element.SUELDO_MONTO=(25000*CANTIDAD_HRS)/12 //Proporcion del turno de 12 horas
+          }
+         }  else{
+           console.log("calculando a dotacion")
+          
+           
+           let sueldoBase=0;
+           sueldoBase= element.SUELDO.find(x=>x.VARIABLE_CODI=="P001").VARIABLE_MONTO;
+           console.log()
+           let liquidoPago=element.SUELDO.find(x=>x.VARIABLE_CODI=="H303").VARIABLE_MONTO;
+           console.log( {nombre:element.NOMBRE ,ficha: element.FICHA,base:sueldoBase, liquido: liquidoPago});
           if (sueldoBase){
-            element.SUELDO_MONTO=sueldoBase*0.0077777*0.8*element.CANTIDAD_HRS;
+            element.SUELDO_MONTO=Math.round(sueldoBase*0.0077777*0.8*element.CANTIDAD_HRS,0);
           }else{
             element.SUELDO_MONTO=-1;
           }
-        }
-  
-        
-        let liquidoPago=element.SUELDO.find(x=>x.VARIABLE_CODI=="H303");
-        if(liquidoPago){
+
+        if(liquidoPago&&proceso=='2a'){  //tienen que haber liquido a pago y el proceso debe ser segunda quincena
           if (liquidoPago<0 && liquidoPago*-1>=SUELDO_MONTO) element.DESCUENTO= SUELDO_MONTO+liquidoPago;  
        
         }
-  
+      }
       }
        
   
@@ -213,8 +236,17 @@ function getCalculaSueldo(persDiff){
 }
 
 
-function getVariablesSueldoPers(persDiff){
+function getVariablesSueldoPers(optionsProcess,persDiff){
+   
+   let fecha=optionsProcess.fecha.value;
+    console.log(fecha);
+   let mes=fecha.substr(0,2);
+   let año=fecha.substr(3,4);
+   console.log("la fecha y año es")
+   let fechaquery=año+'-'+mes+'-01'
+    console.log(fechaquery);
  
+   //let proceso=optionsProcess.proceso;
 
 
   return new Promise(resolve=>{
@@ -230,7 +262,7 @@ function getVariablesSueldoPers(persDiff){
      if(value.IN_BD=="true"){
      console.log(value.FICHA);
      let vars=`'H303','P001'`;
-     let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='2018-08-01' and FICHA='`+replaceAll(value.FICHA,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
+     let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='`+fechaquery+`' and FICHA='`+replaceAll(value.FICHA,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
     
  
     entrega_resultDB2(query,null).then(result=>{
@@ -316,6 +348,7 @@ function getPersonalBD(persAsist,persRRHH){
       element.FICHA= persRRHHEncontrar.FICHA;
       element.RUT=persRRHHEncontrar.RUT;
       element.CARGO_DESC=persRRHHEncontrar.CARGO_DESC;
+      element.CARGO_CODI=persRRHHEncontrar.CARGO_CODI;
       element.CENCO2_CODI=persRRHHEncontrar.CENCO2_CODI;
       element.CENCO2_DESC=persRRHHEncontrar.CENCO2_DESC;
       element.CENCO1_DESC=persRRHHEncontrar.CENCO1_DESC;

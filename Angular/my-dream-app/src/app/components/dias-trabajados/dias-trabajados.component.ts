@@ -12,6 +12,9 @@ import { isNumeric } from '../../../../node_modules/rxjs/internal-compatibility'
 import {TabMenuModule} from 'primeng/tabmenu';
 import {MenuModule} from 'primeng/menu';
 import {MenuItem} from 'primeng/api';
+import {ProgressBarModule} from 'primeng/progressbar';
+import {GrowlModule} from 'primeng/growl';
+
 
 @Component({
   selector: 'app-dias-trabajados',
@@ -31,18 +34,23 @@ export class DiasTrabajadosComponent implements OnInit {
   display:boolean;
   displayFormCreate:boolean;
   displayEditForm:boolean;
+  displayNewProcess:boolean;
+  loadigProcess:boolean;
   personalSoft:Cars[];
   utils:Utils;
   idPlantilla:String;
-  optionSelectedZona:String
+  optionSelectedZona:String;
   zonas:any[];
-  optionSelectedMes:String
-  optionMeses:any[];
-  optionSelectedProceso:String
+  optionSelectedMes:String; //mes del selector
+  optionRequestedMes:String; //mes confirmado para el proceso
+  optionMeses:any[];  //arreglo de meses posibles
+  optionSelectedProceso:String;
+  optionRequestedProceso:String;
   optionProcesos:any[];
   uploadedFiles: any[] = [];
   msgs: Message[] = [];
   items: MenuItem[];
+  optionProcess;
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
@@ -74,8 +82,15 @@ export class DiasTrabajadosComponent implements OnInit {
    //this. getAllDiasTrabajados();
    this.idPlantilla=this.route.snapshot.paramMap.get('id');
    
+   if(localStorage.getItem('optionsProcess')){
+    console.log("existe el proceso");
+ this.optionRequestedMes=(JSON.parse(localStorage.getItem('optionsProcess'))["fecha"]);
+  this.optionRequestedProceso=(JSON.parse(localStorage.getItem('optionsProcess'))["proceso"]);
+  }
+
    if(localStorage.getItem('dias')){
     console.log("existe el objeto");
+
     this.diasTrabajados=JSON.parse(localStorage.getItem('dias'));
     this.getNoExisteEnBD();
     this.getExisteEnBD();
@@ -100,6 +115,7 @@ export class DiasTrabajadosComponent implements OnInit {
     this.display=false;
     this.displayFormCreate=false;
     this.displayEditForm=false;
+    this.loadigProcess=false;
 
     this.items = [
       {label: 'A Pagar', icon: 'fa fa-fw fa-bar-chart',command: () => {this.idPlantilla='1'}},
@@ -121,9 +137,7 @@ export class DiasTrabajadosComponent implements OnInit {
     }
   console.log("se subio");
   console.log(this.uploadedFiles[0]);
-  this.persistenceService.removeAll(); 
-  localStorage.removeItem('dias'); 
-  this.FilesgetAllDiasTrabajados();
+  
   }
   
   eliminaDiasTrab(event){
@@ -145,26 +159,30 @@ export class DiasTrabajadosComponent implements OnInit {
     )
 
   }
-  FilesgetAllDiasTrabajados(){
-    
+ async FilesgetAllDiasTrabajados(){
+  return new Promise(resolve=>{
     // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
-     this.InfoDiasTrabajadosService.getAllDiasTrabFile(this.uploadedFiles[0]).subscribe(  
+     this.InfoDiasTrabajadosService.getAllDiasTrabFile(this.uploadedFiles[0],this.optionProcess).subscribe(  
     data=> {
                this.diasTrabajados=data;
                this.getNoExisteEnBD();
                this.getExisteEnBD();
                this.getZonas();
+         
+               localStorage.setItem('optionsProcess',JSON.stringify(this.optionProcess));
+               console.log(this.optionProcess);
                this.persistenceService.set('dias', this.diasTrabajados);
                localStorage.setItem('dias', JSON.stringify(this.diasTrabajados));
                console.log("el objeto es"+Object.keys(this.persistenceService.get('dias')));
               // console.log(this.diasTrabajados);
+              resolve();
  
               
  
              }
        
      )
- 
+    });
    }
 
   
@@ -225,12 +243,28 @@ getFiltered(zona){
 
   
    getCSV(){
+     if(!(this.diasTrabajadosExiste)){
+    this.msgs = [];
+    this.msgs.push({severity:'error', summary:'Error', detail:'No existen datos cargados'});
+     }else{
+    //var today = new Date();
+    //var dd = today.getDate();
+    //var mm = today.getMonth()+1; //January is 0!
+    //var yyyy = today.getFullYear();
+    let variable;
+    if (this.optionRequestedProceso["value"]=="1a") variable='P066';
+    if (this.optionRequestedProceso["value"]=="2a") variable='P067';
+    let fecha=this.optionRequestedMes["value"];
+     console.log(this.diasTrabajadosExiste);
+
     var fichero;
    var data=this.diasTrabajadosExiste.map((element)=>{
-     
+    
+    
+
    fichero={  FICHA :element.FICHA,
-    VARIABLE:'P607',
-    MES:'08/2018',
+    VARIABLE:variable,
+    MES:fecha,
    VALOR :element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS};
 
  
@@ -293,6 +327,7 @@ getFiltered(zona){
     a.remove(); // remove the element
   */ 
   }
+}
 
 
    creaPersonalOtros(nuevaPersona:DiasTrabajados){
@@ -400,6 +435,8 @@ this.displayEditForm=true;
 
 }
 
+
+
 saveDiasTrabajadosOtros(){
   console.log(this.diasTrabajadosOneSelected.SUELDO_MONTO);
   console.log(this.diasTrabajadosOneSelected.DESCUENTO);
@@ -456,5 +493,24 @@ showError(message:string) {
   this.msgs = [];
   this.msgs.push({severity:'error', summary:'Error', detail: message});
 }
+
+async newProcess(){
+ 
+  //this.diasTrabajadosOtrosOne=personaEditar // la original para saber la posicion
+  //this.diasTrabajadosOneSelected=this.cloneDias(personaEditar);  // la copia para editar y luego reasignar
+  this.loadigProcess=true;
+  this.persistenceService.removeAll(); 
+  localStorage.removeItem('dias'); 
+  localStorage.removeItem('optionsProcess'); 
+ this.optionProcess= {'fecha':this.optionSelectedMes,'proceso':this.optionSelectedProceso};
+ await this.FilesgetAllDiasTrabajados();
+this.optionRequestedMes=this.optionSelectedMes;
+this.optionRequestedProceso=this.optionSelectedProceso;
+ this.loadigProcess=false;
+   this.displayNewProcess=false;
+
+
+}
+
 
 }

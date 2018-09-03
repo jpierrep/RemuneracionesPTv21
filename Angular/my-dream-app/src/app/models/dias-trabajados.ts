@@ -13,6 +13,8 @@ export class DiasTrabajados {
     CENCO1_DESC:string;
     CENCO2_DESC:string;
     RUT_ID: string;
+    CARGO_CODI:string;
+    CARGO_DESC:string;
 
 }
 

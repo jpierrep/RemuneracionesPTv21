@@ -12,10 +12,35 @@
   
   </ul>
 -->
+<p-growl [(value)]="msgs"></p-growl>
 
-<p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
-<p-dropdown [options]="optionMeses" [(ngModel)]="optionSelectedMes" placeholder="Seleccione el Mes" optionLabel="name" [showClear]="true"></p-dropdown>
-<p-dropdown [options]="optionProcesos" [(ngModel)]="optionSelectedProceso" placeholder="Seleccione el Proceso" optionLabel="name" [showClear]="true"></p-dropdown>
+
+<p-button label="Nuevo Proceso" (onClick)="displayNewProcess=true"></p-button>
+<p>Proceso: {{optionRequestedMes? optionRequestedMes.name : 'ninguna'}}</p>
+<p>Proceso: {{optionRequestedProceso? optionRequestedProceso.name : 'ninguna'}}</p>
+
+
+
+<p-dialog header="Nuevo Proceso" [(visible)]="displayNewProcess" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="250" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+
+      
+         
+            <p-dropdown [options]="optionMeses" [(ngModel)]="optionSelectedMes" placeholder="Seleccione el Mes" optionLabel="name" [showClear]="true"></p-dropdown>
+            <p-dropdown [options]="optionProcesos" [(ngModel)]="optionSelectedProceso" placeholder="Seleccione el Proceso" optionLabel="name" [showClear]="true"></p-dropdown>
+            <div *ngIf="  optionSelectedMes&&optionSelectedProceso"> 
+            <p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
+          </div>
+            <p-footer>
+                <div *ngIf="loadigProcess"> 
+                    <p-progressBar mode="indeterminate"></p-progressBar>
+                </div>
+            <button type="button" pButton icon="pi pi-check" (click)="newProcess()" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="displayNewProcess=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
+</p-dialog>
+
+
 
 <p-tabMenu [model]="items"></p-tabMenu>
 

@@ -16,6 +16,9 @@ import { PersistenceModule } from 'angular-persistence';
 //import { Angular5Csv } from 'angular5-csv/Angular5-csv';
 import {MenuModule} from 'primeng/menu';
 import {TabMenuModule} from 'primeng/tabmenu';
+import {ProgressBarModule} from 'primeng/progressbar';
+import {GrowlModule} from 'primeng/growl';
+
 
 
 @NgModule ({
@@ -40,7 +43,9 @@ import {TabMenuModule} from 'primeng/tabmenu';
     FileUploadModule,
     PersistenceModule,
     MenuModule,
-    TabMenuModule
+    TabMenuModule,
+    ProgressBarModule,
+    GrowlModule
 
 
 

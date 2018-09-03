@@ -35,10 +35,14 @@ export class InfoDiasTrabajadosService {
 //return this.arr;
   }
 
-  getAllDiasTrabFile(dataForm){
+  getAllDiasTrabFile(dataForm,optionProcess){
     //console.log(this.http.get<DiasTrabajados[]>(this.webApiUrl));
-   const fd=new  FormData();
+   console.log(optionProcess);
+   console.log(JSON.stringify(optionProcess["fecha"]))
+    const fd=new  FormData();
    fd.append('file',dataForm);
+   fd.append('fecha',JSON.stringify(optionProcess["fecha"]));
+   fd.append('proceso',JSON.stringify(optionProcess["proceso"]));
     return this.http.post<DiasTrabajados[]>("http://localhost:3800/api/generaProcesoUpload",fd);
    // return this.http.post<DiasTrabajados[]>(this.webApiUrl,formdata);
 
