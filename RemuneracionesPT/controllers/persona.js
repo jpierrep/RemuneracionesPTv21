@@ -108,7 +108,9 @@ function TESTgetPersonalAsist (){
 function getPersonalSoft(){
   let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'`
-
+  
+   query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[RRHH_PERSONAL_SOFT] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
+   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V' ` 
 return new Promise(resolve=>{
   entrega_resultDB(query,(result)=>{
     
@@ -125,7 +127,7 @@ function getPersonalSoftOne(req,res){
   console.log(rut_id);
   let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V' and RUT_ID=`+rut_id
-console.log(query);
+
   entrega_resultDB2(query,null).then(result=>{
     if (result.length>0){ 
      console.log(result); 
@@ -165,6 +167,7 @@ async function generaProcesoSueldoUpdload(req,res){
   console.log("dentro genera proceso")
 
   let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
+  console.log(optionProcess);
 
   
 
@@ -174,13 +177,16 @@ async function generaProcesoSueldoUpdload(req,res){
   let persDiff=await getPersonalBD(persAsist,persRRHH);   
   let persVar=await getVariablesSueldoPers(optionProcess,persDiff);
   let persCalcula=await getCalculaSueldo(optionProcess,persVar);  
+  //console.log(persCalcula);
   res.status(200).send(persCalcula);
   
 }
 
 
 function getCalculaSueldo(optionProcess,persDiff){
-  let proceso=optionsProcess.proceso.value;
+  let proceso=optionProcess.proceso.value;
+  console.log("proceso es");
+  console.log(proceso);
   return new Promise(resolve=>{
 
 
@@ -209,9 +215,11 @@ function getCalculaSueldo(optionProcess,persDiff){
           
            
            let sueldoBase=0;
-           sueldoBase= element.SUELDO.find(x=>x.VARIABLE_CODI=="P001").VARIABLE_MONTO;
-           console.log()
-           let liquidoPago=element.SUELDO.find(x=>x.VARIABLE_CODI=="H303").VARIABLE_MONTO;
+           let liquidoPago=0;
+           if(element.SUELDO.find(x=>x.VARIABLE_CODI=="P001")) sueldoBase= element.SUELDO.find(x=>x.VARIABLE_CODI=="P001").VARIABLE_MONTO;
+           if( element.SUELDO.find(x=>x.VARIABLE_CODI=="H303")) element.SUELDO.find(x=>x.VARIABLE_CODI=="H303").VARIABLE_MONTO;
+          
+           
            console.log( {nombre:element.NOMBRE ,ficha: element.FICHA,base:sueldoBase, liquido: liquidoPago});
           if (sueldoBase){
             element.SUELDO_MONTO=Math.round(sueldoBase*0.0077777*0.8*element.CANTIDAD_HRS,0);
@@ -263,7 +271,7 @@ function getVariablesSueldoPers(optionsProcess,persDiff){
      console.log(value.FICHA);
      let vars=`'H303','P001'`;
      let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='`+fechaquery+`' and FICHA='`+replaceAll(value.FICHA,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
-    
+  
  
     entrega_resultDB2(query,null).then(result=>{
       if (result){ 
