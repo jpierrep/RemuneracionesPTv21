@@ -19,7 +19,7 @@ import {TabMenuModule} from 'primeng/tabmenu';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {GrowlModule} from 'primeng/growl';
 import { DiasTrabajadosDatalleComponent } from './components/dias-trabajados-datalle/dias-trabajados-datalle.component';
-
+import {TableModule} from 'primeng/table';
 
 
 @NgModule ({
@@ -47,7 +47,8 @@ import { DiasTrabajadosDatalleComponent } from './components/dias-trabajados-dat
     MenuModule,
     TabMenuModule,
     ProgressBarModule,
-    GrowlModule
+    GrowlModule,
+    TableModule
 
 
 

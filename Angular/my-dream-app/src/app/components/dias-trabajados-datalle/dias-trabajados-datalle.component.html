@@ -1,16 +1,43 @@
+<p>{{diaTrabajado.NOMBRE}} </p>
 
-<p-dataTable [value]="diaTrabajado">
-  <p-header>
-     Turnos Realizados
-      <div class="ui-helper-clearfix">
-       
-          <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add" 
-           style="float:right"></button>
-      </div>
 
-  </p-header>
-  <p-column field="NOMBRE" header="NOMBRE"></p-column>
- <p-column field="TIPO" header="TIPO"></p-column>
 
  
+
+<p-dataTable [value]="diaTrabajado.TURNOS">
+<p-header>
+   Personal a Pagar
+    <div class="ui-helper-clearfix">
+     
+       <!-- <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add" 
+         style="float:right"></button>  -->
+    </div>
+
+</p-header>
+
+<p-column field="CANTIDAD_HRS" header="CANT HRS"></p-column>
+<p-column field="VALOR_TURNO" header="VALOR TURNO"></p-column>
+<p-column field="DIA" header="DIA"></p-column>
+
+
 </p-dataTable>
+
+
+
+<!--<p-table [value]="diaTrabajado.TURNOS">
+  <ng-template pTemplate="header">
+      <tr>
+          <th>Vin</th>
+
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-dia>
+      <tr>
+          <td>{{dia.NOMBRE}}</td>
+
+      </tr>
+  </ng-template>
+</p-table>
+-->
+
+

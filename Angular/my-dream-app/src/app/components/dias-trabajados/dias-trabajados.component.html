@@ -85,7 +85,7 @@
 
  <p-column styleClass="col-button">
     <ng-template let-diaTrab="rowData" pTemplate="body">
-       <button type="button" pButton icon="fa fa-trash" class="ui-button-danger"></button>
+       <button type="button" pButton icon="fa fa-eye" class="ui-button-danger" (click)="selectedDetalleTurnos(diaTrab)"></button>
     </ng-template>
   </p-column>
 
@@ -112,14 +112,20 @@
         </p-footer>
 </p-dialog>
 
-<!--<div  *ngIf="diasTrabajadosOne">
-  <app-dias-trabajados-datalle [diaTrabajado]="diasTrabajadosOne"></app-dias-trabajados-datalle>
-
-</div> -->
+<p-dialog header="Detalle de Turnos" [(visible)]="displayDetalleTurnos" [modal]="modal" [responsive]="true" [width]="550" [minWidth]="200" [minY]="200" 
+        [maximizable]="true" [baseZIndex]="10000">
+        <app-dias-trabajados-datalle [diaTrabajado]="diasTrabajadosOneDetalle"></app-dias-trabajados-datalle>
+        <p-footer>
+          <button type="button" pButton icon="pi pi-check" (click)="displayDetalleTurnos=false" label="Ok"></button>
+      </p-footer>
+      </p-dialog>
 
 
 </ng-template>
+<!--<div  *ngIf="diasTrabajadosOne.NOMBRE">
+  <app-dias-trabajados-datalle [diaTrabajado]="diasTrabajadosOne"></app-dias-trabajados-datalle>
 
+</div> -->
 
 <ng-template #elseBlock>
 

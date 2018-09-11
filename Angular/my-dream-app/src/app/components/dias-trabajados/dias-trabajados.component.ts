@@ -31,10 +31,12 @@ export class DiasTrabajadosComponent implements OnInit {
   diasTrabajadosOne:DiasTrabajados;
   diasTrabajadosOneSelected:DiasTrabajados;
   diasTrabajadosOtrosOne:DiasTrabajados;
+  diasTrabajadosOneDetalle:DiasTrabajados; //para mostrar el detalle de turnos
   display:boolean;
   displayFormCreate:boolean;
   displayEditForm:boolean;
   displayNewProcess:boolean;
+  displayDetalleTurnos:boolean;
   loadigProcess:boolean;
   personalSoft:Cars[];
   utils:Utils;
@@ -65,6 +67,7 @@ export class DiasTrabajadosComponent implements OnInit {
     this.diasTrabajadosOne=new DiasTrabajados(); //importante que exista este objeto creado
     this.diasTrabajadosOtrosOne=new DiasTrabajados();
     this.diasTrabajadosOneSelected=new DiasTrabajados();
+    this.diasTrabajadosOneDetalle=new DiasTrabajados();
     this.diasTrabajados=[];
  
     
@@ -116,6 +119,7 @@ export class DiasTrabajadosComponent implements OnInit {
     this.displayFormCreate=false;
     this.displayEditForm=false;
     this.loadigProcess=false;
+    this.displayDetalleTurnos=false;
 
     this.items = [
       {label: 'A Pagar', icon: 'fa fa-fw fa-bar-chart',command: () => {this.idPlantilla='1'}},
@@ -238,6 +242,11 @@ getFiltered(zona){
  selectedDiasTrabajados(diasTrabajados:DiasTrabajados){
   this.display=true; // cuando se selecciona uno, se mustra el dialog
  this.diasTrabajadosOne=diasTrabajados;
+ }
+
+ selectedDetalleTurnos(diasTrabajados:DiasTrabajados){
+  this.displayDetalleTurnos=true; // cuando se selecciona uno, se mustra el dialog
+ this.diasTrabajadosOneDetalle=diasTrabajados;
  }
 
 
