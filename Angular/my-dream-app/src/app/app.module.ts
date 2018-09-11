@@ -18,6 +18,7 @@ import {MenuModule} from 'primeng/menu';
 import {TabMenuModule} from 'primeng/tabmenu';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {GrowlModule} from 'primeng/growl';
+import { DiasTrabajadosDatalleComponent } from './components/dias-trabajados-datalle/dias-trabajados-datalle.component';
 
 
 
@@ -25,7 +26,8 @@ import {GrowlModule} from 'primeng/growl';
   declarations: [
     AppComponent,
     CarsListComponent,
-    DiasTrabajadosComponent
+    DiasTrabajadosComponent,
+    DiasTrabajadosDatalleComponent
 
   ],
   imports: [

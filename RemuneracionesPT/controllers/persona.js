@@ -79,6 +79,83 @@ function home (req,res){
 }
 */
 
+async function generaProcesoSueldoUpdload(req,res){
+  
+
+  
+  console.log("dentro genera proceso")
+
+  let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
+  console.log(optionProcess);
+
+  
+
+  await uploadFile(req,res);
+  let persAsist= await TESTgetPersonalAsist();
+  //res.status(200).send(persAsist);
+  let persAgrupa=await getAgrupaPers(persAsist);
+ // console.log(persAgrupa);
+
+  let persRRHH=await getPersonalSoft();
+ 
+  let persDiff=await getPersonalBD(persAgrupa,persRRHH);   
+  //res.status(200).send(persDiff);
+  let persVar=await getVariablesSueldoPers(optionProcess,persDiff);
+
+ let persCalcula=await getCalculaSueldo(optionProcess,persVar);  
+ 
+  res.status(200).send(persCalcula);
+  
+}
+
+function getAgrupaPers(persAsist){
+  return new Promise(resolve=>{
+
+    let rut=  persAsist.map(value=>{
+        return convierteRutID(value.RUT);
+    });
+ 
+ 
+   let unique = (value, index, self) => {
+ 
+     return self.indexOf(value) == index;
+ }
+ 
+ let distinctRut = rut.filter(unique);
+
+    
+ 
+ //let zonasJson=[];
+ //distinctZonas.map(element => {
+ //   zonasJson.push({"name":element});
+ // });
+ 
+ //this.zonas=zonasJson;
+  console.log(distinctRut);
+  let personalTurnos=distinctRut.map(value=>{
+
+ let turnos= persAsist.filter(x=>convierteRutID(x.RUT)==value).map(element=>{
+  return {NOMBRE:element.NOMBRE,TIPO:element.TIPO, DIA:element.DIA,CANTIDAD_HRS:element.CANTIDAD_HRS};
+
+ });
+  
+ console.log(turnos);
+ // let object=new Object;
+ // object["PERSONA"]=value;
+ // object["TURNOS"]=turnos;
+     return {RUT_ASIST:value,TURNOS:turnos};
+  
+
+  
+  });
+
+
+ resolve(personalTurnos);
+
+  });
+}
+
+
 function getPersonalAsist (){
   return new Promise(resolve=>{
     readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
@@ -97,7 +174,7 @@ function TESTgetPersonalAsist (){
     //readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
     readXlsxFile('uploads/personas/'+ExcelFilename,{schema}).then((rows) => {
    let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
-    convierteRutID("17.933.157-8"); 
+  
     result=JSON.parse(result);
     resolve(result);
     }); 
@@ -110,7 +187,7 @@ function getPersonalSoft(){
   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'`
   
    query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[RRHH_PERSONAL_SOFT] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
-   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V' ` 
+   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'and FECHA_SOFT='2018-08-01'` 
 return new Promise(resolve=>{
   entrega_resultDB(query,(result)=>{
     
@@ -160,27 +237,8 @@ async function generaProcesoSueldo(req,res){
   
 }
 
-async function generaProcesoSueldoUpdload(req,res){
-  
 
-  
-  console.log("dentro genera proceso")
 
-  let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
-  console.log(optionProcess);
-
-  
-
-  await uploadFile(req,res);
-  let persAsist= await TESTgetPersonalAsist();
-  let persRRHH=await getPersonalSoft();
-  let persDiff=await getPersonalBD(persAsist,persRRHH);   
-  let persVar=await getVariablesSueldoPers(optionProcess,persDiff);
-  let persCalcula=await getCalculaSueldo(optionProcess,persVar);  
-  //console.log(persCalcula);
-  res.status(200).send(persCalcula);
-  
-}
 
 
 function getCalculaSueldo(optionProcess,persDiff){
@@ -194,10 +252,88 @@ function getCalculaSueldo(optionProcess,persDiff){
       element.SUELDO_MONTO=0;
       element.DESCUENTO=0;
       element.OTROS_DESCUENTOS=0;
+      element.CANT_TURNOS=0;
   
 
-
       
+      if(element.IN_BD=="true"){
+        if(element.CARGO_CODI=='122') {
+          
+          console.log("calculando a partime");
+          //por cada uno de los turnos de la persona
+          element.TURNOS.forEach((turno)=>{
+                     
+          if(turno.CANTIDAD_HRS==12){
+            turno.VALOR_TURNO=25000
+          }else if(turno.CANTIDAD_HRS==8){
+            turno.VALOR_TURNO=19000
+          }else{
+            turno.VALOR_TURNO=(25000*turno.CANTIDAD_HRS)/12 //Proporcion del turno de 12 horas
+          }  
+
+          });
+
+
+         }  else{
+           console.log("calculando a dotacion")
+          
+           
+           let sueldoBase=0;
+           let liquidoPago=0;
+           if(element.SUELDO.find(x=>x.VARIABLE_CODI=="P001")) sueldoBase= element.SUELDO.find(x=>x.VARIABLE_CODI=="P001").VARIABLE_MONTO;
+           if( element.SUELDO.find(x=>x.VARIABLE_CODI=="H303")) element.SUELDO.find(x=>x.VARIABLE_CODI=="H303").VARIABLE_MONTO;
+          
+           
+           console.log( {nombre:element.NOMBRE ,ficha: element.FICHA,base:sueldoBase, liquido: liquidoPago});
+          //calcula valor de cada turno
+           element.TURNOS.forEach((turno)=>{
+           if (sueldoBase){
+            turno.VALOR_TURNO=Math.round(sueldoBase*0.0077777*0.8*turno.CANTIDAD_HRS,0);
+          }else{
+            turno.VALOR_TURNO=-1;
+          }
+        });
+
+        if(liquidoPago&&proceso=='2a'){  //tienen que haber liquido a pago y el proceso debe ser segunda quincena
+          if (liquidoPago<0 && liquidoPago*-1>=element.SUELDO_MONTO) element.DESCUENTO= element.SUELDO_MONTO+liquidoPago;  
+       
+        }
+                
+                
+                    }
+
+                          //calcula la suma de sueldos de todos los turnos y cantidad de turnos
+                          element.TURNOS.forEach((turno)=>{
+                            element.SUELDO_MONTO=element.SUELDO_MONTO+turno.VALOR_TURNO;
+                            element.CANT_TURNOS++;
+                          });
+       
+    
+      }
+
+  
+       
+  
+     });
+  
+    resolve(persDiff);
+
+  });
+
+}
+
+/* function getCalculaSueldo2(optionProcess,persDiff){
+  let proceso=optionProcess.proceso.value;
+  console.log("proceso es");
+  console.log(proceso);
+  return new Promise(resolve=>{
+
+
+    persDiff.forEach((element,index,array)=>{
+      element.SUELDO_MONTO=0;
+      element.DESCUENTO=0;
+      element.OTROS_DESCUENTOS=0;
+  
 
       
       if(element.IN_BD=="true"){
@@ -241,8 +377,7 @@ function getCalculaSueldo(optionProcess,persDiff){
 
   });
 
-}
-
+} */
 
 function getVariablesSueldoPers(optionsProcess,persDiff){
    
@@ -345,7 +480,8 @@ function getPersonalBD(persAsist,persRRHH){
 
    var resultTestAsist=persAsist.map((element)=>{
     //   console.log("el elemento es"+element.RUT);
-     let rutbuscar = convierteRutID(element.RUT);
+    // let rutbuscar = convierteRutID(element.RUT);
+    let rutbuscar = element.RUT_ASIST
 
         //console.log("evaluando" +element.RUT+"y"+rutbuscar)
   
@@ -353,6 +489,7 @@ function getPersonalBD(persAsist,persRRHH){
     if (persRRHHEncontrar){
       element.IN_BD="true"
     console.log("Se encontro"+element.IN_BD);
+     element.NOMBRE=persRRHHEncontrar.NOMBRES;
       element.FICHA= persRRHHEncontrar.FICHA;
       element.RUT=persRRHHEncontrar.RUT;
       element.CARGO_DESC=persRRHHEncontrar.CARGO_DESC;

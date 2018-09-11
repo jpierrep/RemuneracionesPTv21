@@ -71,8 +71,8 @@
   </p-header>
   <p-column field="NOMBRE" header="NOMBRE"></p-column>
  <p-column field="RUT" header="RUT"></p-column>
- <p-column field="TIPO" header="TIPO"></p-column>
- <p-column field="CANTIDAD_HRS" header="CANT_HRS"></p-column>
+ <p-column field="CARGO_DESC" header="CARGO"></p-column>
+ <p-column field="CANT_TURNOS" header="CANT_TURNOS"></p-column>
  <p-column field="SUELDO_MONTO" header="MONTO"></p-column>
  <p-column field="DESCUENTO" header="DESCUENTOS"></p-column>
  <p-column field="OTROS_DESCUENTOS" header="OTROS DESCUENTOS"></p-column>
@@ -111,6 +111,12 @@
             <button type="button" pButton icon="pi pi-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
         </p-footer>
 </p-dialog>
+
+<!--<div  *ngIf="diasTrabajadosOne">
+  <app-dias-trabajados-datalle [diaTrabajado]="diasTrabajadosOne"></app-dias-trabajados-datalle>
+
+</div> -->
+
 
 </ng-template>
 

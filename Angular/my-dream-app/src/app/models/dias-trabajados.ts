@@ -1,3 +1,5 @@
+import {Turno} from './turno';
+
 export class DiasTrabajados {
     NOMBRE: string;
     FICHA:string;
@@ -15,6 +17,8 @@ export class DiasTrabajados {
     RUT_ID: string;
     CARGO_CODI:string;
     CARGO_DESC:string;
+    CANT_TURNOS:number
+    TURNOS:Turno[];
 
 }
 
