@@ -135,7 +135,7 @@ function getAgrupaPers(persAsist){
   let personalTurnos=distinctRut.map(value=>{
 
  let turnos= persAsist.filter(x=>convierteRutID(x.RUT)==value).map(element=>{
-  return {NOMBRE:element.NOMBRE,TIPO:element.TIPO, DIA:element.DIA,CANTIDAD_HRS:element.CANTIDAD_HRS};
+  return {NOMBRE:element.NOMBRE,RUT:element.RUT,TIPO:element.TIPO, DIA:element.DIA,CANTIDAD_HRS:element.CANTIDAD_HRS};
 
  });
   
@@ -309,6 +309,17 @@ function getCalculaSueldo(optionProcess,persDiff){
                           });
        
     
+      }else{
+       //Si no esta en BD
+         // cantidad de turnos
+         element.TURNOS.forEach((turno)=>{
+          element.CANT_TURNOS++;
+        });
+        element.NOMBRE=element.TURNOS[0].NOMBRE;
+        element.RUT=element.TURNOS[0].RUT;
+        element.CARGO_DESC=element.TURNOS[0].TIPO;
+
+
       }
 
   

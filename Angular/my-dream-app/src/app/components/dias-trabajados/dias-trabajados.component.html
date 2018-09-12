@@ -59,27 +59,23 @@
     <p-dropdown [options]="zonas" [(ngModel)]="optionSelectedZona" placeholder="Seleccione una zona" optionLabel="name" [showClear]="true"></p-dropdown>
     <p>Zona seleccionada: {{optionSelectedZona? optionSelectedZona.name : 'ninguna'}}</p>
 
-<p-dataTable [value]="getFiltered(optionSelectedZona? optionSelectedZona.name : undefined)">
+<p-dataTable [value]="getFiltered(optionSelectedZona? optionSelectedZona.name : undefined)" [immutable]=false>
   <p-header>
      Personal a Pagar
-      <div class="ui-helper-clearfix">
-       
-          <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add" 
-           style="float:right"></button>
-      </div>
+ 
 
   </p-header>
   <p-column field="NOMBRE" header="NOMBRE"></p-column>
  <p-column field="RUT" header="RUT"></p-column>
  <p-column field="CARGO_DESC" header="CARGO"></p-column>
- <p-column field="CANT_TURNOS" header="CANT_TURNOS"></p-column>
+ <p-column field="CANT_TURNOS" header="CANT TURNOS"></p-column>
  <p-column field="SUELDO_MONTO" header="MONTO"></p-column>
  <p-column field="DESCUENTO" header="DESCUENTOS"></p-column>
  <p-column field="OTROS_DESCUENTOS" header="OTROS DESCUENTOS"></p-column>
  
  <p-column styleClass="col-button">
    <ng-template let-diaTrab="rowData" pTemplate="body">
-      <button type="button" pButton icon="fa fa-edit" (click)="selectedDiasTrabajados(diaTrab)"></button>
+      <button type="button" pButton icon="fa fa-edit" (click)="editDiasTrabajados(diaTrab)"></button>
    </ng-template>
  </p-column>
 
@@ -96,18 +92,43 @@
 
         <form>
           <div class="form-group">
-            <div class="ui-inputgroup">
-                <span class="ui-float-label">
-                    <input id="car-brand" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOne.NOMBRE" name="brand"> 
-                    <label for="car-brand">Car Brand</label>
-                </span>
 
-            </div>
+            <div class="ui-inputgroup">
+
+                     
+                <span class="ui-float-label">
+               
+               
+                  <input id="rut" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOneSelected.RUT" name="rut" disabled="true"> 
+                    <label for="rut">RUT</label>
+               
+                  </span>
+                </div>
+                <div class="ui-inputgroup">
+                  <span class="ui-float-label">
+               
+               
+                      <input id="monto" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOneSelected.OTROS_DESCUENTOS" name="monto"> 
+                        <label for="monto">OTROS DESCUENTOS</label>
+                   
+                      </span>
+                    </div>
+
+                                              
+                    <div class="ui-inputgroup">
+
+                        <span class="ui-float-label">
+                         <!--   <button type="button" pButton (click)="showError()" label="Error" class="ui-button-danger"></button> -->
+                            <p-messages [(value)]="msgs"></p-messages>
+                       
+                          </span>
+        
+                    </div>
 
           </div>
         </form>
         <p-footer>
-            <button type="button" pButton icon="pi pi-check" (click)="display=false" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-check" (click)="saveDiasTrabajados()" label="Yes"></button>
             <button type="button" pButton icon="pi pi-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
         </p-footer>
 </p-dialog>
@@ -132,20 +153,13 @@
     <p-dataTable [value]="diasTrabajadosNoExiste" >
         <p-header>
           Personal No Existente o No Vigente
-            <div class="ui-helper-clearfix">
-             
-                <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add" 
-                 style="float:right"></button>
-            </div>
+
       
         </p-header>
         <p-column field="NOMBRE" header="NOMBRE"></p-column>
        <p-column field="RUT" header="RUT"></p-column>
-       <p-column field="TIPO" header="TIPO"></p-column>
-       <p-column field="CANTIDAD_HRS" header="CANT_HRS"></p-column>
-       <p-column field="SUELDO_MONTO" header="MONTO"></p-column>
-       <p-column field="DESCUENTO" header="DESCUENTOS"></p-column>
-       <p-column field="OTROS_DESCUENTOS" header="OTROS DESCUENTOS"></p-column>
+       <p-column field="CARGO_DESC" header="TIPO"></p-column>
+       <p-column field="CANT_TURNOS" header="CANT TURNOS"></p-column>
        
      
       
@@ -162,7 +176,7 @@
           Personal Pagos Pendientes
             <div class="ui-helper-clearfix">
              
-                <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Add"  (click)="creaDiasTrabajados()"
+                <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Nuevo"  (click)="creaDiasTrabajados()"
                  style="float:right"></button>
             </div>
       

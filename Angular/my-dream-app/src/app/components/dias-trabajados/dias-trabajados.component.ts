@@ -234,15 +234,15 @@ this.zonas=zonasJson;
 getFiltered(zona){
 
   if(zona)
-   return this.diasTrabajados.filter(x=>x.CENCO1_DESC==zona);
+   return this.diasTrabajadosExiste.filter(x=>x.CENCO1_DESC==zona);
   else
-  return this.diasTrabajados;
+  return this.diasTrabajadosExiste;
   }
 
- selectedDiasTrabajados(diasTrabajados:DiasTrabajados){
-  this.display=true; // cuando se selecciona uno, se mustra el dialog
- this.diasTrabajadosOne=diasTrabajados;
- }
+ //selectedDiasTrabajados(diasTrabajados:DiasTrabajados){
+ // this.display=true; // cuando se selecciona uno, se mustra el dialog
+ //this.diasTrabajadosOne=diasTrabajados;
+// }
 
  selectedDetalleTurnos(diasTrabajados:DiasTrabajados){
   this.displayDetalleTurnos=true; // cuando se selecciona uno, se mustra el dialog
@@ -438,13 +438,60 @@ someArray=someArray.filter((e)=>e.name !=arrayToRemove.name && e.lines!= arrayTo
 }
 editDiasTrabajadosOtros(personaEditar:DiasTrabajados){
 
+
   this.diasTrabajadosOtrosOne=personaEditar // la original para saber la posicion
   this.diasTrabajadosOneSelected=this.cloneDias(personaEditar);  // la copia para editar y luego reasignar
 this.displayEditForm=true;
 
+
+
+}
+editDiasTrabajados(personaEditar:DiasTrabajados){
+
+   this.diasTrabajadosOne=new DiasTrabajados();
+  this.diasTrabajadosOne=personaEditar // la original para saber la posicion
+  this.diasTrabajadosOneSelected=this.cloneDias(personaEditar);  // la copia para editar y luego reasignar
+this.display=true;
+
 }
 
+saveDiasTrabajados(){
+  //transforma a numerico los valores ya que vienen en string, al ordenar o comparar los valores 
+           //ordena por ejemplo 11111 < 2 
 
+           if ((isNumeric(this.diasTrabajadosOneSelected.SUELDO_MONTO)&&isNumeric(this.diasTrabajadosOneSelected.DESCUENTO)&&isNumeric(this.diasTrabajadosOneSelected.OTROS_DESCUENTOS))){
+            this.diasTrabajadosOneSelected.SUELDO_MONTO=parseFloat(this.diasTrabajadosOneSelected.SUELDO_MONTO.toString() )
+            this.diasTrabajadosOneSelected.DESCUENTO=parseFloat(this.diasTrabajadosOneSelected.DESCUENTO.toString() )
+            this.diasTrabajadosOneSelected.OTROS_DESCUENTOS=parseFloat(this.diasTrabajadosOneSelected.OTROS_DESCUENTOS.toString() )
+          }
+
+       //valida que los valores sean numericos
+          if (!(isNumeric(this.diasTrabajadosOneSelected.SUELDO_MONTO)&&isNumeric(this.diasTrabajadosOneSelected.DESCUENTO)&&isNumeric(this.diasTrabajadosOneSelected.OTROS_DESCUENTOS))){
+            console.log("valida")
+            this.showError("Ingrese valores numéricos");
+            return;
+           }
+
+           else if(this.diasTrabajadosOneSelected.SUELDO_MONTO>300000){
+              this.showError("Monto superior al máximo permitido");
+              return;
+            }
+           else if(this.diasTrabajadosOneSelected.SUELDO_MONTO<0 ||this.diasTrabajadosOneSelected.DESCUENTO<0||this.diasTrabajadosOneSelected.OTROS_DESCUENTOS<0){
+              this.showError("ingrese valores positivos");
+              return;
+            }
+          else  if(this.diasTrabajadosOneSelected.SUELDO_MONTO<(this.diasTrabajadosOneSelected.DESCUENTO+this.diasTrabajadosOneSelected.OTROS_DESCUENTOS)){
+              this.showError("Suma de descuentos deben ser menores que monto");
+
+              return;
+            }
+ else{
+   console.log("grabandoo")
+  this.diasTrabajadosExiste[this.diasTrabajados.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //cuidado con los filtros existe vs el completo
+  this.display=false;
+ }
+ 
+}
 
 saveDiasTrabajadosOtros(){
   console.log(this.diasTrabajadosOneSelected.SUELDO_MONTO);
