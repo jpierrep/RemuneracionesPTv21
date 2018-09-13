@@ -16,8 +16,8 @@
 
 
 <p-button label="Nuevo Proceso" (onClick)="displayNewProcess=true"></p-button>
-<p>Proceso: {{optionRequestedMes? optionRequestedMes.name : 'ninguna'}}</p>
-<p>Proceso: {{optionRequestedProceso? optionRequestedProceso.name : 'ninguna'}}</p>
+<h1>Asignación de Pago Quincenas </h1>
+<h3>{{optionRequestedMes? optionRequestedMes.name : ''}} - {{optionRequestedProceso? optionRequestedProceso.name : ''}}</h3>
 
 
 
@@ -50,17 +50,17 @@
 <div *ngIf="  idPlantilla=='1'  ; then thenBlock"> </div>
 <div *ngIf="  idPlantilla=='2'  ; then elseBlock"> </div>
 <div *ngIf="  idPlantilla=='3'  ; then nuevosBlock"> </div>
-<p-button label="Elimina Lista" (onClick)="eliminaDiasTrab($event)"></p-button>
+<!--<p-button label="Elimina Lista" (onClick)="eliminaDiasTrab($event)"></p-button>-->
 
 <button class="btn btn-primary" (click)="getCSV()"><i class="fa fa-file"></i> Descargar</button>
 <ng-template #thenBlock>
 
-    <h3 class="first">Seleccione zona a mostrar</h3>
+<!--<h3 class="first">Seleccione zona a mostrar</h3>
     <p-dropdown [options]="zonas" [(ngModel)]="optionSelectedZona" placeholder="Seleccione una zona" optionLabel="name" [showClear]="true"></p-dropdown>
-    <p>Zona seleccionada: {{optionSelectedZona? optionSelectedZona.name : 'ninguna'}}</p>
+    <p>Zona seleccionada: {{optionSelectedZona? optionSelectedZona.name : 'ninguna'}}</p> -->
 
-    <p-multiSelect [options]="cargos" [(ngModel)]="optionSelectedMultiCargo" [panelStyle]="{minWidth:'12em'}" optionLabel="name" maxSelectedLabels="1"></p-multiSelect>
-    <p-multiSelect [options]="zonas" [(ngModel)]="optionSelectedMultiZona" [panelStyle]="{minWidth:'12em'}" optionLabel="name" maxSelectedLabels="1"></p-multiSelect>
+    <p-multiSelect [options]="cargos" [(ngModel)]="optionSelectedMultiCargo" [panelStyle]="{minWidth:'12em'}" optionLabel="name" filterPlaceHolder="Buscar cargos" defaultLabel="Seleccione cargos" selectedItemsLabel="{0} items seleccionados" maxSelectedLabels="1"></p-multiSelect>
+    <p-multiSelect [options]="zonas" [(ngModel)]="optionSelectedMultiZona" [panelStyle]="{minWidth:'12em'}" optionLabel="name" filterPlaceHolder="Buscar zonas" defaultLabel="Seleccione zonas" selectedItemsLabel="{0} items seleccionados"  maxSelectedLabels="1"></p-multiSelect>
     <!--<p>Selected Cars: {{optionSelectedMultiZona}}</p> -->
 
 <!--<p-dataTable [value]="getFiltered(optionSelectedZona? optionSelectedZona.name : undefined)" [immutable]=false> -->
@@ -93,7 +93,7 @@
 
 </p-dataTable>
 
-<p-dialog header="Edit" [(visible)]="display" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+<p-dialog header="Edita Pago" [(visible)]="display" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
         [maximizable]="true" [baseZIndex]="10000">
         <p>{{diasTrabajadosOneSelected.NOMBRE}} </p>
       
@@ -268,7 +268,7 @@
 
       <p-dialog header="Edita Personal" [(visible)]="displayEditForm" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
         [maximizable]="true" [baseZIndex]="10000">
-
+        <p>{{diasTrabajadosOneSelected.NOMBRE}} </p>
         <form>
           <div class="form-group">
 

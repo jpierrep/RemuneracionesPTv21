@@ -95,6 +95,7 @@ export class DiasTrabajadosComponent implements OnInit {
    //this. getAllDiasTrabajados();
    this.idPlantilla=this.route.snapshot.paramMap.get('id');
    
+   
    if(localStorage.getItem('optionsProcess')){
     console.log("existe el proceso");
  this.optionRequestedMes=(JSON.parse(localStorage.getItem('optionsProcess'))["fecha"]);
@@ -110,21 +111,18 @@ export class DiasTrabajadosComponent implements OnInit {
     this.getZonas();
     this.getFilterOptions();
 
-   }else{
-     console.log("no existe");
-     
    }
 
-   if(this.persistenceService.get('dias')){
-     console.log("existe el objeto");
-     this.diasTrabajados=this.persistenceService.get('dias');
-     this.getNoExisteEnBD();
-     this.getExisteEnBD();
-     this.getZonas();
-     this.getFilterOptions()
-   }else{
-     console.log("no existe el objeto");
+   if(localStorage.getItem('diasOtros')){
+    console.log("existe el objeto");
+
+    this.diasTrabajadosOtros=JSON.parse(localStorage.getItem('diasOtros'));
+
    }
+
+
+
+
    
 
     this.display=false;
@@ -188,11 +186,10 @@ export class DiasTrabajadosComponent implements OnInit {
                this.getFilterOptions();
          
                localStorage.setItem('optionsProcess',JSON.stringify(this.optionProcess));
-               console.log(this.optionProcess);
-               this.persistenceService.set('dias', this.diasTrabajados);
+           
                localStorage.setItem('dias', JSON.stringify(this.diasTrabajados));
-               console.log("el objeto es"+Object.keys(this.persistenceService.get('dias')));
-              // console.log(this.diasTrabajados);
+
+         
               resolve();
  
               
@@ -203,6 +200,12 @@ export class DiasTrabajadosComponent implements OnInit {
     });
    }
 
+   saveData(){
+    console.log("guardando");
+    //localStorage.setItem('optionsProcess',JSON.stringify(this.optionProcess));
+    localStorage.setItem('dias', JSON.stringify(this.diasTrabajados));
+    localStorage.setItem('diasOtros', JSON.stringify(this.diasTrabajadosOtros));
+   }
   
  
 getNoExisteEnBD(){
@@ -364,11 +367,17 @@ return cargoFiltered.filter((elementDiasTrab=>{
    var data=this.diasTrabajadosExiste.map((element)=>{
     
     
+    var montoOtroPago=0;
+    if(this.diasTrabajadosOtros.find(x=>x.RUT==element.RUT)){
+      let otroPago=this.diasTrabajadosOtros.find(x=>x.RUT==element.RUT)
+      montoOtroPago=(otroPago.SUELDO_MONTO-otroPago.DESCUENTO);
+      console.log("pagando a persona que ya tiene pago")
+    }
 
    fichero={  FICHA :element.FICHA,
     VARIABLE:variable,
     MES:fecha,
-   VALOR :element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS};
+   VALOR :element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS+montoOtroPago};
 
  
      return fichero;
@@ -482,6 +491,7 @@ return cargoFiltered.filter((elementDiasTrab=>{
       this.diasTrabajadosOtros.push(nuevaPersona);
       this.displayFormCreate=false;
       this.diasTrabajadosOtrosOne=new DiasTrabajados();
+      this.saveData();
      }else{
       this.showError("Rut no existente o no vigente");
      }
@@ -590,8 +600,9 @@ saveDiasTrabajados(){
               return;
             }
  else{
-   console.log("grabandoo")
+  
   this.diasTrabajadosExiste[this.diasTrabajados.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //cuidado con los filtros existe vs el completo
+  this.saveData();
   this.display=false;
  }
  
@@ -633,7 +644,8 @@ saveDiasTrabajadosOtros(){
             }
  else{
             this.diasTrabajadosOtros[this.diasTrabajadosOtros.indexOf(this.diasTrabajadosOtrosOne)] = this.diasTrabajadosOneSelected
-  this.displayEditForm=false;
+            this.saveData();
+            this.displayEditForm=false;
 
  }
 
