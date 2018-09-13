@@ -16,6 +16,7 @@
     "express": "^4.16.3",
     "express-myconnection": "^1.0.4",
     "json-stringify": "^1.0.0",
+    "moment": "^2.22.2",
     "mssql": "^3.3.0",
     "nodemon": "^1.18.3",
     "npm": "^6.2.0",

@@ -20,6 +20,7 @@ import {ProgressBarModule} from 'primeng/progressbar';
 import {GrowlModule} from 'primeng/growl';
 import { DiasTrabajadosDatalleComponent } from './components/dias-trabajados-datalle/dias-trabajados-datalle.component';
 import {TableModule} from 'primeng/table';
+import {MultiSelectModule} from 'primeng/multiselect';
 
 
 @NgModule ({
@@ -48,7 +49,8 @@ import {TableModule} from 'primeng/table';
     TabMenuModule,
     ProgressBarModule,
     GrowlModule,
-    TableModule
+    TableModule,
+    MultiSelectModule
 
 
 

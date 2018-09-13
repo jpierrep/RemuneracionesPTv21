@@ -14,6 +14,9 @@ import {MenuModule} from 'primeng/menu';
 import {MenuItem} from 'primeng/api';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {GrowlModule} from 'primeng/growl';
+import { log } from 'util';
+import {moment} from 'moment';
+import {MultiSelectModule} from 'primeng/multiselect';
 
 
 @Component({
@@ -42,7 +45,11 @@ export class DiasTrabajadosComponent implements OnInit {
   utils:Utils;
   idPlantilla:String;
   optionSelectedZona:String;
+  optionSelectedMultiZona:any[];
+  optionSelectedCargo:String;
+  optionSelectedMultiCargo:any:[];
   zonas:any[];
+  cargos:any[];
   optionSelectedMes:String; //mes del selector
   optionRequestedMes:String; //mes confirmado para el proceso
   optionMeses:any[];  //arreglo de meses posibles
@@ -69,6 +76,9 @@ export class DiasTrabajadosComponent implements OnInit {
     this.diasTrabajadosOneSelected=new DiasTrabajados();
     this.diasTrabajadosOneDetalle=new DiasTrabajados();
     this.diasTrabajados=[];
+    this.optionSelectedMultiZona=[];
+    this.optionSelectedMultiCargo=[];
+  
  
     
     
@@ -98,6 +108,7 @@ export class DiasTrabajadosComponent implements OnInit {
     this.getNoExisteEnBD();
     this.getExisteEnBD();
     this.getZonas();
+    this.getFilterOptions();
 
    }else{
      console.log("no existe");
@@ -110,6 +121,7 @@ export class DiasTrabajadosComponent implements OnInit {
      this.getNoExisteEnBD();
      this.getExisteEnBD();
      this.getZonas();
+     this.getFilterOptions()
    }else{
      console.log("no existe el objeto");
    }
@@ -158,6 +170,7 @@ export class DiasTrabajadosComponent implements OnInit {
              this.getNoExisteEnBD();
              this.getExisteEnBD();
              this.getZonas();
+             this.getFilterOptions();
             }
       
     )
@@ -172,6 +185,7 @@ export class DiasTrabajadosComponent implements OnInit {
                this.getNoExisteEnBD();
                this.getExisteEnBD();
                this.getZonas();
+               this.getFilterOptions();
          
                localStorage.setItem('optionsProcess',JSON.stringify(this.optionProcess));
                console.log(this.optionProcess);
@@ -230,19 +244,99 @@ this.zonas=zonasJson;
 
 }
 
+getFilterOptions(){
+
+  
+
+  let cenco1=  this.diasTrabajadosExiste.map(value=>{
+     return value.CENCO1_DESC;
+   });
+   let cargo=  this.diasTrabajadosExiste.map(value=>{
+    return value.CARGO_DESC;
+  });
+
+
+  let unique = (value, index, self) => {
+
+    return self.indexOf(value) == index;
+}
+
+let distinctZonas = cenco1.filter(unique);
+let distinctCargos=cargo.filter(unique);
+
+let zonasJson=[];
+let cargosJson=[];
+distinctZonas.map(element => {
+   zonasJson.push({"name":element});
+ });
+ distinctCargos.map(element => {
+  cargosJson.push({"name":element});
+});
+
+this.zonas=zonasJson;
+this.cargos=cargosJson;
+
+
+
+}
+
 
 getFiltered(zona){
-
+  this.getFilteredMultiple();
+  
+  if(zona){
+  // console.log(optionSelectedMultiZona)
+  // console.log(this.optionSelectedMultiCargo)
+   }
   if(zona)
    return this.diasTrabajadosExiste.filter(x=>x.CENCO1_DESC==zona);
   else
   return this.diasTrabajadosExiste;
   }
 
- //selectedDiasTrabajados(diasTrabajados:DiasTrabajados){
- // this.display=true; // cuando se selecciona uno, se mustra el dialog
- //this.diasTrabajadosOne=diasTrabajados;
-// }
+
+    
+  getFilteredMultiple(){
+      
+      //tengo que encontrar el valor buscado en la lista de zonas, cargos etc y con eso hacer el filtro
+ 
+
+    if(this.optionSelectedMultiZona.length>0&&!this.optionSelectedMultiCargo.length>0){
+    
+      //filtro zona sin cargo
+  return this.diasTrabajadosExiste.filter((elementDiasTrab=>{
+  if  (this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC)) return elementDiasTrab;
+ }));
+    
+  } else if (!this.optionSelectedMultiZona.length>0&&this.optionSelectedMultiCargo.length>0){
+  
+    //  filtro cargo sin zona
+return  this.diasTrabajadosExiste.filter((elementDiasTrab=>{
+if  this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC))  return elementDiasTrab;
+}));
+  
+}else if (this.optionSelectedMultiZona.length>0&&this.optionSelectedMultiCargo.length>0){
+ 
+  //filtro cargo y zona
+
+  //lista filtrada con el cargo
+let cargoFiltered= this.diasTrabajadosExiste.filter((elementDiasTrab=>{
+if  this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC)) return elementDiasTrab;
+}));
+
+  //tomando el arreglo filtrado de cargo, se filtra el centro de costo
+return cargoFiltered.filter((elementDiasTrab=>{
+  if  this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC))  return elementDiasTrab;
+ }));
+
+}
+    else{
+     return this.diasTrabajadosExiste;
+    }
+    
+
+    }
+
 
  selectedDetalleTurnos(diasTrabajados:DiasTrabajados){
   this.displayDetalleTurnos=true; // cuando se selecciona uno, se mustra el dialog
@@ -397,6 +491,11 @@ getFiltered(zona){
     
    }
 
+   getFechaFormat(fecha:string):string{
+     console.log(fecha);
+     return moment(fecha).format("DD/MM/YYYY");
+   }
+
    existsPersona(nuevaPersona:DiasTrabajados) {
     return new Promise(resolve=>{ 
      
@@ -447,6 +546,11 @@ this.displayEditForm=true;
 
 }
 editDiasTrabajados(personaEditar:DiasTrabajados){
+  //console.log(moment().format('LLLL'));
+ // console.log(moment().format());
+  //let fecha=new Date(personaEditar.TURNOS[0].DIA);
+  //console.log(fecha)
+  //console.log(moment(fecha).format("DD/MM/YYYY"));
 
    this.diasTrabajadosOne=new DiasTrabajados();
   this.diasTrabajadosOne=personaEditar // la original para saber la posicion

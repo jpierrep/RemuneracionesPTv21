@@ -24,6 +24,7 @@
     "angular5-csv": "^0.2.10",
     "core-js": "^2.5.4",
     "font-awesome": "^4.7.0",
+    "moment": "^2.22.2",
     "npm-upgrade": "^1.4.1",
     "primeicons": "^1.0.0-beta.10",
     "primeng": "^6.1.3",

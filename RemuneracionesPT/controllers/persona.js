@@ -14,6 +14,7 @@ var path=require('path');
 
 var sql = require("mssql");
 var ExcelFilename;
+var moment = require('moment');
 
 // config for your database
 var config = {
@@ -135,7 +136,7 @@ function getAgrupaPers(persAsist){
   let personalTurnos=distinctRut.map(value=>{
 
  let turnos= persAsist.filter(x=>convierteRutID(x.RUT)==value).map(element=>{
-  return {NOMBRE:element.NOMBRE,RUT:element.RUT,TIPO:element.TIPO, DIA:element.DIA,CANTIDAD_HRS:element.CANTIDAD_HRS};
+  return {NOMBRE:element.NOMBRE,RUT:element.RUT,TIPO:element.TIPO, DIA:moment(element.DIA).format("DD/MM/YYYY"),CANTIDAD_HRS:element.CANTIDAD_HRS};
 
  });
   
