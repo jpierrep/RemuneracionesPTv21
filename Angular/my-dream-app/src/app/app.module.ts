@@ -21,6 +21,7 @@ import {GrowlModule} from 'primeng/growl';
 import { DiasTrabajadosDatalleComponent } from './components/dias-trabajados-datalle/dias-trabajados-datalle.component';
 import {TableModule} from 'primeng/table';
 import {MultiSelectModule} from 'primeng/multiselect';
+import { ParametrosPagoComponent } from './components/parametros-pago/parametros-pago.component';
 
 
 @NgModule ({
@@ -28,7 +29,8 @@ import {MultiSelectModule} from 'primeng/multiselect';
     AppComponent,
     CarsListComponent,
     DiasTrabajadosComponent,
-    DiasTrabajadosDatalleComponent
+    DiasTrabajadosDatalleComponent,
+    ParametrosPagoComponent
 
   ],
   imports: [

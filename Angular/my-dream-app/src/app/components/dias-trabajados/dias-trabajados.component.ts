@@ -15,7 +15,6 @@ import {MenuItem} from 'primeng/api';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {GrowlModule} from 'primeng/growl';
 import { log } from 'util';
-import {moment} from 'moment';
 import {MultiSelectModule} from 'primeng/multiselect';
 
 
@@ -40,6 +39,7 @@ export class DiasTrabajadosComponent implements OnInit {
   displayEditForm:boolean;
   displayNewProcess:boolean;
   displayDetalleTurnos:boolean;
+  displayParametros:boolean;
   loadigProcess:boolean;
   personalSoft:Cars[];
   utils:Utils;
@@ -47,7 +47,7 @@ export class DiasTrabajadosComponent implements OnInit {
   optionSelectedZona:String;
   optionSelectedMultiZona:any[];
   optionSelectedCargo:String;
-  optionSelectedMultiCargo:any[];
+  optionSelectedMultiCargo;
   zonas:any[];
   cargos:any[];
   optionSelectedMes:String; //mes del selector
@@ -130,6 +130,7 @@ export class DiasTrabajadosComponent implements OnInit {
     this.displayEditForm=false;
     this.loadigProcess=false;
     this.displayDetalleTurnos=false;
+  
 
     this.items = [
       {label: 'A Pagar', icon: 'fa fa-fw fa-bar-chart',command: () => {this.idPlantilla='1'}},
@@ -304,19 +305,19 @@ getFiltered(zona){
       //tengo que encontrar el valor buscado en la lista de zonas, cargos etc y con eso hacer el filtro
  
 
-    if(this.optionSelectedMultiZona.length>0&&!this.optionSelectedMultiCargo.length>0){
+    if(this.optionSelectedMultiZona.length>0&&!(this.optionSelectedMultiCargo.length>0)){
     
       //filtro zona sin cargo
   return this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
   if  (this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC)) return elementDiasTrab;
  });
     
-  } else if (!this.optionSelectedMultiZona.length>0&&this.optionSelectedMultiCargo.length>0){
+  } else if (!(this.optionSelectedMultiZona.length>0)&&(this.optionSelectedMultiCargo.length>0)){
   
     //  filtro cargo sin zona
 return  this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
 if  (this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC))  return elementDiasTrab;
-}));
+});
   
 }else if (this.optionSelectedMultiZona.length>0&&this.optionSelectedMultiCargo.length>0){
  
@@ -501,10 +502,6 @@ return cargoFiltered.filter((elementDiasTrab)=>{
     
    }
 
-   getFechaFormat(fecha:string):string{
-     console.log(fecha);
-     return moment(fecha).format("DD/MM/YYYY");
-   }
 
    existsPersona(nuevaPersona:DiasTrabajados) {
     return new Promise(resolve=>{ 

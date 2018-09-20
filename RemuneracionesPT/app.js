@@ -7,6 +7,7 @@ var app=express();
   
   //cargar rutas
   var user_routes=require('./routes/persona');
+  var parameter_routes=require('./routes/parametros_pago');
   //var follow_routes=require('./routes/follow');
 
   //middelware metodo que se ejecuta antes de llegar a un controlador
@@ -18,6 +19,7 @@ var app=express();
   //use es un middelware se ejecuta antes de llegar a la accion del controlador en cada peticion que realice 
 
 app.use('/api',user_routes);
+app.use('/api/parameters',parameter_routes);
 //app.use('/api',follow_routes);
 
 

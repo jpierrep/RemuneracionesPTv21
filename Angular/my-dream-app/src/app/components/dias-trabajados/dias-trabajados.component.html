@@ -54,6 +54,8 @@
 <!--<p-button label="Elimina Lista" (onClick)="eliminaDiasTrab($event)"></p-button>-->
 
 <button class="btn btn-primary" (click)="getCSV()"><i class="fa fa-file"></i> Descargar</button>
+<button type="button" pButton  (click)="displayParametros=true" label="Parametros"></button>
+
 <ng-template #thenBlock>
 
 <!--<h3 class="first">Seleccione zona a mostrar</h3>
@@ -148,6 +150,7 @@
           <button type="button" pButton icon="pi pi-check" (click)="displayDetalleTurnos=false" label="Ok"></button>
       </p-footer>
       </p-dialog>
+
 
 
 </ng-template>
@@ -323,3 +326,12 @@
 </p-dialog>
 
  </ng-template>
+
+ <p-dialog header="Parámetros Pago" [(visible)]="displayParametros" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="250" [minY]="70" 
+ [maximizable]="true" [baseZIndex]="10000">
+ 
+
+<p>Parámetros para turnos Partime y variables de sueldo para cálculo del valor de turnos.</p>
+  <app-parametros-pago></app-parametros-pago>
+
+</p-dialog>
