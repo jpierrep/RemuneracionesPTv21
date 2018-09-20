@@ -82,8 +82,9 @@ function home (req,res){
 
 async function generaProcesoSueldoUpdload(req,res){
   
-
-  
+  //obtiene parametros para el pago de sueldo
+ let parametrosPago= await getParametrosPago();
+  console.log(parametrosPago);
   console.log("dentro genera proceso")
 
   let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
@@ -101,9 +102,9 @@ async function generaProcesoSueldoUpdload(req,res){
  
   let persDiff=await getPersonalBD(persAgrupa,persRRHH);   
   //res.status(200).send(persDiff);
-  let persVar=await getVariablesSueldoPers(optionProcess,persDiff);
+  let persVar=await getVariablesSueldoPers(optionProcess,persDiff,parametrosPago);
 
- let persCalcula=await getCalculaSueldo(optionProcess,persVar);  
+ let persCalcula=await getCalculaSueldo(optionProcess,persVar,parametrosPago);  
  
   res.status(200).send(persCalcula);
   
@@ -242,10 +243,19 @@ async function generaProcesoSueldo(req,res){
 
 
 
-function getCalculaSueldo(optionProcess,persDiff){
+function getCalculaSueldo(optionProcess,persDiff,parametrosPago){
   let proceso=optionProcess.proceso.value;
   console.log("proceso es");
   console.log(proceso);
+
+   let turno12=0; 
+   let turno8=0 ;
+   let sueldoBaseVar="";
+   let liquidoPagoVar="";
+   if(parametrosPago.find(x=>x.ID==1).VALOR) turno12=parseInt(parametrosPago.find(x=>x.ID==1).VALOR);  //valor para el turno de 12
+   if(parametrosPago.find(x=>x.ID==2).VALOR) turno8=parseInt(parametrosPago.find(x=>x.ID==2).VALOR);   //valor para el turno de 8
+   if(parametrosPago.find(x=>x.ID==3).VALOR) sueldoBaseVar=parametrosPago.find(x=>x.ID==3).VALOR;  
+   if(parametrosPago.find(x=>x.ID==4).VALOR) liquidoPagoVar=parametrosPago.find(x=>x.ID==4).VALOR; 
   return new Promise(resolve=>{
 
 
@@ -265,11 +275,11 @@ function getCalculaSueldo(optionProcess,persDiff){
           element.TURNOS.forEach((turno)=>{
                      
           if(turno.CANTIDAD_HRS==12){
-            turno.VALOR_TURNO=25000
+            turno.VALOR_TURNO=turno12 //valor del turno de 12 hrs según parámetros
           }else if(turno.CANTIDAD_HRS==8){
-            turno.VALOR_TURNO=19000
+            turno.VALOR_TURNO=turno8 //valor del turno de 8 hrs según parámetros
           }else{
-            turno.VALOR_TURNO=(25000*turno.CANTIDAD_HRS)/12 //Proporcion del turno de 12 horas
+            turno.VALOR_TURNO=(turno12*turno.CANTIDAD_HRS)/12 //Proporcion del turno de 12 horas
           }  
 
           });
@@ -281,8 +291,8 @@ function getCalculaSueldo(optionProcess,persDiff){
            
            let sueldoBase=0;
            let liquidoPago=0;
-           if(element.SUELDO.find(x=>x.VARIABLE_CODI=="P001")) sueldoBase= element.SUELDO.find(x=>x.VARIABLE_CODI=="P001").VARIABLE_MONTO;
-           if( element.SUELDO.find(x=>x.VARIABLE_CODI=="H303")) element.SUELDO.find(x=>x.VARIABLE_CODI=="H303").VARIABLE_MONTO;
+           if(element.SUELDO.find(x=>x.VARIABLE_CODI==sueldoBaseVar)) sueldoBase= element.SUELDO.find(x=>x.VARIABLE_CODI==sueldoBaseVar).VARIABLE_MONTO;  //tomando las variables liquidas y sueldo base de los parametros de la aplicacion
+           if( element.SUELDO.find(x=>x.VARIABLE_CODI==liquidoPagoVar)) element.SUELDO.find(x=>x.VARIABLE_CODI==liquidoPagoVar).VARIABLE_MONTO;
           
            
            console.log( {nombre:element.NOMBRE ,ficha: element.FICHA,base:sueldoBase, liquido: liquidoPago});
@@ -391,7 +401,7 @@ function getCalculaSueldo(optionProcess,persDiff){
 
 } */
 
-function getVariablesSueldoPers(optionsProcess,persDiff){
+function getVariablesSueldoPers(optionsProcess,persDiff,parametrosPago){
    
    let fecha=optionsProcess.fecha.value;
     console.log(fecha);
@@ -400,6 +410,11 @@ function getVariablesSueldoPers(optionsProcess,persDiff){
    console.log("la fecha y año es")
    let fechaquery=año+'-'+mes+'-01'
     console.log(fechaquery);
+    let sueldoBaseVar="";
+    let liquidoPagoVar="";
+    if(parametrosPago.find(x=>x.ID==3).VALOR) sueldoBaseVar=parametrosPago.find(x=>x.ID==3).VALOR;  //valor para el turno de 12
+    if(parametrosPago.find(x=>x.ID==4).VALOR) liquidoPagoVar=parametrosPago.find(x=>x.ID==4).VALOR;   //valor para el turno de 8
+ 
  
    //let proceso=optionsProcess.proceso;
 
@@ -416,7 +431,7 @@ function getVariablesSueldoPers(optionsProcess,persDiff){
     console.log(key);
      if(value.IN_BD=="true"){
      console.log(value.FICHA);
-     let vars=`'H303','P001'`;
+     let vars=`'`+sueldoBaseVar+`','`+liquidoPagoVar+`'`;  
      let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='`+fechaquery+`' and FICHA='`+replaceAll(value.FICHA,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
   
  
@@ -735,6 +750,29 @@ function entrega_resultDB2(queryDB, callback){
             }
           });
 
+        }
+
+      
+      async  function getParametrosPago(){
+          return new Promise(resolve=>{
+          let  query=`SELECT *
+      FROM [Inteligencias].[dbo].[RRHH_PARAM_SUELDO]`
+        
+          entrega_resultDB2(query,null).then(result=>{
+            if (result.length>0){ 
+             console.log(result.length);
+             console.log("hay result");
+           
+             resolve(result);
+               // console.log(value);
+               
+           }else{ console.log("no hay");
+           
+          
+          }
+           
+           });
+          });
         }
 
 

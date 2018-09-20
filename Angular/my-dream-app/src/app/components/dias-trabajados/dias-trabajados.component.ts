@@ -157,7 +157,12 @@ export class DiasTrabajadosComponent implements OnInit {
   
   eliminaDiasTrab(event){
     localStorage.removeItem('dias'); 
+    localStorage.removeItem('optionsProcess'); 
+    localStorage.removeItem('diasOtros');
     this.diasTrabajados=[];
+    this.diasTrabajadosExiste=[];
+    this.diasTrabajadosNoExiste=[];
+    this.diasTrabajadosOtros=[];
   }
     
   getAllDiasTrabajados(){
@@ -189,8 +194,8 @@ export class DiasTrabajadosComponent implements OnInit {
                localStorage.setItem('optionsProcess',JSON.stringify(this.optionProcess));
            
                localStorage.setItem('dias', JSON.stringify(this.diasTrabajados));
-
-         
+              // localStorage.setItem('diasOtros', JSON.stringify(this.diasTrabajadosOtros));
+              this.diasTrabajadosOtros=[];
               resolve();
  
               
@@ -672,9 +677,9 @@ async newProcess(){
   //this.diasTrabajadosOtrosOne=personaEditar // la original para saber la posicion
   //this.diasTrabajadosOneSelected=this.cloneDias(personaEditar);  // la copia para editar y luego reasignar
   this.loadigProcess=true;
-  this.persistenceService.removeAll(); 
   localStorage.removeItem('dias'); 
   localStorage.removeItem('optionsProcess'); 
+  localStorage.removeItem('diasOtros');
  this.optionProcess= {'fecha':this.optionSelectedMes,'proceso':this.optionSelectedProceso};
  await this.FilesgetAllDiasTrabajados();
 this.optionRequestedMes=this.optionSelectedMes;

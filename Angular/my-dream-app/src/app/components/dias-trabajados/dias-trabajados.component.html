@@ -17,7 +17,7 @@
 
 
 <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Nuevo Proceso" (click)="displayNewProcess=true"></button>
-<h1>Asignación de Pago Quincenas </h1>
+<h1> Asignación de Pago Quincenas </h1>
 <h3>{{optionRequestedMes? optionRequestedMes.name : ''}} - {{optionRequestedProceso? optionRequestedProceso.name : ''}}</h3>
 
 
@@ -51,11 +51,11 @@
 <div *ngIf="  idPlantilla=='1'  ; then thenBlock"> </div>
 <div *ngIf="  idPlantilla=='2'  ; then elseBlock"> </div>
 <div *ngIf="  idPlantilla=='3'  ; then nuevosBlock"> </div>
-<!--<p-button label="Elimina Lista" (onClick)="eliminaDiasTrab($event)"></p-button>-->
+<p-button label="Elimina Lista" (onClick)="eliminaDiasTrab($event)"></p-button>
 
-<button class="btn btn-primary" (click)="getCSV()"><i class="fa fa-file"></i> Descargar</button>
+
 <button type="button" pButton  (click)="displayParametros=true" label="Parametros"></button>
-
+<button class="btn btn-primary" (click)="getCSV()"><i class="fa fa-file"></i> Descargar</button>
 <ng-template #thenBlock>
 
 <!--<h3 class="first">Seleccione zona a mostrar</h3>
@@ -327,7 +327,7 @@
 
  </ng-template>
 
- <p-dialog header="Parámetros Pago" [(visible)]="displayParametros" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="250" [minY]="70" 
+ <p-dialog header="Parámetros Pago" [(visible)]="displayParametros" [modal]="modal" [responsive]="true" [width]="800" [minWidth]="600" [minY]="70" 
  [maximizable]="true" [baseZIndex]="10000">
  
 
