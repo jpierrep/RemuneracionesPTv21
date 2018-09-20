@@ -47,7 +47,7 @@ export class DiasTrabajadosComponent implements OnInit {
   optionSelectedZona:String;
   optionSelectedMultiZona:any[];
   optionSelectedCargo:String;
-  optionSelectedMultiCargo:any:[];
+  optionSelectedMultiCargo:any[];
   zonas:any[];
   cargos:any[];
   optionSelectedMes:String; //mes del selector
@@ -307,15 +307,15 @@ getFiltered(zona){
     if(this.optionSelectedMultiZona.length>0&&!this.optionSelectedMultiCargo.length>0){
     
       //filtro zona sin cargo
-  return this.diasTrabajadosExiste.filter((elementDiasTrab=>{
+  return this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
   if  (this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC)) return elementDiasTrab;
- }));
+ });
     
   } else if (!this.optionSelectedMultiZona.length>0&&this.optionSelectedMultiCargo.length>0){
   
     //  filtro cargo sin zona
-return  this.diasTrabajadosExiste.filter((elementDiasTrab=>{
-if  this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC))  return elementDiasTrab;
+return  this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+if  (this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC))  return elementDiasTrab;
 }));
   
 }else if (this.optionSelectedMultiZona.length>0&&this.optionSelectedMultiCargo.length>0){
@@ -323,14 +323,14 @@ if  this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC))  
   //filtro cargo y zona
 
   //lista filtrada con el cargo
-let cargoFiltered= this.diasTrabajadosExiste.filter((elementDiasTrab=>{
-if  this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC)) return elementDiasTrab;
-}));
+let cargoFiltered= this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+if  (this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC)) return elementDiasTrab;
+});
 
   //tomando el arreglo filtrado de cargo, se filtra el centro de costo
-return cargoFiltered.filter((elementDiasTrab=>{
-  if  this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC))  return elementDiasTrab;
- }));
+return cargoFiltered.filter((elementDiasTrab)=>{
+  if  (this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC))  return elementDiasTrab;
+ });
 
 }
     else{
@@ -533,7 +533,9 @@ return cargoFiltered.filter((elementDiasTrab=>{
    deleteDiasTrabajadosOtros(personaEliminar:DiasTrabajados){
      console.log(this.diasTrabajadosOtros.indexOf(personaEliminar)); // funciona
 
-     this.diasTrabajadosOtros=this.diasTrabajadosOtros.filter((e)=>e.RUT !=personaEliminar.RUT)
+     this.diasTrabajadosOtros=this.diasTrabajadosOtros.filter((e)=>e.RUT !=personaEliminar.RUT);
+     this.saveData();
+     
   
      
 /*
@@ -545,6 +547,7 @@ let arrayToRemove={name:"Kristian", lines:"2,5,10"};
 someArray=someArray.filter((e)=>e.name !=arrayToRemove.name && e.lines!= arrayToRemove.lines)
 */   
 }
+
 editDiasTrabajadosOtros(personaEditar:DiasTrabajados){
 
 
@@ -602,6 +605,7 @@ saveDiasTrabajados(){
  else{
   
   this.diasTrabajadosExiste[this.diasTrabajados.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //cuidado con los filtros existe vs el completo
+  this.diasTrabajados[this.diasTrabajados.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //se guarda también en el general 
   this.saveData();
   this.display=false;
  }

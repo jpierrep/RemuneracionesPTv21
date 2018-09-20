@@ -16,12 +16,13 @@ import {TableModule} from 'primeng/table';
 export class DiasTrabajadosDatalleComponent implements OnInit {
 
   @Input() diaTrabajado:DiasTrabajados;
+  displayVariables:boolean;
 
   constructor( private InfoDiasTrabajadosService:InfoDiasTrabajadosService) { }
 
   ngOnInit() {
 
-  
+  this.displayVariables=false;
     
 
   }

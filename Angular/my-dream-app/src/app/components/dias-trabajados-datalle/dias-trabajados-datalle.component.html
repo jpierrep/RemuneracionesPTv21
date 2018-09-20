@@ -1,6 +1,6 @@
-<p>{{diaTrabajado.NOMBRE}} </p>
-
-
+<p>{{diaTrabajado.NOMBRE}} 
+<button type="button" pButton  (click)="displayVariable=true" label="Variables"></button>
+</p>
 
  
 
@@ -21,6 +21,20 @@
 
 
 </p-dataTable>
+
+<p-dialog header="Variables" [(visible)]="displayVariable" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="250" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+        <p>{{diaTrabajado.NOMBRE}} </p>
+
+        <p-dataTable [value]="diaTrabajado.SUELDO">
+
+          <p-column field="VARIABLE_CODI" header="CODIGO"></p-column>
+          <p-column field="VARIABLE_MONTO" header="MONTO"></p-column>
+          
+          
+          </p-dataTable>
+    
+</p-dialog>
 
 
 

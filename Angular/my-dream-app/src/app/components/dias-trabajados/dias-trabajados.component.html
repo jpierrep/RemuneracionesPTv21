@@ -15,7 +15,8 @@
 <p-growl [(value)]="msgs"></p-growl>
 
 
-<p-button label="Nuevo Proceso" (onClick)="displayNewProcess=true"></p-button>
+
+<button type="button" pButton icon="fa fa-plus" iconPos="left" label="Nuevo Proceso" (click)="displayNewProcess=true"></button>
 <h1>Asignación de Pago Quincenas </h1>
 <h3>{{optionRequestedMes? optionRequestedMes.name : ''}} - {{optionRequestedProceso? optionRequestedProceso.name : ''}}</h3>
 
@@ -192,7 +193,7 @@
        <p-column field="RUT" header="RUT"></p-column>
        <p-column field="TIPO" header="TIPO"></p-column>
        <p-column field="CENCO2_DESC" header="INSTALACION"></p-column>
-       <p-column field="SUELDO_MONTO" header="MONTO"></p-column>
+       <p-column field="SUELDO_MONTO" header="MONTO"  [ngClass]="tiene-pago"></p-column>
        <p-column field="DESCUENTO" header="DESCUENTOS"></p-column> 
       
        <p-column styleClass="col-button">
