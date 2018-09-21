@@ -64,6 +64,7 @@
 
     <p-multiSelect [options]="cargos" [(ngModel)]="optionSelectedMultiCargo" [panelStyle]="{minWidth:'12em'}" optionLabel="name" filterPlaceHolder="Buscar cargos" defaultLabel="Seleccione cargos" selectedItemsLabel="{0} items seleccionados" maxSelectedLabels="1"></p-multiSelect>
     <p-multiSelect [options]="zonas" [(ngModel)]="optionSelectedMultiZona" [panelStyle]="{minWidth:'12em'}" optionLabel="name" filterPlaceHolder="Buscar zonas" defaultLabel="Seleccione zonas" selectedItemsLabel="{0} items seleccionados"  maxSelectedLabels="1"></p-multiSelect>
+    <p-multiSelect [options]="personas" [(ngModel)]="optionSelectedMultiPersona" [panelStyle]="{minWidth:'12em'}" optionLabel="name" filterPlaceHolder="Buscar personas" defaultLabel="Seleccione personas" selectedItemsLabel="{0} items seleccionados"  maxSelectedLabels="1"></p-multiSelect>
     <!--<p>Selected Cars: {{optionSelectedMultiZona}}</p> -->
 
 <!--<p-dataTable [value]="getFiltered(optionSelectedZona? optionSelectedZona.name : undefined)" [immutable]=false> -->
@@ -71,7 +72,12 @@
 
   <p-header>
      Personal a Pagar
- 
+     <p>
+      Total Nómina: 
+      {{totalNomina}}    
+      Total Actual: 
+      {{totalActual}} 
+    </p>
 
   </p-header>
   <p-column field="NOMBRE" header="NOMBRE"></p-column>
@@ -93,6 +99,7 @@
        <button type="button" pButton icon="fa fa-eye" class="ui-button-danger" (click)="selectedDetalleTurnos(diaTrab)"></button>
     </ng-template>
   </p-column>
+
 
 </p-dataTable>
 

@@ -48,8 +48,10 @@ export class DiasTrabajadosComponent implements OnInit {
   optionSelectedMultiZona:any[];
   optionSelectedCargo:String;
   optionSelectedMultiCargo;
+  optionSelectedMultiPersona;
   zonas:any[];
   cargos:any[];
+  personas:any[];
   optionSelectedMes:String; //mes del selector
   optionRequestedMes:String; //mes confirmado para el proceso
   optionMeses:any[];  //arreglo de meses posibles
@@ -60,6 +62,8 @@ export class DiasTrabajadosComponent implements OnInit {
   msgs: Message[] = [];
   items: MenuItem[];
   optionProcess;
+  totalNomina;
+  totalActual;
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
@@ -78,6 +82,9 @@ export class DiasTrabajadosComponent implements OnInit {
     this.diasTrabajados=[];
     this.optionSelectedMultiZona=[];
     this.optionSelectedMultiCargo=[];
+    this.optionSelectedMultiPersona=[];
+    this.totalNomina=0;
+    this.totalActual=0;
   
  
     
@@ -141,6 +148,9 @@ export class DiasTrabajadosComponent implements OnInit {
 
   this.optionMeses=[{name:'Agosto', value:'08/2018'},{name:'Septiembre', value:'09/2018'}];
   this.optionProcesos=[{name:'Primera Quincena', value:'1a'},{name:'Segunda Quincena', value:'2a'}];
+  
+  this.calculaTotalNomina();
+  this.totalActual=this.totalNomina;
 
   }
 
@@ -263,6 +273,10 @@ getFilterOptions(){
    let cargo=  this.diasTrabajadosExiste.map(value=>{
     return value.CARGO_DESC;
   });
+  let persona=  this.diasTrabajadosExiste.map(value=>{
+    return value.NOMBRE;
+  });
+
 
 
   let unique = (value, index, self) => {
@@ -272,9 +286,12 @@ getFilterOptions(){
 
 let distinctZonas = cenco1.filter(unique);
 let distinctCargos=cargo.filter(unique);
+let distinctPersonas=persona.filter(unique);
 
 let zonasJson=[];
 let cargosJson=[];
+let personasJson=[];
+
 distinctZonas.map(element => {
    zonasJson.push({"name":element});
  });
@@ -282,10 +299,13 @@ distinctZonas.map(element => {
   cargosJson.push({"name":element});
 });
 
+distinctPersonas.map(element => {
+  personasJson.push({"name":element});
+});
+
 this.zonas=zonasJson;
 this.cargos=cargosJson;
-
-
+this.personas=personasJson;
 
 }
 
@@ -304,8 +324,84 @@ getFiltered(zona){
   }
 
 
-    
+    //Filtro con 3 select dependientes 8 posibilidades distintas
+    //(zcp),(000),(001),(010),(011),(100),(101),(110),(111)
   getFilteredMultiple(){
+      
+      //tengo que encontrar el valor buscado en la lista de zonas, cargos etc y con eso hacer el filtro
+ 
+     //100
+    if(this.optionSelectedMultiZona.length>0&&!(this.optionSelectedMultiCargo.length>0)&&!(this.optionSelectedMultiPersona.length>0)){
+    
+      return this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+        if  (this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC)) return elementDiasTrab;
+      });
+    //010
+  } else if (!(this.optionSelectedMultiZona.length>0)&&(this.optionSelectedMultiCargo.length>0)&&!(this.optionSelectedMultiPersona.length>0)){
+  
+      return  this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+        if  (this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC))  return elementDiasTrab;
+      });
+     //001
+  }else if (!(this.optionSelectedMultiZona.length>0)&&!(this.optionSelectedMultiCargo.length>0)&&(this.optionSelectedMultiPersona.length>0)){
+  
+    return  this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+      if  (this.optionSelectedMultiPersona.find(y=>y.name==elementDiasTrab.NOMBRE))  return elementDiasTrab;
+    });
+   //110
+  } else if (this.optionSelectedMultiZona.length>0&&this.optionSelectedMultiCargo.length>0&&!(this.optionSelectedMultiPersona.length>0) ){
+ 
+    let cargoFiltered= this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+       if  (this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC)) return elementDiasTrab;
+    });
+
+  //tomando el arreglo filtrado de cargo, se filtra el centro de costo
+    return cargoFiltered.filter((elementDiasTrab)=>{
+       if  (this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC))  return elementDiasTrab;
+    });
+    //011
+}else if (!(this.optionSelectedMultiZona.length>0)&&this.optionSelectedMultiCargo.length>0&&this.optionSelectedMultiPersona.length>0){
+ 
+    let cargoFiltered= this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+      if  (this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC)) return elementDiasTrab;
+    });
+
+    return cargoFiltered.filter((elementDiasTrab)=>{
+      if  (this.optionSelectedMultiPersona.find(y=>y.name==elementDiasTrab.NOMBRE))  return elementDiasTrab;
+    });
+   //101
+}else if (this.optionSelectedMultiZona.length>0&&!(this.optionSelectedMultiCargo.length>0)&&this.optionSelectedMultiPersona.length>0){
+ 
+    let zonaFiltered= this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+      if  (this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC)) return elementDiasTrab;
+    });
+
+    return zonaFiltered.filter((elementDiasTrab)=>{
+      if  (this.optionSelectedMultiPersona.find(y=>y.name==elementDiasTrab.NOMBRE))  return elementDiasTrab;
+    });
+    //111
+}else if (this.optionSelectedMultiZona.length>0&&this.optionSelectedMultiCargo.length>0&&this.optionSelectedMultiPersona.length>0){
+ 
+    let zonaFiltered= this.diasTrabajadosExiste.filter((elementDiasTrab)=>{
+      if  (this.optionSelectedMultiZona.find(y=>y.name==elementDiasTrab.CENCO1_DESC)) return elementDiasTrab;
+    });
+    
+    let cargoFiltered= zonaFiltered.filter((elementDiasTrab)=>{
+      if  (this.optionSelectedMultiCargo.find(y=>y.name==elementDiasTrab.CARGO_DESC)) return elementDiasTrab;
+    });
+
+    return cargoFiltered.filter((elementDiasTrab)=>{
+      if  (this.optionSelectedMultiPersona.find(y=>y.name==elementDiasTrab.NOMBRE))  return elementDiasTrab;
+    });
+
+}
+    else{
+     return this.diasTrabajadosExiste;
+    }
+  
+    }
+
+    getFilteredMultiple22(){
       
       //tengo que encontrar el valor buscado en la lista de zonas, cargos etc y con eso hacer el filtro
  
@@ -345,6 +441,7 @@ return cargoFiltered.filter((elementDiasTrab)=>{
     
 
     }
+
 
 
  selectedDetalleTurnos(diasTrabajados:DiasTrabajados){
@@ -498,6 +595,7 @@ return cargoFiltered.filter((elementDiasTrab)=>{
       this.displayFormCreate=false;
       this.diasTrabajadosOtrosOne=new DiasTrabajados();
       this.saveData();
+      this.calculaTotalNomina();
      }else{
       this.showError("Rut no existente o no vigente");
      }
@@ -537,6 +635,7 @@ return cargoFiltered.filter((elementDiasTrab)=>{
 
      this.diasTrabajadosOtros=this.diasTrabajadosOtros.filter((e)=>e.RUT !=personaEliminar.RUT);
      this.saveData();
+     this.calculaTotalNomina();
      
   
      
@@ -609,6 +708,7 @@ saveDiasTrabajados(){
   this.diasTrabajadosExiste[this.diasTrabajados.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //cuidado con los filtros existe vs el completo
   this.diasTrabajados[this.diasTrabajados.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //se guarda también en el general 
   this.saveData();
+  this.calculaTotalNomina();
   this.display=false;
  }
  
@@ -651,6 +751,7 @@ saveDiasTrabajadosOtros(){
  else{
             this.diasTrabajadosOtros[this.diasTrabajadosOtros.indexOf(this.diasTrabajadosOtrosOne)] = this.diasTrabajadosOneSelected
             this.saveData();
+            this.calculaTotalNomina();
             this.displayEditForm=false;
 
  }
@@ -686,8 +787,21 @@ this.optionRequestedMes=this.optionSelectedMes;
 this.optionRequestedProceso=this.optionSelectedProceso;
  this.loadigProcess=false;
    this.displayNewProcess=false;
+   this.calculaTotalNomina();
 
 
+}
+
+calculaTotalNomina(){
+  this.totalNomina=0;
+  this.diasTrabajadosExiste.forEach((element)=>{
+   this.totalNomina=this.totalNomina+(element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS)
+
+  });
+  this.diasTrabajadosOtros.forEach((element)=>{
+    this.totalNomina=this.totalNomina+(element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS)
+ 
+   });
 }
 
 
