@@ -30,6 +30,7 @@ export class DiasTrabajadosComponent implements OnInit {
   diasTrabajadosNoExiste:DiasTrabajados[];
   diasTrabajadosExiste:DiasTrabajados[];
   diasTrabajadosOtros:DiasTrabajados[];
+  diasTrabajadosFilter:DiasTrabajados[];
   diasTrabajadosOne:DiasTrabajados;
   diasTrabajadosOneSelected:DiasTrabajados;
   diasTrabajadosOtrosOne:DiasTrabajados;
@@ -63,7 +64,7 @@ export class DiasTrabajadosComponent implements OnInit {
   items: MenuItem[];
   optionProcess;
   totalNomina;
-  totalActual;
+  totalNominaActual;
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
@@ -84,7 +85,7 @@ export class DiasTrabajadosComponent implements OnInit {
     this.optionSelectedMultiCargo=[];
     this.optionSelectedMultiPersona=[];
     this.totalNomina=0;
-    this.totalActual=0;
+    this.totalNominaActual=0;
   
  
     
@@ -149,12 +150,16 @@ export class DiasTrabajadosComponent implements OnInit {
   this.optionMeses=[{name:'Agosto', value:'08/2018'},{name:'Septiembre', value:'09/2018'}];
   this.optionProcesos=[{name:'Primera Quincena', value:'1a'},{name:'Segunda Quincena', value:'2a'}];
   
-  this.calculaTotalNomina();
-  this.totalActual=this.totalNomina;
+  this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
+  this.totalNominaActual=this.totalNomina;
+  this.diasTrabajadosFilter=this.diasTrabajadosExiste;
 
   }
 
   evento(event) {
+    //eliminamos los archivos anteriores
+    this.uploadedFiles=[];
+
     console.log("on Uploaded");
     console.log(event);
     for(let file of event.files) {
@@ -324,9 +329,21 @@ getFiltered(zona){
   }
 
 
-    //Filtro con 3 select dependientes 8 posibilidades distintas
+  getDataFilteredMultiple(){ //controlador del filtro de la tabla para calcular el total parcial
+
+
+  this.diasTrabajadosFilter=this.getFilteredMultiple();
+  this.totalNominaActual=this.calculaNomina(this.diasTrabajadosFilter);
+  
+  return  this.diasTrabajadosFilter
+
+  }
+
+    
+    //filtro usado por el controlador getDataFilteredMultiple
+  //Filtro con 3 select dependientes 8 posibilidades distintas
     //(zcp),(000),(001),(010),(011),(100),(101),(110),(111)
-  getFilteredMultiple(){
+  getFilteredMultiple():DiasTrabajados[]{   
       
       //tengo que encontrar el valor buscado en la lista de zonas, cargos etc y con eso hacer el filtro
  
@@ -595,7 +612,7 @@ return cargoFiltered.filter((elementDiasTrab)=>{
       this.displayFormCreate=false;
       this.diasTrabajadosOtrosOne=new DiasTrabajados();
       this.saveData();
-      this.calculaTotalNomina();
+      this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
      }else{
       this.showError("Rut no existente o no vigente");
      }
@@ -635,7 +652,7 @@ return cargoFiltered.filter((elementDiasTrab)=>{
 
      this.diasTrabajadosOtros=this.diasTrabajadosOtros.filter((e)=>e.RUT !=personaEliminar.RUT);
      this.saveData();
-     this.calculaTotalNomina();
+     this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
      
   
      
@@ -704,11 +721,11 @@ saveDiasTrabajados(){
               return;
             }
  else{
-  
-  this.diasTrabajadosExiste[this.diasTrabajados.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //cuidado con los filtros existe vs el completo
+  ////////////
+  this.diasTrabajadosExiste[this.diasTrabajadosExiste.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //cuidado con los filtros existe vs el completo
   this.diasTrabajados[this.diasTrabajados.indexOf(this.diasTrabajadosOne)] = this.diasTrabajadosOneSelected //se guarda también en el general 
   this.saveData();
-  this.calculaTotalNomina();
+  this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
   this.display=false;
  }
  
@@ -751,7 +768,7 @@ saveDiasTrabajadosOtros(){
  else{
             this.diasTrabajadosOtros[this.diasTrabajadosOtros.indexOf(this.diasTrabajadosOtrosOne)] = this.diasTrabajadosOneSelected
             this.saveData();
-            this.calculaTotalNomina();
+            this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
             this.displayEditForm=false;
 
  }
@@ -785,23 +802,45 @@ async newProcess(){
  await this.FilesgetAllDiasTrabajados();
 this.optionRequestedMes=this.optionSelectedMes;
 this.optionRequestedProceso=this.optionSelectedProceso;
+
+this.optionSelectedMes=null;
+this.optionSelectedProceso =null;
  this.loadigProcess=false;
    this.displayNewProcess=false;
-   this.calculaTotalNomina();
+   this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
 
 
 }
 
-calculaTotalNomina(){
-  this.totalNomina=0;
-  this.diasTrabajadosExiste.forEach((element)=>{
-   this.totalNomina=this.totalNomina+(element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS)
+calculaNomina(diasTrabajados){
+ let totalNomina=0;
+ if(diasTrabajados){
+  diasTrabajados.forEach((element)=>{
+   totalNomina=totalNomina+(element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS)
 
   });
-  this.diasTrabajadosOtros.forEach((element)=>{
-    this.totalNomina=this.totalNomina+(element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS)
- 
+}
+   return totalNomina;
+}
+
+saveEditaTurnos(){
+  this.displayDetalleTurnos=false;
+  this.diasTrabajadosOneDetalle.SUELDO_MONTO= this.recalculaMontoTurnos(this.diasTrabajadosOneDetalle);
+  this.saveData();
+  this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
+
+}
+
+recalculaMontoTurnos(diasTrabajadosPersona:DiasTrabajados):number{
+     let nuevoMonto:number=0;
+   diasTrabajadosPersona.TURNOS.forEach(element => {
+     console.log(element.VALOR_TURNO*1);
+     //le ponemos parentesis pues no funcionaba bien concatenaba mas que sumar
+        nuevoMonto=(nuevoMonto*1) + (element.VALOR_TURNO*1);
+        
    });
+   return nuevoMonto;
+
 }
 
 

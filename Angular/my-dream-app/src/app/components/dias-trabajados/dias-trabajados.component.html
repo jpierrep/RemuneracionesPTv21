@@ -68,7 +68,7 @@
     <!--<p>Selected Cars: {{optionSelectedMultiZona}}</p> -->
 
 <!--<p-dataTable [value]="getFiltered(optionSelectedZona? optionSelectedZona.name : undefined)" [immutable]=false> -->
-  <p-dataTable [value]="getFilteredMultiple()" [immutable]=false> 
+  <p-dataTable [value]="getDataFilteredMultiple()" [immutable]=false> 
 
   <p-header>
      Personal a Pagar
@@ -76,7 +76,7 @@
       Total Nómina: 
       {{totalNomina}}    
       Total Actual: 
-      {{totalActual}} 
+      {{totalNominaActual}} 
     </p>
 
   </p-header>
@@ -152,9 +152,9 @@
 
 <p-dialog header="Detalle de Turnos" [(visible)]="displayDetalleTurnos" [modal]="modal" [responsive]="true" [width]="550" [minWidth]="200" [minY]="200" 
         [maximizable]="true" [baseZIndex]="10000">
-        <app-dias-trabajados-datalle [diaTrabajado]="diasTrabajadosOneDetalle"></app-dias-trabajados-datalle>
+        <app-dias-trabajados-datalle [diaTrabajado]="diasTrabajadosOneDetalle" [diasTrabajados]="diasTrabajados" [diasTrabajadosExiste]="diasTrabajadosExiste"></app-dias-trabajados-datalle>
         <p-footer>
-          <button type="button" pButton icon="pi pi-check" (click)="displayDetalleTurnos=false" label="Ok"></button>
+          <button type="button" pButton icon="pi pi-check" (click)="saveEditaTurnos()" label="Ok"></button>
       </p-footer>
       </p-dialog>
 

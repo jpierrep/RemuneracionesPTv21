@@ -185,11 +185,13 @@ function TESTgetPersonalAsist (){
 }
 
 function getPersonalSoft(){
+
+  //extrae la info del mes actual, pues no se puede pagar en relacion a meses pasados
   let  query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[VIEW_SOFT_PERSONAL_ULTIMO_MES] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'`
   
-   query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[RRHH_PERSONAL_SOFT] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
-   on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'and FECHA_SOFT='2018-08-01'` 
+   //query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[RRHH_PERSONAL_SOFT] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
+   //on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'and FECHA_SOFT='2018-08-01'` 
 return new Promise(resolve=>{
   entrega_resultDB(query,(result)=>{
     

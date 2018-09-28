@@ -4,7 +4,7 @@
 
  
 
-<p-dataTable [value]="diaTrabajado.TURNOS">
+<p-dataTable [value]="diaTrabajado.TURNOS"  [immutable]=false>
 <!--<p-header>
    Personal a Pagar
     <div class="ui-helper-clearfix">
@@ -18,15 +18,20 @@
 <p-column field="CANTIDAD_HRS" header="CANT HRS"></p-column>
 <p-column field="VALOR_TURNO" header="VALOR TURNO"></p-column>
 <p-column field="DIA" header="DIA"></p-column>
+<p-column styleClass="col-button">
+    <ng-template let-diaTrab="rowData" pTemplate="body">
+       <button type="button" pButton icon="fa fa-edit" (click)="editTurnos(diaTrab)"></button>
+    </ng-template>
+  </p-column>
 
 
 </p-dataTable>
 
 <p-dialog header="Variables" [(visible)]="displayVariable" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="250" [minY]="70" 
-        [maximizable]="true" [baseZIndex]="10000">
-        <p>{{diaTrabajado.NOMBRE}} </p>
+        [maximizable]="true" [baseZIndex]="10000" > 
+        <p>{{diasTrabajadosOneSelected.NOMBRE}} </p>
 
-        <p-dataTable [value]="diaTrabajado.SUELDO">
+        <p-dataTable [value]="turnoOneSelected.SUELDO" [immutable]=false>
 
           <p-column field="VARIABLE_CODI" header="CODIGO"></p-column>
           <p-column field="VARIABLE_MONTO" header="MONTO"></p-column>
@@ -34,6 +39,54 @@
           
           </p-dataTable>
     
+</p-dialog>
+
+<p-dialog header="Edita Pago" [(visible)]="display" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+        <p>{{diasTrabajadosOneSelected.NOMBRE}} </p>
+      
+        <form>
+          <div class="form-group">
+
+            <div class="ui-inputgroup">
+
+                     
+                <span class="ui-float-label">
+               
+               
+                  <input id="rut" type="text" size="30" pInputText [(ngModel)]="turnoOneSelected.RUT" name="rut" disabled="true"> 
+                    <label for="rut">RUT</label>
+               
+                  </span>
+                </div>
+                <div class="ui-inputgroup">
+                  <span class="ui-float-label">
+               
+               
+                      <input id="monto" type="text" size="30" pInputText [(ngModel)]="turnoOneSelected.VALOR_TURNO" name="monto"> 
+                        <label for="monto">MONTO</label>
+                   
+                      </span>
+                    </div>
+
+
+                                              
+                    <div class="ui-inputgroup">
+
+                        <span class="ui-float-label">
+                         <!--   <button type="button" pButton (click)="showError()" label="Error" class="ui-button-danger"></button> -->
+                            <p-messages [(value)]="msgs"></p-messages>
+                       
+                          </span>
+        
+                    </div>
+
+          </div>
+        </form>
+        <p-footer>
+            <button type="button" pButton icon="pi pi-check" (click)="saveTurnos()" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
 </p-dialog>
 
 
