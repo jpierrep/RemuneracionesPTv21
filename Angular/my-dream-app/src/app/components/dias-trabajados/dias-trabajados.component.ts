@@ -826,6 +826,7 @@ calculaNomina(diasTrabajados){
 saveEditaTurnos(){
   this.displayDetalleTurnos=false;
   this.diasTrabajadosOneDetalle.SUELDO_MONTO= this.recalculaMontoTurnos(this.diasTrabajadosOneDetalle);
+  this.diasTrabajadosOneDetalle.CANT_TURNOS=this.recalculaCantTurnos(this.diasTrabajadosOneDetalle);
   this.saveData();
   this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
 
@@ -840,6 +841,18 @@ recalculaMontoTurnos(diasTrabajadosPersona:DiasTrabajados):number{
         
    });
    return nuevoMonto;
+
+}
+
+recalculaCantTurnos(diasTrabajadosPersona:DiasTrabajados):number{
+  let nuevoMonto:number=0;
+diasTrabajadosPersona.TURNOS.forEach(element => {
+  
+  //le ponemos parentesis pues no funcionaba bien concatenaba mas que sumar
+     nuevoMonto=(nuevoMonto*1) + 1;
+     
+});
+return nuevoMonto;
 
 }
 

@@ -25,6 +25,7 @@ export class DiasTrabajadosDatalleComponent implements OnInit {
   diasTrabajadosOneSelected:DiasTrabajados;
   turnoOne:Turno;
   turnoOneSelected:Turno;
+  displayFormCreate: boolean;
  
 
   constructor( private InfoDiasTrabajadosService:InfoDiasTrabajadosService) { }
@@ -47,6 +48,11 @@ export class DiasTrabajadosDatalleComponent implements OnInit {
     this.turnoOne=turnoEditar // la original para saber la posicion
     this.turnoOneSelected=this.cloneTurno(turnoEditar);  // la copia para editar y luego reasignar
   this.display=true;
+  
+  }
+
+  deleteTurnos(turnoEditar:Turno){
+    this.diaTrabajado.TURNOS=this.diaTrabajado.TURNOS.filter((e)=>e!=turnoEditar); 
   
   }
 
@@ -83,5 +89,16 @@ export class DiasTrabajadosDatalleComponent implements OnInit {
    //}
    
   }
+
+  creaTurnoForm(){
+    this.displayFormCreate=true; // cuando se selecciona uno, se mustra el dialog
+     this.turnoOne=new Turno();
+   }
+
+   creaTurno(turnoCrear:Turno){
+     console.log(turnoCrear);
+   this.diaTrabajado.TURNOS.push(turnoCrear);
+   this.displayFormCreate=false;
+   }
 
 }
