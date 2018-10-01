@@ -610,10 +610,13 @@ return cargoFiltered.filter((elementDiasTrab)=>{
        nuevaPersona.CENCO2_DESC=existe[0].CENCO2_DESC;
        nuevaPersona.TURNOS=[];
        nuevaPersona.OTROS_DESCUENTOS=0;
+       //importante setear que existe en base de datos
+       nuevaPersona.IN_BD="true"
        //si es nueva persona existe
        if(this.isPersonaExiste){
 
        this.diasTrabajadosExiste.push(nuevaPersona);
+       this.diasTrabajados.push(nuevaPersona);
        }else{
          //si pertenece a otros
         this.diasTrabajadosOtros.push(nuevaPersona);

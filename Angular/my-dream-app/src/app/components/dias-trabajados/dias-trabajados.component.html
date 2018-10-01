@@ -43,7 +43,13 @@
 
 
 
-<p-tabMenu [model]="items"></p-tabMenu>
+    <p-tabMenu [model]="items"></p-tabMenu>
+
+ 
+   
+
+     
+
 
 
 
@@ -51,11 +57,17 @@
 <div *ngIf="  idPlantilla=='1'  ; then thenBlock"> </div>
 <div *ngIf="  idPlantilla=='2'  ; then elseBlock"> </div>
 <div *ngIf="  idPlantilla=='3'  ; then nuevosBlock"> </div>
+
+
 <p-button label="Elimina Lista" (onClick)="eliminaDiasTrab($event)"></p-button>
 
 
 <button type="button" pButton  (click)="displayParametros=true" label="Parametros"></button>
 <button class="btn btn-primary" (click)="getCSV()"><i class="fa fa-file"></i> Descargar</button>
+
+
+
+
 <ng-template #thenBlock>
 
 <!--<h3 class="first">Seleccione zona a mostrar</h3>
@@ -302,7 +314,7 @@
 
 </p-dialog>
 
-<p-dialog header="Añade Otros Pagos" [(visible)]="displayFormCreate" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+<p-dialog header="Añade Pagos" [(visible)]="displayFormCreate" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
               [maximizable]="true" [baseZIndex]="10000">
       
               <form>
