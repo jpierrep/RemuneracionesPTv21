@@ -72,13 +72,18 @@
 
   <p-header>
      Personal a Pagar
+     
      <p>
       Total Nómina: 
       {{totalNomina}}    
       Total Actual: 
       {{totalNominaActual}} 
     </p>
-
+    <div class="ui-helper-clearfix">
+             
+      <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Nuevo"  (click)="creaDiasTrabajadosExiste()"
+       style="float:right"></button>
+  </div>
   </p-header>
   <p-column field="NOMBRE" header="NOMBRE"></p-column>
  <p-column field="RUT" header="RUT"></p-column>
@@ -97,6 +102,12 @@
  <p-column styleClass="col-button">
     <ng-template let-diaTrab="rowData" pTemplate="body">
        <button type="button" pButton icon="fa fa-eye" class="ui-button-danger" (click)="selectedDetalleTurnos(diaTrab)"></button>
+    </ng-template>
+  </p-column>
+
+  <p-column styleClass="col-button">
+    <ng-template let-diaTrab="rowData" pTemplate="body">
+       <button type="button" pButton icon="fa fa-trash" class="ui-button-danger"  (click)="deleteDiasTrabajados(diaTrab,true)"></button>
     </ng-template>
   </p-column>
 
@@ -194,7 +205,7 @@
           Personal Pagos Pendientes
             <div class="ui-helper-clearfix">
              
-                <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Nuevo"  (click)="creaDiasTrabajados()"
+                <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Nuevo"  (click)="creaDiasTrabajadosOtros()"
                  style="float:right"></button>
             </div>
       
@@ -214,7 +225,7 @@
 
        <p-column styleClass="col-button">
           <ng-template let-diaTrab="rowData" pTemplate="body">
-             <button type="button" pButton icon="fa fa-trash" class="ui-button-danger"  (click)="deleteDiasTrabajadosOtros(diaTrab)"></button>
+             <button type="button" pButton icon="fa fa-trash" class="ui-button-danger"  (click)="deleteDiasTrabajados(diaTrab,false)"></button>
           </ng-template>
         </p-column>
        
@@ -223,59 +234,7 @@
       </p-dataTable>
       
  
-      <p-dialog header="Añade Otros Pagos" [(visible)]="displayFormCreate" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
-              [maximizable]="true" [baseZIndex]="10000">
       
-              <form>
-                <div class="form-group">
-                    <div class="ui-inputgroup">
-
-                     
-                        <span class="ui-float-label">
-                       
-                       
-                          <input id="rut" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.RUT" name="rut"> 
-                            <label for="rut">Rut</label>
-                       
-                          </span>
-                        </div>
-                        <div class="ui-inputgroup">
-                          <span class="ui-float-label">
-                       
-                       
-                              <input id="monto" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.SUELDO_MONTO" name="monto"> 
-                                <label for="monto">Monto</label>
-                           
-                              </span>
-                            </div>
-
-                            <div class="ui-inputgroup">
-                                <span class="ui-float-label">
-                             
-                             
-                                    <input id="descuento" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.DESCUENTO" name="descuento"> 
-                                      <label for="descuento">Descuentos</label>
-                                 
-                                    </span>
-                                  </div>
-                    
-                    <div class="ui-inputgroup">
-
-                        <span class="ui-float-label">
-                         <!--   <button type="button" pButton (click)="showError()" label="Error" class="ui-button-danger"></button> -->
-                            <p-messages [(value)]="msgs"></p-messages>
-                       
-                          </span>
-        
-                    </div>
-      
-                </div>
-              </form>
-              <p-footer>
-                  <button type="button" pButton icon="pi pi-check" (click)="creaPersonalOtros(diasTrabajadosOtrosOne)" label="Yes"></button>
-                  <button type="button" pButton icon="pi pi-close" (click)="displayFormCreate=false" label="No" class="ui-button-secondary"></button>
-              </p-footer>
-      </p-dialog>
 
       <p-dialog header="Edita Personal" [(visible)]="displayEditForm" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
         [maximizable]="true" [baseZIndex]="10000">
@@ -342,3 +301,57 @@
   <app-parametros-pago></app-parametros-pago>
 
 </p-dialog>
+
+<p-dialog header="Añade Otros Pagos" [(visible)]="displayFormCreate" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+              [maximizable]="true" [baseZIndex]="10000">
+      
+              <form>
+                <div class="form-group">
+                    <div class="ui-inputgroup">
+
+                     
+                        <span class="ui-float-label">
+                       
+                       
+                          <input id="rut" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.RUT" name="rut"> 
+                            <label for="rut">Rut</label>
+                       
+                          </span>
+                        </div>
+                        <div class="ui-inputgroup">
+                          <span class="ui-float-label">
+                       
+                       
+                              <input id="monto" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.SUELDO_MONTO" name="monto"> 
+                                <label for="monto">Monto</label>
+                           
+                              </span>
+                            </div>
+
+                            <div class="ui-inputgroup">
+                                <span class="ui-float-label">
+                             
+                             
+                                    <input id="descuento" type="text" size="30" pInputText [(ngModel)]="diasTrabajadosOtrosOne.DESCUENTO" name="descuento"> 
+                                      <label for="descuento">Descuentos</label>
+                                 
+                                    </span>
+                                  </div>
+                    
+                    <div class="ui-inputgroup">
+
+                        <span class="ui-float-label">
+                         <!--   <button type="button" pButton (click)="showError()" label="Error" class="ui-button-danger"></button> -->
+                            <p-messages [(value)]="msgs"></p-messages>
+                       
+                          </span>
+        
+                    </div>
+      
+                </div>
+              </form>
+              <p-footer>
+                  <button type="button" pButton icon="pi pi-check" (click)="creaPersonalOtros(diasTrabajadosOtrosOne)" label="Yes"></button>
+                  <button type="button" pButton icon="pi pi-close" (click)="displayFormCreate=false" label="No" class="ui-button-secondary"></button>
+              </p-footer>
+      </p-dialog>

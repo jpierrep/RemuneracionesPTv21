@@ -65,6 +65,7 @@ export class DiasTrabajadosComponent implements OnInit {
   optionProcess;
   totalNomina;
   totalNominaActual;
+  isPersonaExiste:boolean;
 
   constructor(
     private InfoDiasTrabajadosService:InfoDiasTrabajadosService,private InfoPersonalSoftService:CarsInfoService
@@ -212,8 +213,6 @@ export class DiasTrabajadosComponent implements OnInit {
               // localStorage.setItem('diasOtros', JSON.stringify(this.diasTrabajadosOtros));
               this.diasTrabajadosOtros=[];
               resolve();
- 
-              
  
              }
        
@@ -562,9 +561,9 @@ return cargoFiltered.filter((elementDiasTrab)=>{
 }
 
 
-   creaPersonalOtros(nuevaPersona:DiasTrabajados){
+   creaPersonalOtros(nuevaExiste){
 
-
+   let nuevaPersona=this.diasTrabajadosOtrosOne;
      //valida que la persona exista
    // if(parseFloat(nuevaPersona.RUT).toString() === nuevaPersona.RUT.toString()){
     this.existsPersona(nuevaPersona).then((existe)=>{
@@ -601,14 +600,24 @@ return cargoFiltered.filter((elementDiasTrab)=>{
        this.showError("Descuentos deben ser menores que monto");
        return;
      }
-
+    
        nuevaPersona.NOMBRE=existe[0].NOMBRES;
        nuevaPersona.RUT=existe[0].RUT;
        nuevaPersona.TIPO=existe[0].CARGO_DESC;
+       nuevaPersona.CARGO_DESC=existe[0].CARGO_DESC;
        nuevaPersona.RUT=existe[0].RUT;
        nuevaPersona.RUT_ID=existe[0].RUT_ID;
        nuevaPersona.CENCO2_DESC=existe[0].CENCO2_DESC;
-      this.diasTrabajadosOtros.push(nuevaPersona);
+       nuevaPersona.TURNOS=[];
+       nuevaPersona.OTROS_DESCUENTOS=0;
+       //si es nueva persona existe
+       if(this.isPersonaExiste){
+
+       this.diasTrabajadosExiste.push(nuevaPersona);
+       }else{
+         //si pertenece a otros
+        this.diasTrabajadosOtros.push(nuevaPersona);
+       }
       this.displayFormCreate=false;
       this.diasTrabajadosOtrosOne=new DiasTrabajados();
       this.saveData();
@@ -642,15 +651,29 @@ return cargoFiltered.filter((elementDiasTrab)=>{
   }
 
 
-   creaDiasTrabajados(){
+   creaDiasTrabajadosExiste(){
     this.displayFormCreate=true; // cuando se selecciona uno, se mustra el dialog
      this.diasTrabajadosOtrosOne=new DiasTrabajados();
+     this.isPersonaExiste=true;
+   }
+   creaDiasTrabajadosOtros(){
+    this.displayFormCreate=true; // cuando se selecciona uno, se mustra el dialog
+     this.diasTrabajadosOtrosOne=new DiasTrabajados();
+     this.isPersonaExiste=false;
    }
    
-   deleteDiasTrabajadosOtros(personaEliminar:DiasTrabajados){
+   deleteDiasTrabajados(personaEliminar:DiasTrabajados,isPersonaExiste){
      console.log(this.diasTrabajadosOtros.indexOf(personaEliminar)); // funciona
-
+     //Si es del listado existe o del listado otros pagos respectivamente
+     console.log(isPersonaExiste);
+     if(isPersonaExiste){
+       console.log(personaEliminar.RUT);
+       console.log(this.diasTrabajados.filter((e)=>e.RUT !=personaEliminar.RUT))
+      this.diasTrabajados=this.diasTrabajados.filter((e)=>e.RUT !=personaEliminar.RUT);
+      this.diasTrabajadosExiste=this.diasTrabajadosExiste.filter((e)=>e.RUT !=personaEliminar.RUT);
+     }else{
      this.diasTrabajadosOtros=this.diasTrabajadosOtros.filter((e)=>e.RUT !=personaEliminar.RUT);
+     }
      this.saveData();
      this.totalNomina=this.calculaNomina(this.diasTrabajadosExiste)+this.calculaNomina(this.diasTrabajadosOtros);
      
