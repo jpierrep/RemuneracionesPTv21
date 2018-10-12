@@ -17,7 +17,7 @@
 
 
 <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Nuevo Proceso" (click)="displayNewProcess=true"></button>
-<h1> Asignación de Pago Quincenas </h1>
+<h1 class= "h1-strong"> Asignación de Pago Quincenas </h1>
 <h3>{{optionRequestedMes? optionRequestedMes.name : ''}} - {{optionRequestedProceso? optionRequestedProceso.name : ''}}</h3>
 
 
@@ -43,14 +43,31 @@
 
 
 
-    <p-tabMenu [model]="items"></p-tabMenu>
+
 
  
    
 
      
+    <div class="p-grid">
+      <div class="p-col-12 p-md-6 p-lg-6">
+          <div class="box">   
+             <p-tabMenu [model]="items"></p-tabMenu>
+          </div>
+      </div>
+      <div class="p-col-12 p-md-6 p-lg-3">
+          <div class="box"> </div>
+      </div>
+      <div class="p-col-12 p-md-6 p-lg-3">
+          <div class="box">
 
+              <p-button  icon="fa fa-trash" class="ui-button-secondary" (onClick)="eliminaDiasTrab($event)"></p-button>
+              <button type="button" pButton icon="fa fa-info-circle" class="ui-button-secondary" (click)="displayParametros=true" ></button>
+              <button   type="button" pButton icon="fa fa-download" class="ui-button-secondary" iconPos="left"  (click)="getCSV()"></button>
 
+            </div>
+      </div>
+  </div>
 
 
 <!--<div *ngIf="  idPlantilla=='1' ; then thenBlock else elseBlock"></div> -->
@@ -59,11 +76,7 @@
 <div *ngIf="  idPlantilla=='3'  ; then nuevosBlock"> </div>
 
 
-<p-button label="Elimina Lista" (onClick)="eliminaDiasTrab($event)"></p-button>
 
-
-<button type="button" pButton  (click)="displayParametros=true" label="Parametros"></button>
-<button class="btn btn-primary" (click)="getCSV()"><i class="fa fa-file"></i> Descargar</button>
 
 
 
@@ -113,7 +126,7 @@
 
  <p-column styleClass="col-button">
     <ng-template let-diaTrab="rowData" pTemplate="body">
-       <button type="button" pButton icon="fa fa-eye" class="ui-button-danger" (click)="selectedDetalleTurnos(diaTrab)"></button>
+       <button type="button" pButton icon="fa fa-eye" class="ui-button-success" (click)="selectedDetalleTurnos(diaTrab)"></button>
     </ng-template>
   </p-column>
 
