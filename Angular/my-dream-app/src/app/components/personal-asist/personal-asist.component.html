@@ -1,0 +1,25 @@
+<p>
+  personal-asist works!
+</p>
+<p-table [value]="resumenTurnos">
+  <ng-template pTemplate="header">
+      <tr>
+          <th>idPersona</th>
+          <th>CantidadTurnos</th>
+          <th>Nombre</th>
+          <th>Rut</th>
+          <th>Instalacion</th>
+
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-resumenTurnos>
+      <tr>
+          <td>{{resumenTurnos.IdPersonal}}</td>
+          <td>{{resumenTurnos.CantidadTurnos}}</td>
+          <td>{{resumenTurnos.PERSONAL.PersonalNombre}}</td>
+          <td>{{resumenTurnos.PERSONAL.PersonalRut}}</td>
+          <td>{{resumenTurnos.PERSONAL.CentroCostoDesc}}</td>
+
+      </tr>
+  </ng-template>
+</p-table>

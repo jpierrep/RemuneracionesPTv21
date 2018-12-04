@@ -22,6 +22,7 @@ import { DiasTrabajadosDatalleComponent } from './components/dias-trabajados-dat
 import {TableModule} from 'primeng/table';
 import {MultiSelectModule} from 'primeng/multiselect';
 import { ParametrosPagoComponent } from './components/parametros-pago/parametros-pago.component';
+import { PersonalAsistComponent } from './components/personal-asist/personal-asist.component';
 
 
 @NgModule ({
@@ -30,7 +31,8 @@ import { ParametrosPagoComponent } from './components/parametros-pago/parametros
     CarsListComponent,
     DiasTrabajadosComponent,
     DiasTrabajadosDatalleComponent,
-    ParametrosPagoComponent
+    ParametrosPagoComponent,
+    PersonalAsistComponent
 
   ],
   imports: [

@@ -616,6 +616,9 @@ function getVariablesSueldo(ficha,mes,vars,callback){
     rut=replaceAll(rut,".","");
     rut=replaceAll(rut,"-","");
     // rut1=rut.replace(".","");
+    if (isNaN(parseFloat(rut)) && !isFinite(rut))
+      rut=0;
+    
   
    console.log("el rut es:"+rut);
    return rut;
@@ -779,7 +782,7 @@ function entrega_resultDB2(queryDB, callback){
 
 
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne}
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID}
 
    
      
