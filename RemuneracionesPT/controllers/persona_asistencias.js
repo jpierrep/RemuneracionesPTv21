@@ -136,6 +136,9 @@ function getPersonalAsist(){
 
 
 
+
+
+
   
   function getTurnosAsistencias2(req,res){
 
@@ -306,9 +309,63 @@ Turnos2.dbo.CALENDARIO AS CALEND ON Planilla.CALENDARIO = CALEND.ID_CAL LEFT OUT
   
   
   }
+
+
+   
+  function getTurnosPersona(req,res){
+
+    //extrae los turnos realizados por una persona durante un año
+  let  query=`select  
+  [ID_ASIST], asist.[FECHA_ASIST], asist.[MOTIVO], asist.[DETFUNC], asist.[TURNO], asist.[REEMPLAZO], asist.[HH_FESTIVAS], asist.[HH_EXT], asist.[TIPO_REEMP], asist.[Paquete], asist.[Centro], asist.[PlanillaRol], asist.[Tiempo], asist.[Observacion] as ObservacionAsist, asist.[OrigenHora], asist.[asistencia], asist.[cerrar], asist.[HorasExtrasDia], asist.[HorasExtrasSemana], asist.[HorasExtrasFestivas], asist.[MesCerrado], asist.[DiasCerrado], asist.[DomingoCerrado], asist.[IdDetalle], asist.[IdCausal], asist.[Cumplido], asist.[InHabilitado]
+  --,[ID_DETFUNC], detfunc.[PLANILLA], detfunc.[FICHA], detfunc.[CICLO], detfunc.[RELEVO], detfunc.[Grupo], detfunc.[Colacion], detfunc.[Horas], detfunc.[Maximo], detfunc.[Id_Detalle], detfunc.[Rol], detfunc.[AsignaHoras], detfunc.[AsignaPesos], detfunc.[RepiteHoras], detfunc.[RepitePesos], detfunc.[CadaHoras], detfunc.[CadaPesos], detfunc.[MesHoras], detfunc.[MesPesos], detfunc.[AñoHoras], detfunc.[AñoPesos], detfunc.[Movilizacion], detfunc.[DF_Contrato], detfunc.[DF_Finiquito], detfunc.[Calendario], detfunc.[IdPersona], detfunc.[DF_Activo], detfunc.[RepiteMovilizacion], detfunc.[CadaMovilizacion], detfunc.[MesMovilizacion], detfunc.[AñoMovilizacion], detfunc.[FechaCreacionIngreso]   
+  ,[ID_PL]
+
+-- Planilla.[Administra], Planilla.[Pl_Grupo], Planilla.[FECHA], Planilla.[FECHA_TERMINO], Planilla.[FONO], Planilla.[CALENDARIO], Planilla.[AREA_CCTO], Planilla.[OBSERVACION] as ObservacionPlanilla, Planilla.[USUARIO_CREA], Planilla.[FECHA_CREA], Planilla.[USUARIO_MOD], Planilla.[FECHA_MOD], Planilla.[VIGENTE], Planilla.[NUMERO_GUARDIAS], Planilla.[HorasPaquete], Planilla.[Empresa], Planilla.[SubTitulo], Planilla.[Rubro], Planilla.[HorDiaLun], Planilla.[HorDiaMar], Planilla.[HorDiaMie], Planilla.[HorDiaJue], Planilla.[HorDiaVie], Planilla.[HorDiaSab], Planilla.[HorDiaDom], Planilla.[Cotizacion]   
+  ,mant_cc.*  
+,turnos_desc.CODIGO_TURNO,turnos_desc.DESCRIPCION_TURNO,turnos_desc.HH_COLACION,turnos_desc.DESDE,turnos_desc.HASTA 
+      from Turnos2.dbo.Asistencia  as asist left join 
+      Turnos2.dbo.Detalle_Funcionarios  as detfunc on asist.IdDetalle=detfunc.Id_Detalle
+      left join Turnos2.dbo.Planilla AS Planilla ON  detfunc.PLANILLA = Planilla.ID_PL left join
+       Turnos2.dbo.CentroCosto AS CentroCosto ON PLANILLA.AREA_CCTO = CentroCosto.Id_Centro
+   left join Turnos2.dbo.Turnos as turnos_desc
+   on turnos_desc.ID_TURNO=asist.TURNO
+       LEFT JOIN   Inteligencias.dbo.CENTROS_COSTO AS mant_cc ON mant_cc.EMP_CODI = CentroCosto.Empresa AND 
+                               mant_cc.CENCO2_CODI COLLATE SQL_Latin1_General_CP1_CI_AS = CentroCosto.Codigo LEFT OUTER JOIN
+                               Inteligencias.dbo.EMPRESAS AS EMPRESAS ON EMPRESAS.EMP_CODI = CentroCosto.Empresa 
+      
+      
+      where   (detfunc.DF_Contrato  <=DATEADD(d, -1, DATEADD(m, DATEDIFF(m, 0, asist.FECHA_ASIST) + 1, 0)) and detfunc.DF_Finiquito>= DATEADD(mm, DATEDIFF(mm,0,asist.FECHA_ASIST), 0) )  
+       --and month(FECHA_ASIST)=11 
+   and year(fecha_asist)=2018
+      and CENCO1_DESC = 'PODER JUDICIAL JURISDICCION VALPARAISO' and (case when REEMPLAZO is null then detfunc else reemplazo end)='21326' and (motivo is null or not MOTIVO>0)`
+  
+   //query=`SELECT FICHA,NOMBRES,RUT,RUT_ID,DIRECCION,FECHA_INGRESO,FECHA_FINIQUITO,ESTADO,CARGO_DESC,CARGO_CODI,ult.CENCO2_CODI,cc.CENCO2_DESC,cc.CENCO1_DESC  FROM [Inteligencias].[dbo].[RRHH_PERSONAL_SOFT] as ult left join Inteligencias.dbo.CENTROS_COSTO as cc
+   //on cc.EMP_CODI=ult.EMP_CODI and cc.CENCO2_CODI=ult.CENCO2_CODI collate SQL_Latin1_General_CP1_CI_AI  where Estado='V'and FECHA_SOFT='2018-08-01'` 
+
+  
+  entrega_resultDB(query,null).then(result=>{
+      if (result.length>0){ 
+       console.log(result.length);
+       console.log("hay result");
+     
+       return   res.status(200).send(result);
+       //resolve(result);
+         // console.log(value);
+         
+     }else{ console.log("no hay");
+     
+    
+    }
+     
+     });
+
+   
+
+
+}
   
   
-  module.exports={getPersonalAsistencias,getTurnosAsistencias,consolidaInfo,consolidaInfo2}
+  module.exports={getPersonalAsistencias,getTurnosAsistencias,consolidaInfo,consolidaInfo2,getTurnosPersona}
 
    
      

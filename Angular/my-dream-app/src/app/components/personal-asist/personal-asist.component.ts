@@ -18,6 +18,7 @@ export class PersonalAsistComponent implements OnInit {
 
   ngOnInit() {
 
+      //activar para obtener personal
     this.getAllDiasTrabajados();
   }
 

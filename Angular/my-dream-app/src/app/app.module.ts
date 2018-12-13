@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { CarsListComponent } from './components/cars-list/cars-list.component';
 import { DiasTrabajadosComponent } from './components/dias-trabajados/dias-trabajados.component';
 import { CarsInfoService } from './services/cars-info.service';
-import {DataTableModule,SharedModule, ButtonModule, DialogModule, InputTextModule, MenuItemContent} from 'primeng/primeng'
+import {DataTableModule,SharedModule, ButtonModule, DialogModule, InputTextModule, MenuItemContent, ScheduleModule} from 'primeng/primeng'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { FormsModule } from '../../node_modules/@angular/forms';
 import { AppRoutingModule } from './app-routing/app-routing.module';
@@ -23,6 +23,8 @@ import {TableModule} from 'primeng/table';
 import {MultiSelectModule} from 'primeng/multiselect';
 import { ParametrosPagoComponent } from './components/parametros-pago/parametros-pago.component';
 import { PersonalAsistComponent } from './components/personal-asist/personal-asist.component';
+import { CalendarioTurnosComponent } from './components/calendario-turnos/calendario-turnos.component';
+import {FullCalendarModule} from 'primeng/fullcalendar';
 
 
 @NgModule ({
@@ -32,7 +34,8 @@ import { PersonalAsistComponent } from './components/personal-asist/personal-asi
     DiasTrabajadosComponent,
     DiasTrabajadosDatalleComponent,
     ParametrosPagoComponent,
-    PersonalAsistComponent
+    PersonalAsistComponent,
+    CalendarioTurnosComponent
 
   ],
   imports: [
@@ -54,7 +57,9 @@ import { PersonalAsistComponent } from './components/personal-asist/personal-asi
     ProgressBarModule,
     GrowlModule,
     TableModule,
-    MultiSelectModule
+    MultiSelectModule,
+    FullCalendarModule
+  
 
 
 

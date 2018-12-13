@@ -1,4 +1,23 @@
+
 /* You can add global styles to this file, and also import other style files */
+/*  
+ Importante la importación de estilos se estaba efectuando en el archivo index.html
+ luego de la actualizacion a angular-cli 7 dejo de funcionar pues rechazaba la carga acusando problema con mime/type
+  por lo que los estilos fueron cargados correctamente de la forma que sigue.
+
+ <link rel="stylesheet" type="text/css" href="/node_modules/primeng/resources/themes/omega/theme.css" />
+  <link rel="stylesheet" type="text/css" href="/node_modules/font-awesome/css/font-awesome.css"/>
+*/
+
+@import "~primeicons/primeicons.css";
+@import "~primeng/resources/themes/nova-light/theme.css";
+@import "~primeng/resources/primeng.min.css";
+@import "~font-awesome/css/font-awesome.css";
+@import "~primeflex/primeflex.css";
+@import "~fullcalendar/dist/fullcalendar.css";
+
+
+
 .h1-strong{
     font-size: 35px;
     font-weight: bold;
