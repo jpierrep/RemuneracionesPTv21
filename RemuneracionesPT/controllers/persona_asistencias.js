@@ -353,10 +353,8 @@ Turnos2.dbo.CALENDARIO AS CALEND ON Planilla.CALENDARIO = CALEND.ID_CAL LEFT OUT
          // console.log(value);
          
      }else{ console.log("no hay");
-     
     
     }
-     
      });
 
    

@@ -8,6 +8,8 @@ var app=express();
   //cargar rutas
   var user_routes=require('./routes/persona');
   var per_asist_routes=require('./routes/persona_asistencias');
+  var reliquidaciones_routes=require('./routes/reliquidaciones');
+
   var parameter_routes=require('./routes/parametros_pago');
   //var follow_routes=require('./routes/follow');
 
@@ -22,6 +24,7 @@ var app=express();
 app.use('/api',user_routes);
 app.use('/api/parameters',parameter_routes);
 app.use('/api/asistencias',per_asist_routes);
+app.use('/reliquida',reliquidaciones_routes);
 
 //app.use('/api',follow_routes);
 
