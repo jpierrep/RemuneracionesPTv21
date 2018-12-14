@@ -80,6 +80,8 @@ function home (req,res){
 }
 */
 
+
+//Funcion final que realiza proceso completo
 async function generaProcesoSueldoUpdload(req,res){
   
   //obtiene parametros para el pago de sueldo
@@ -87,7 +89,14 @@ async function generaProcesoSueldoUpdload(req,res){
   console.log(parametrosPago);
   console.log("dentro genera proceso")
 
-  let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
+  let sueldoBaseVar="";
+  let liquidoPagoVar="";
+  if(parametrosPago.find(x=>x.ID==3).VALOR) sueldoBaseVar=parametrosPago.find(x=>x.ID==3).VALOR;  //valor para el turno de 12
+  if(parametrosPago.find(x=>x.ID==4).VALOR) liquidoPagoVar=parametrosPago.find(x=>x.ID==4).VALOR;   //valor para el turno de 8
+  if(parametrosPago.find(x=>x.ID==4).VALOR) reliquidacionVar=parametrosPago.find(x=>x.ID==6).VALOR;   //valor para el turno de 8
+  let vars=`'`+sueldoBaseVar+`','`+liquidoPagoVar+`'`;  
+
+  let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso),variables:vars}
   console.log(optionProcess);
 
   
@@ -102,7 +111,7 @@ async function generaProcesoSueldoUpdload(req,res){
  
   let persDiff=await getPersonalBD(persAgrupa,persRRHH);   
   //res.status(200).send(persDiff);
-  let persVar=await getVariablesSueldoPers(optionProcess,persDiff,parametrosPago);
+  let persVar=await getVariablesSueldoPers(optionProcess,persDiff);
 
  let persCalcula=await getCalculaSueldo(optionProcess,persVar,parametrosPago);  
  
@@ -403,7 +412,7 @@ function getCalculaSueldo(optionProcess,persDiff,parametrosPago){
 
 } */
 
-function getVariablesSueldoPers(optionsProcess,persDiff,parametrosPago){
+function getVariablesSueldoPers(optionsProcess,persDiff){
    
    let fecha=optionsProcess.fecha.value;
     console.log(fecha);
@@ -412,11 +421,7 @@ function getVariablesSueldoPers(optionsProcess,persDiff,parametrosPago){
    console.log("la fecha y año es")
    let fechaquery=año+'-'+mes+'-01'
     console.log(fechaquery);
-    let sueldoBaseVar="";
-    let liquidoPagoVar="";
-    if(parametrosPago.find(x=>x.ID==3).VALOR) sueldoBaseVar=parametrosPago.find(x=>x.ID==3).VALOR;  //valor para el turno de 12
-    if(parametrosPago.find(x=>x.ID==4).VALOR) liquidoPagoVar=parametrosPago.find(x=>x.ID==4).VALOR;   //valor para el turno de 8
- 
+    let vars=optionsProcess.variables;
  
    //let proceso=optionsProcess.proceso;
 
@@ -432,8 +437,8 @@ function getVariablesSueldoPers(optionsProcess,persDiff,parametrosPago){
     //callback();
     console.log(key);
      if(value.IN_BD=="true"){
-     console.log(value.FICHA);
-     let vars=`'`+sueldoBaseVar+`','`+liquidoPagoVar+`'`;  
+
+     console.log(value.FICHA); 
      let query =`select * FROM [Inteligencias].[dbo].[RRHH_ESTRUCTURA_SUELDO] where DIA='01' and FECHA='`+fechaquery+`' and FICHA='`+replaceAll(value.FICHA,'"','')+`' and VARIABLE_CODI in (`+vars+ `)`; 
   
  
@@ -493,6 +498,8 @@ function getVariablesSueldoPers(optionsProcess,persDiff,parametrosPago){
 
 
 }
+
+//realiza cruce según rut_id
 
 function getPersonalBD(persAsist,persRRHH){
 
@@ -782,7 +789,7 @@ function entrega_resultDB2(queryDB, callback){
 
 
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID}
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID,getVariablesSueldoPers,getParametrosPago}
 
    
      
