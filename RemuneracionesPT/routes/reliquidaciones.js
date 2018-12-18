@@ -11,7 +11,7 @@ var md_upload=multipart({uploadDir:'./uploads/reliquidaciones'})
 
 //api.get('/leeArchivoReliq',md_upload,ReliqController.getFileReliquida);
 api.get('/generaProcesoReliquida',md_upload,ReliqController.generaReliquidacionUpdload);
-api.get('/getRemuneracionesArchivo',ReliqController.getRemuneracionesMes)
+api.get('/getRemuneracionesArchivo/:fecha?',ReliqController.getRemuneracionesMes)
 
 
 module.exports=api;

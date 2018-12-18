@@ -23,8 +23,13 @@ export class ReliquidacionesService {
     //return this.arr;
       }
 
-      getRemuneracionesArchivo(){
-        return this.http.get<any[]>(this.urlRemuneracionesArch);
+      getRemuneracionesArchivo(fecha){
+        
+        let urlParameter=this.urlRemuneracionesArch;
+        if (fecha){
+           urlParameter=this.urlRemuneracionesArch+'/'+fecha;
+        }
+        return this.http.get<any[]>(urlParameter);
 
       }
 

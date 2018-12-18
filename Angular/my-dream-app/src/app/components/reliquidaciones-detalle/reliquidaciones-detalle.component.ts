@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ReliquidacionesService} from '../../services/reliquidaciones.service';
+import {DropdownModule} from 'primeng/dropdown';
 
 @Component({
   selector: 'app-reliquidaciones-detalle',
@@ -23,8 +24,14 @@ export class ReliquidacionesDetalleComponent implements OnInit {
 
   */
  this.frozenCols = [
-  { field: 'NOMBRE', header: 'NOMBRE               ' }
+  { field: 'NOMBRE', header: 'NOMBRE' }
 
+];
+
+this.cities = [
+  {name: '2018-12-18', code: '2018-12-18'},
+  {name: '2018-12-19', code: '2018-12-19'},
+  {name: '2018-12-20', code: '2018-12-20'}
 ];
 
   }
@@ -33,6 +40,8 @@ export class ReliquidacionesDetalleComponent implements OnInit {
   remuneracionArchivo:any[];
   cols:any[];
   frozenCols: any[];
+  cities:any[];
+  selectedCity:any;
 
 
   getReliquidaciones(){
@@ -67,15 +76,10 @@ export class ReliquidacionesDetalleComponent implements OnInit {
 
 
                console.log(this.reliquidacionDetalle);
+               this.getRemuneracionesArchivo();
        
-              // Las columnas estan en la primera linea de los datos
-              this.cols= Object.keys(this.reliquidacionDetalle[0]);
-              console.log(this.cols);
-              this.cols=this.cols.map(value=>{
-                return{field:value,header:value};
-              });
-
-              this.getRemuneracionesArchivo();
+                    
+             
 
 
 
@@ -89,12 +93,16 @@ export class ReliquidacionesDetalleComponent implements OnInit {
 
 
 
-   getRemuneracionesArchivo(){
+   getRemuneracionesArchivo(fecha){
+
     
+
     // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
-     this.ReliquidacionesService.getRemuneracionesArchivo().subscribe(
+     this.ReliquidacionesService.getRemuneracionesArchivo(fecha).subscribe(
     data=> {
+      console.log(" la fecha obtenida es"+fecha)
                this.remuneracionArchivo=data;
+               
                
                this.reliquidacionDetalle.forEach(persona=>{
                 persona.LIQUIDO_ARCHIVO=0;
@@ -104,11 +112,32 @@ export class ReliquidacionesDetalleComponent implements OnInit {
 
                });
 
-   
+                  // Las columnas estan en la primera linea de los datos
+                  this.cols= Object.keys(this.reliquidacionDetalle[0]);
+                  console.log(this.cols);
+                  this.cols=this.cols.map(value=>{
+                    return{field:value,header:value};
+                  });
+
+                  console.log(this.remuneracionArchivo);
+
+
+
 
     });
 
+ 
+
   }
+
+  cambiaFechaRemunArchivo(event){
+     console.log(" la fecha es"+this.selectedCity.code)
+    this.getRemuneracionesArchivo(this.selectedCity.code);
+
+
+
+  }
+
 
 
 }

@@ -183,10 +183,18 @@ function getPersonalBD(persAsist,persRRHH){
 
   
   function getRemuneracionesMes (req,res){
-
-   if (req.body.fecha){
+    let fecha= req.params.fecha;
+    console.log("la fecha parametro es"+fecha)
+   if (fecha){
        //si viene fecha
-   }else{
+       let  query=`SELECT distinct [ficha] ,[codVariable] ,[valor] ,[empresa],convert(date,fecha_Registro) as fecha_Registro from inteligencias.dbo.RRHH_APP_REG_VAR where convert(date,fecha_Registro)='`+fecha+`'`
+       personaController.entrega_resultDB(query,(resultFinal)=>{
+     
+        res.status(200).send(resultFinal);
+      //   resolve ( resultFinal);
+    });
+   
+    }else{
        //si no viene fecha, extraer el ultimo día del mes en curso
    //extrae la info del mes actual, pues no se puede pagar en relacion a meses pasados
   let  query=`select convert(date,max(Fecha_Registro)) as MaxFecha from inteligencias.dbo.RRHH_APP_REG_VAR`

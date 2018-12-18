@@ -1,5 +1,8 @@
 
-<h3>Dynamic Columns</h3>
+<h3>Archivo Reliquidacion </h3>
+<p-dropdown [options]="cities" [(ngModel)]="selectedCity" placeholder="Select a City" optionLabel="name" (onChange)="cambiaFechaRemunArchivo($event)"></p-dropdown>
+<p>fechaSeleccionada: {{selectedCity ? selectedCity.code : 'none'}}</p>
+
 <p-table [columns]="cols"  [value]="reliquidacionDetalle" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
