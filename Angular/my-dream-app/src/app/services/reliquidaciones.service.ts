@@ -14,11 +14,18 @@ export class ReliquidacionesService {
       
   }
   webApiUrl: string='http://localhost:3800/reliquida/generaProcesoReliquida';
+  urlRemuneracionesArch: string='http://localhost:3800/reliquida/getRemuneracionesArchivo';
+  
   
   getReliquidaciones(){
     return this.http.get<any[]>(this.webApiUrl);
       //console.log("essssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
     //return this.arr;
+      }
+
+      getRemuneracionesArchivo(){
+        return this.http.get<any[]>(this.urlRemuneracionesArch);
+
       }
 
 

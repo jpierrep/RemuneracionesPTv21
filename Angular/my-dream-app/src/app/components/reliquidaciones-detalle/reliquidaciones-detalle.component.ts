@@ -18,14 +18,22 @@ export class ReliquidacionesDetalleComponent implements OnInit {
       { field: 'C.COSTO', header: 'Centro Costo' },
       {field: 'DIAS LICENCIA', header: 'Licencia' },
       { field: 'FICHA', header: 'Ficha' },
-      { field: 'NOMBRE', header: 'Nombre' }
+      { field:'NOMBRE' , header: 'Nombre' }
   ];
 
   */
+ this.frozenCols = [
+  { field: 'NOMBRE', header: 'NOMBRE               ' }
+
+];
+
   }
 
   reliquidacionDetalle:any[];
+  remuneracionArchivo:any[];
   cols:any[];
+  frozenCols: any[];
+
 
   getReliquidaciones(){
     
@@ -67,7 +75,7 @@ export class ReliquidacionesDetalleComponent implements OnInit {
                 return{field:value,header:value};
               });
 
-            
+              this.getRemuneracionesArchivo();
 
 
 
@@ -78,5 +86,29 @@ export class ReliquidacionesDetalleComponent implements OnInit {
      );
   
    }
+
+
+
+   getRemuneracionesArchivo(){
+    
+    // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
+     this.ReliquidacionesService.getRemuneracionesArchivo().subscribe(
+    data=> {
+               this.remuneracionArchivo=data;
+               
+               this.reliquidacionDetalle.forEach(persona=>{
+                persona.LIQUIDO_ARCHIVO=0;
+                if(this.remuneracionArchivo.find(x=>x.ficha==persona.FICHA))
+                persona.LIQUIDO_ARCHIVO=parseInt(this.remuneracionArchivo.find(x=>x.ficha==persona.FICHA).valor);
+
+
+               });
+
+   
+
+    });
+
+  }
+
 
 }

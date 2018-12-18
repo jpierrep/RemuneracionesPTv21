@@ -1,7 +1,13 @@
 
 <h3>Dynamic Columns</h3>
-<p-table [columns]="cols" [value]="reliquidacionDetalle" [responsive]="true" [style]="{'width':'100%','overflow':'auto!important'}">
-    <ng-template pTemplate="header" let-columns>
+<p-table [columns]="cols"  [value]="reliquidacionDetalle" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+        <col *ngFor="let col of columns" style="width:300px">
+    </colgroup>
+</ng-template> 
+  
+  <ng-template pTemplate="header" let-columns>
         <tr>
             <th *ngFor="let col of columns">
                 {{col.header}}

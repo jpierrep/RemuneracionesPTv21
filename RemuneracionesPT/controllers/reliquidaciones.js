@@ -8,6 +8,7 @@ var async= require('async');
 var readXlsxFile=require ('read-excel-file/node');
 var stringify = require('json-stringify');
 var personaController=require('../controllers/persona');
+var moment = require('moment');
 
 
 
@@ -61,6 +62,7 @@ async function generaReliquidacionUpdload(req,res){
    //
     let persVar=await personaController.getVariablesSueldoPers(optionProcess,persDiff);
     res.status(200).send(persVar);
+ 
   
    //let persCalcula=await getCalculaSueldo(optionProcess,persVar,parametrosPago);  
    
@@ -179,7 +181,48 @@ function getPersonalBD(persAsist,persRRHH){
   }
 
 
+  
+  function getRemuneracionesMes (req,res){
 
-  module.exports={generaReliquidacionUpdload,getPersonalArchivo}
+   if (req.body.fecha){
+       //si viene fecha
+   }else{
+       //si no viene fecha, extraer el ultimo día del mes en curso
+   //extrae la info del mes actual, pues no se puede pagar en relacion a meses pasados
+  let  query=`select convert(date,max(Fecha_Registro)) as MaxFecha from inteligencias.dbo.RRHH_APP_REG_VAR`
+  
+//return new Promise(resolve=>{
+    personaController.entrega_resultDB(query,(result)=>{
+
+      console.log(result[0].MaxFecha)
+      let maxFecha=result[0].MaxFecha;
+      maxFecha=moment(maxFecha).format("YYYY-MM-DD");
+      query=`SELECT  [ficha] ,[codVariable] ,[valor] ,[empresa],[Fecha_Registro]
+      FROM [Inteligencias].[dbo].[RRHH_APP_REG_VAR] where convert(date,fecha_Registro)='`+maxFecha+`'`
+      
+      personaController.entrega_resultDB(query,(resultFinal)=>{
+     
+        res.status(200).send(resultFinal);
+      //   resolve ( resultFinal);
+    });
+
+      
+    
+  
+ 
+ 
+
+});
+
+  //});
+    }
+
+
+
+  }
+
+
+
+  module.exports={generaReliquidacionUpdload,getPersonalArchivo,getRemuneracionesMes }
 
    
