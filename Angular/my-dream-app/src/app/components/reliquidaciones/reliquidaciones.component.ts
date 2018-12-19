@@ -13,16 +13,20 @@ export class ReliquidacionesComponent implements OnInit {
 
   ngOnInit() {
 
+    this.display=false;
+    
+
     this.getReliquidaciones();
-    /*
-    this.cols = [
+    
+    
+    this.colsDynamic = [
       { field: 'C.COSTO', header: 'Centro Costo' },
-      {field: 'DIAS LICENCIA', header: 'Licencia' },
-      { field: 'FICHA', header: 'Ficha' },
-      { field:'NOMBRE' , header: 'Nombre' }
+      {field: 'DIAS_LICENCIA', header: 'Licencia' }
   ];
 
-  */
+  this.variables=[{field:'C.COSTO',variable:'H003'},{field:'DIAS_LICENCIA',variable:'H082'}];
+
+  
  this.frozenCols = [
   { field: 'NOMBRE', header: 'NOMBRE' }
 
@@ -43,10 +47,15 @@ this.getFechasRemuneracionesArchivo();
   reliquidacionDetalle:any[];
   remuneracionArchivo:any[];
   cols:any[];
+  colsDynamic:any[];
   frozenCols: any[];
   fechasRemArchivo:any[];
   cities:any[];
   selectedFechaRemArchivo:any;
+  display:boolean;
+  displayMapping:boolean;
+  colsDynamicValue:any[];
+  variables:any[];
 
 
 
@@ -119,13 +128,31 @@ this.getFechasRemuneracionesArchivo();
                });
 
                   // Las columnas estan en la primera linea de los datos
+                  //Filtramos aquellas que no queremos que aparezcan
+                  let columnsFilter=['NOMBRE','IN_BD','LIQUIDO_PAGO','RELIQUIDACION','LIQUIDO_ARCHIVO']
                   this.cols= Object.keys(this.reliquidacionDetalle[0]);
-                  console.log(this.cols);
-                  this.cols=this.cols.map(value=>{
-                    return{field:value,header:value};
+                  
+                 this.cols= this.cols.filter(value=>{
+                     if(columnsFilter.indexOf(value)<0)
+                     return value;
+
                   });
 
-                  console.log(this.remuneracionArchivo);
+                  this.cols=this.cols.map(value=>{
+                    return{field:value,header:value};
+                  
+                  });
+
+                  this.variables=this.cols.map(value=>{
+                    return{field:value.field,variable:''};
+                  
+                  });
+                  
+                 
+                  console.log(this.cols);
+                  console.log("variables");
+                  console.log(this.variables);
+                  
 
 
 
@@ -167,6 +194,16 @@ this.getFechasRemuneracionesArchivo();
 
   }
 
+  getNoExistentes(){
+    if(this.reliquidacionDetalle){
+   let noExistentes=this.reliquidacionDetalle.filter(value=>{
+    return value.IN_BD="false";
+   });
+   console.log(noExistentes)
+   return noExistentes;
+  
+  }
+  }
 
 
 }

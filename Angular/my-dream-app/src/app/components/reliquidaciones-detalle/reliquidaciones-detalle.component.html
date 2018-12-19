@@ -23,8 +23,8 @@
     </ng-template>
     <ng-template pTemplate="body" let-rowData >
         <tr>
-            <td *ngFor="let col of cols">
-                    {{ col.field!='DIFF'? rowData[col.field]:rowData['LIQUIDO_PAGO']-rowData['LIQUIDO_ARCHIVO']}}
+            <td *ngFor="let col of cols" [ngClass]="rowData['DIFF'] >0 ? 'old-car' : null" >
+                    {{ col.field!='DIFF'? rowData[col.field]:rowData['DIFF']=rowData['LIQUIDO_PAGO']-rowData['LIQUIDO_ARCHIVO']}}
             </td>
 
         </tr>

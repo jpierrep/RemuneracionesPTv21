@@ -1,9 +1,13 @@
 
 <h3>Archivo Reliquidacion </h3>
-<p-dropdown [options]="fechasRemArchivo" [(ngModel)]="selectedFechaRemArchivo" placeholder="Seleccione Fecha" optionLabel="name" (onChange)="cambiaFechaRemunArchivo($event)"></p-dropdown>
-<p>fecha Seleccionada: {{selectedFechaRemArchivo ? selectedFechaRemArchivo.code : 'ninguna'}}</p>
 
-<button type="button" pButton icon="fa fa-plus" iconPos="left" label="ver Detalle" (click)="displayNewProcess=true"></button>
+
+
+<button type="button" routerLink="/reliquidacionDetalle" pButton icon="fa fa-plus" iconPos="left" label="Ver Detalle"></button>
+<button type="button" pButton icon="fa fa-plus" iconPos="left" label="Ver No Existentes" (click)="display=true"></button>
+<button type="button" pButton icon="fa fa-plus" iconPos="left" label="Mapear Variables" (click)="displayMapping=true"></button>
+
+
 
 <p-table [columns]="cols"  [value]="reliquidacionDetalle" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
   <ng-template pTemplate="colgroup" let-columns>
@@ -31,3 +35,69 @@
 
     </ng-template>
 </p-table>
+
+<p-dialog header="Personal No Existente" [(visible)]="display" [modal]="modal" [responsive]="true" [width]="800" [minWidth]="200" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+    
+      
+<p-table [columns]="cols"  [value]="getNoExistentes()" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+          <col *ngFor="let col of columns" style="width:300px">
+      </colgroup>
+  </ng-template> 
+    
+    <ng-template pTemplate="header" let-columns>
+          <tr>
+              <th *ngFor="let col of columns">
+                  {{col.header}}
+              </th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+              <td *ngFor="let col of columns">
+                      {{rowData[col.field]}}
+              </td>
+  
+          </tr>
+  
+           
+  
+      </ng-template>
+  </p-table>
+        <p-footer>
+            <button type="button" pButton icon="pi pi-check" (click)="display=false" label="Ok"></button>
+       
+        </p-footer>
+</p-dialog>
+
+
+
+<p-dialog header="Mapea Variables" [(visible)]="displayMapping" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+    
+
+
+        <form  >
+                
+                    <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+                       
+                    <div *ngFor="let col of variables">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-6">
+                                    {{col.field}}  :
+                            </div>
+                            <div class="ui-grid-col-4">
+                                <input id="{{col.field}}" pInputText type="text" pInputText [(ngModel)]="col.variable" placeholder="valor" name="{{col.field}}"/>
+                            </div>
+
+                        </div>
+                    </div>
+                    </div>
+         </form>
+        <p-footer>
+            <button type="button" pButton icon="pi pi-check" (click)="saveDiasTrabajados()" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="displayMapping=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
+</p-dialog>

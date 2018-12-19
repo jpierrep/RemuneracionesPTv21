@@ -41,7 +41,7 @@ async function generaReliquidacionUpdload(req,res){
   console.log("dentro genera proceso")
   
    // let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
-    let optionProcess={fecha:{name:'Diciembre', value:'12/2018'},proceso:{name:'Reliquidaciones', value:'Reliquida'},variables:vars};
+    let optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'Reliquidaciones', value:'Reliquida'},variables:vars};
     console.log(optionProcess);
   
       
@@ -55,7 +55,7 @@ async function generaReliquidacionUpdload(req,res){
     //res.status(200).send(persAsist);
    // let persAgrupa=await getAgrupaPers(persAsist);
   
-    let persRRHH=await personaController.getPersonalSoft();
+    let persRRHH=await personaController.getPersonalSoft(optionProcess);
    
     let persDiff=await getPersonalBD(persAsist,persRRHH);   
     //res.status(200).send(persDiff);
@@ -204,7 +204,7 @@ function getPersonalBD(persAsist,persRRHH){
 
       console.log(result[0].MaxFecha)
       let maxFecha=result[0].MaxFecha;
-      maxFecha=moment(maxFecha).format("YYYY-MM-DD");
+      maxFecha=moment.utc(maxFecha).format("YYYY-MM-DD");
       query=`SELECT  [ficha] ,[codVariable] ,[valor] ,[empresa],[Fecha_Registro]
       FROM [Inteligencias].[dbo].[RRHH_APP_REG_VAR] where convert(date,fecha_Registro)='`+maxFecha+`'`
       
