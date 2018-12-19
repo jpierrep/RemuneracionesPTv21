@@ -225,12 +225,34 @@ function getPersonalBD(persAsist,persRRHH){
   //});
     }
 
-
-
   }
 
+  function getFechasRemuneracArchivo (req,res){
+    
+    //como se trabaja con el ultimo registro, este ultimo deberia apuntar a los ultimos dias del mes anterior
+       
+       let  query=`--obtiene todos los registros de fecha del mes actual
+
+       select distinct convert(date,Fecha_Registro) as FechaRegistro from   [Inteligencias].[dbo].[RRHH_APP_REG_VAR]
+       where    
+       DATEADD(m, DATEDIFF(m,0,Fecha_Registro), 0) = (select top 1 DATEADD(m, DATEDIFF(m,0,Fecha_Registro), 0)  from  [Inteligencias].[dbo].[RRHH_APP_REG_VAR] order by Fecha_Registro desc) 
+         order by convert(date,Fecha_Registro) desc`
+
+       personaController.entrega_resultDB(query,(resultFinal)=>{
+          
+      resultFinal.forEach(row=>{
+            row.FechaRegistro=moment.utc(row.FechaRegistro).format("YYYY-MM-DD");
+       });
+     
+        res.status(200).send(resultFinal);
+      //   resolve ( resultFinal);
+   
+  });
+    
+}
 
 
-  module.exports={generaReliquidacionUpdload,getPersonalArchivo,getRemuneracionesMes }
+
+  module.exports={generaReliquidacionUpdload,getPersonalArchivo,getRemuneracionesMes,getFechasRemuneracArchivo}
 
    

@@ -1,7 +1,9 @@
 
 <h3>Archivo Reliquidacion </h3>
-<p-dropdown [options]="cities" [(ngModel)]="selectedCity" placeholder="Select a City" optionLabel="name" (onChange)="cambiaFechaRemunArchivo($event)"></p-dropdown>
-<p>fechaSeleccionada: {{selectedCity ? selectedCity.code : 'none'}}</p>
+<p-dropdown [options]="fechasRemArchivo" [(ngModel)]="selectedFechaRemArchivo" placeholder="Seleccione Fecha" optionLabel="name" (onChange)="cambiaFechaRemunArchivo($event)"></p-dropdown>
+<p>fecha Seleccionada: {{selectedFechaRemArchivo ? selectedFechaRemArchivo.code : 'ninguna'}}</p>
+
+<button type="button" pButton icon="fa fa-plus" iconPos="left" label="ver Detalle" (click)="displayNewProcess=true"></button>
 
 <p-table [columns]="cols"  [value]="reliquidacionDetalle" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
   <ng-template pTemplate="colgroup" let-columns>

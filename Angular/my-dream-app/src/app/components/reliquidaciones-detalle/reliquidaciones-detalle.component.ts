@@ -28,11 +28,15 @@ export class ReliquidacionesDetalleComponent implements OnInit {
 
 ];
 
+/*
 this.cities = [
   {name: '2018-12-18', code: '2018-12-18'},
   {name: '2018-12-19', code: '2018-12-19'},
   {name: '2018-12-20', code: '2018-12-20'}
 ];
+
+*/
+this.getFechasRemuneracionesArchivo();
 
   }
 
@@ -40,8 +44,10 @@ this.cities = [
   remuneracionArchivo:any[];
   cols:any[];
   frozenCols: any[];
+  fechasRemArchivo:any[];
   cities:any[];
-  selectedCity:any;
+  selectedFechaRemArchivo:any;
+
 
 
   getReliquidaciones(){
@@ -76,7 +82,7 @@ this.cities = [
 
 
                console.log(this.reliquidacionDetalle);
-               this.getRemuneracionesArchivo();
+               this.getRemuneracionesArchivo(null);
        
                     
              
@@ -130,9 +136,32 @@ this.cities = [
 
   }
 
+
+
+  getFechasRemuneracionesArchivo(){
+
+    
+
+    // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
+     this.ReliquidacionesService.getFechasRemuneracionesArchivo().subscribe(
+    data=> {
+    
+             
+              this.fechasRemArchivo= data.map(row=>{
+                return{name:row.FechaRegistro,code:row.FechaRegistro}
+              });
+
+              console.log(this.fechasRemArchivo);
+               
+    });
+
+ 
+
+  }
+
   cambiaFechaRemunArchivo(event){
-     console.log(" la fecha es"+this.selectedCity.code)
-    this.getRemuneracionesArchivo(this.selectedCity.code);
+     console.log(" la fecha es"+this.selectedFechaRemArchivo.code)
+    this.getRemuneracionesArchivo(this.selectedFechaRemArchivo.code);
 
 
 
