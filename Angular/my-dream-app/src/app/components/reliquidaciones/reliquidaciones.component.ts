@@ -3,31 +3,26 @@ import {ReliquidacionesService} from '../../services/reliquidaciones.service';
 import {DropdownModule} from 'primeng/dropdown';
 
 @Component({
-  selector: 'app-reliquidaciones-detalle',
-  templateUrl: './reliquidaciones-detalle.component.html',
-  styleUrls: ['./reliquidaciones-detalle.component.css']
+  selector: 'app-reliquidaciones',
+  templateUrl: './reliquidaciones.component.html',
+  styleUrls: ['./reliquidaciones.component.css']
 })
-export class ReliquidacionesDetalleComponent implements OnInit {
+export class ReliquidacionesComponent implements OnInit {
 
   constructor(private ReliquidacionesService:ReliquidacionesService) {}
 
   ngOnInit() {
 
     this.getReliquidaciones();
-    
+    /*
     this.cols = [
-      
+      { field: 'C.COSTO', header: 'Centro Costo' },
+      {field: 'DIAS LICENCIA', header: 'Licencia' },
       { field: 'FICHA', header: 'Ficha' },
-      {field: 'LIQUIDO_ARCHIVO', header: 'LIQ. EN REMUNERACIONES' },
-      {field: 'LIQUIDO_PAGO', header: 'LIQ. ACTUAL' },
-      {field: 'DIFF', header: 'DIFF.' },
-      {field: 'RELIQUIDACION', header: 'H068' }
-
- 
-    
+      { field:'NOMBRE' , header: 'Nombre' }
   ];
 
-  
+  */
  this.frozenCols = [
   { field: 'NOMBRE', header: 'NOMBRE' }
 
@@ -123,7 +118,14 @@ this.getFechasRemuneracionesArchivo();
 
                });
 
- 
+                  // Las columnas estan en la primera linea de los datos
+                  this.cols= Object.keys(this.reliquidacionDetalle[0]);
+                  console.log(this.cols);
+                  this.cols=this.cols.map(value=>{
+                    return{field:value,header:value};
+                  });
+
+                  console.log(this.remuneracionArchivo);
 
 
 

@@ -26,6 +26,7 @@ import { PersonalAsistComponent } from './components/personal-asist/personal-asi
 import { CalendarioTurnosComponent } from './components/calendario-turnos/calendario-turnos.component';
 import {FullCalendarModule} from 'primeng/fullcalendar';
 import { ReliquidacionesDetalleComponent } from './components/reliquidaciones-detalle/reliquidaciones-detalle.component';
+import { ReliquidacionesComponent } from './components/reliquidaciones/reliquidaciones.component';
 
 
 @NgModule ({
@@ -37,7 +38,8 @@ import { ReliquidacionesDetalleComponent } from './components/reliquidaciones-de
     ParametrosPagoComponent,
     PersonalAsistComponent,
     CalendarioTurnosComponent,
-    ReliquidacionesDetalleComponent
+    ReliquidacionesDetalleComponent,
+    ReliquidacionesComponent
 
   ],
   imports: [

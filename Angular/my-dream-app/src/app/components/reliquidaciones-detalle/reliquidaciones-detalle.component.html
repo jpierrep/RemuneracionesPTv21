@@ -3,26 +3,28 @@
 <p-dropdown [options]="fechasRemArchivo" [(ngModel)]="selectedFechaRemArchivo" placeholder="Seleccione Fecha" optionLabel="name" (onChange)="cambiaFechaRemunArchivo($event)"></p-dropdown>
 <p>fecha Seleccionada: {{selectedFechaRemArchivo ? selectedFechaRemArchivo.code : 'ninguna'}}</p>
 
-<button type="button" pButton icon="fa fa-plus" iconPos="left" label="ver Detalle" (click)="displayNewProcess=true"></button>
 
-<p-table [columns]="cols"  [value]="reliquidacionDetalle" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
-  <ng-template pTemplate="colgroup" let-columns>
+
+
+<p-table   [value]="reliquidacionDetalle" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
+  <ng-template pTemplate="colgroup" >
     <colgroup>
-        <col *ngFor="let col of columns" style="width:300px">
+        <col *ngFor="let col of cols" style="width:300px">
     </colgroup>
 </ng-template> 
   
-  <ng-template pTemplate="header" let-columns>
+  <ng-template pTemplate="header" >
         <tr>
-            <th *ngFor="let col of columns">
-                {{col.header}}
+            <th *ngFor="let col of cols">
+                
+              {{col.header}}
             </th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <ng-template pTemplate="body" let-rowData >
         <tr>
-            <td *ngFor="let col of columns">
-                    {{rowData[col.field]}}
+            <td *ngFor="let col of cols">
+                    {{ col.field!='DIFF'? rowData[col.field]:rowData['LIQUIDO_PAGO']-rowData['LIQUIDO_ARCHIVO']}}
             </td>
 
         </tr>
