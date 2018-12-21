@@ -14,7 +14,8 @@ export class ReliquidacionesComponent implements OnInit {
   ngOnInit() {
 
     this.display=false;
-    
+    this.displayNuevaPlantilla=false;
+    this.displayPlantillas=false
 
     this.getReliquidaciones();
     
@@ -42,6 +43,8 @@ this.cities = [
 */
 this.getFechasRemuneracionesArchivo();
 
+
+
   }
 
   reliquidacionDetalle:any[];
@@ -56,7 +59,12 @@ this.getFechasRemuneracionesArchivo();
   displayMapping:boolean;
   colsDynamicValue:any[];
   variables:any[];
-
+  plantillaNombre:string;
+  displayNuevaPlantilla:boolean;
+  displayPlantillas:boolean;
+  plantillas:any[];
+  plantillaVarsOne:any[];
+  selectedPlantilla:any;
 
 
   getReliquidaciones(){
@@ -204,6 +212,62 @@ this.getFechasRemuneracionesArchivo();
   
   }
   }
+
+  creaPlantillaVariables(){
+ 
+    let jsonPlantilla={name:this.plantillaNombre,variables:this.variables}
+
+   this.ReliquidacionesService.creaVariablesPlantilla(jsonPlantilla).subscribe(
+     data=> {
+    console.log("cantidad de inserciones",data);
+    this.displayNuevaPlantilla=false;
+
+     });
+
+  }
+
+  getPlantillas(){
+
+      // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
+       this.ReliquidacionesService.getPlantillas().subscribe(
+      data=> {
+       console.log(data);
+        this.plantillas=data;
+  
+      });
+
+
+}
+
+
+ async asignaPlantilla(){
+  console.log("la plantilla es",this.selectedPlantilla);
+ //this.getPlantillaVarsOne(this.selectedPlantilla.id);
+ let variablesDB=await this.ReliquidacionesService.getPlantillasVarsOne(this.selectedPlantilla.id).toPromise();
+console.log(variablesDB);
+  //console.log("variables",this.plantillaVarsOne);
+
+  
+
+
+  this.variables.forEach((element)=>{
+    let encuentra=variablesDB.find(x=>x.columna_nombre==element.field)
+
+    if(encuentra){
+    element.variable=encuentra.columna_variable;
+    console.log("se encontro",encuentra)
+
+    }
+  
+  });
+
+  this.displayPlantillas=false;
+
+}
+
+
+
+
 
 
 }

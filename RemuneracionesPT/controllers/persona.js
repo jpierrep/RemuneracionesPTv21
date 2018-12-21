@@ -701,7 +701,7 @@ function entrega_resultDB2(queryDB, callback){
 
     }).catch(err=>{
      console.log(err);
-   })
+   });
 
 
    }); 
@@ -803,8 +803,79 @@ function entrega_resultDB2(queryDB, callback){
         }
 
 
+        
+  function cargaDatos(req,res){
+    /*
+const table = new sql.Table('table_name') // or temporary table, e.g. #temptable
+table.create = true
+table.columns.add('a', sql.Int, {nullable: true, primary: true})
+table.columns.add('b', sql.VarChar(50), {nullable: false})
+table.rows.add(777, 'test')
+ 
+const request = new sql.Request()
+request.bulk(table, (err, result) => {
+    // ... error checks
+})
+*/
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID,getVariablesSueldoPers,getParametrosPago,entrega_resultDB}
+
+/*
+const table = new sql.Table('RRHH_Mapeo_Variables') // or temporary table, e.g. #temptable
+
+table.columns.add('columna_nombre', sql.VarChar(255), {nullable: false})
+table.columns.add('columna_variable', sql.VarChar(50), {nullable: false})
+table.columns.add('activo', sql.Bit, {nullable: false})
+
+table.rows.add('test', 'test',1)
+table.rows.add('test', 'test',1)
+ 
+
+   // connect to your database
+   sql.connect(config).then((pool)=>{
+    return pool.request().bulk(table)
+    .then(result=>{
+  console.log(result);
+    //  return res.status(200).send(result);
+   }).catch(err=>{
+    console.log(err);
+  });
+
+
+  });
+
+
+  */
+
+ const table = new sql.Table('RRHH_Mapeo_Variables') // or temporary table, e.g. #temptable
+
+table.columns.add('columna_nombre', sql.VarChar(255), {nullable: false})
+table.columns.add('columna_variable', sql.VarChar(50), {nullable: false})
+table.columns.add('activo', sql.Bit, {nullable: false})
+
+table.rows.add('test', 'test',1)
+table.rows.add('test', 'test',1)
+
+table.rows.add('test', 'test',1);
+ 
+
+   // connect to your database
+   sql.connect(config).then((pool)=>{
+    return pool.request().bulk(table)
+    .then(result=>{
+  console.log(result);
+    //  return res.status(200).send(result);
+   }).catch(err=>{
+    console.log(err);
+  });
+
+
+  });
+
+}
+
+
+
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID,getVariablesSueldoPers,getParametrosPago,entrega_resultDB,cargaDatos}
 
    
      

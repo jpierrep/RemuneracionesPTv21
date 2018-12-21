@@ -11,6 +11,7 @@ var app=express();
   var reliquidaciones_routes=require('./routes/reliquidaciones');
 
   var parameter_routes=require('./routes/parametros_pago');
+  var VarSoft=require('./routes/variables_softland');
   //var follow_routes=require('./routes/follow');
 
   //middelware metodo que se ejecuta antes de llegar a un controlador
@@ -25,6 +26,7 @@ app.use('/api',user_routes);
 app.use('/api/parameters',parameter_routes);
 app.use('/api/asistencias',per_asist_routes);
 app.use('/reliquida',reliquidaciones_routes);
+app.use('/varSoft',VarSoft);
 
 //app.use('/api',follow_routes);
 

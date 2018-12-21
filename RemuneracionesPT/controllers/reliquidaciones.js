@@ -253,6 +253,7 @@ function getPersonalBD(persAsist,persRRHH){
 
 
 
+
   module.exports={generaReliquidacionUpdload,getPersonalArchivo,getRemuneracionesMes,getFechasRemuneracArchivo}
 
    

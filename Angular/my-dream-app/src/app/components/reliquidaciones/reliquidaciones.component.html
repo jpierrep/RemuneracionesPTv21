@@ -97,7 +97,68 @@
                     </div>
          </form>
         <p-footer>
-            <button type="button" pButton icon="pi pi-check" (click)="saveDiasTrabajados()" label="Yes"></button>
+                <button type="button" pButton icon="pi pi-plus" (click)="displayPlantillas=true;getPlantillas()" label="Carga Plantilla"></button>
+                <button type="button" pButton icon="pi pi-plus" (click)="displayNuevaPlantilla=true" label="Crear Plantilla"></button>
+            <button type="button" pButton icon="pi pi-check" (click)="creaPlantillaVariables()" label="Yes"></button>
             <button type="button" pButton icon="pi pi-close" (click)="displayMapping=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
+</p-dialog>
+
+<p-dialog header="Nueva Plantilla" [(visible)]="displayNuevaPlantilla" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+    
+
+
+        <form  >
+                
+                    <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+                       
+                    
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-6">
+                                    Nombre:
+                            </div>
+                            <div class="ui-grid-col-6">
+                                <input id="nombre" pInputText type="text" pInputText [(ngModel)]="plantillaNombre" placeholder="Nombre" name="nombre"/>
+                            </div>
+
+                        </div>
+                    </div>
+                   
+         </form>
+        <p-footer>
+           
+            <button type="button" pButton icon="pi pi-check" (click)="creaPlantillaVariables()" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="displayNuevaPlantilla=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
+</p-dialog>
+
+
+<p-dialog header="Carga Plantilla" [(visible)]="displayPlantillas" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="200" 
+        [maximizable]="true" [baseZIndex]="10000">
+    
+
+
+    
+                
+                    <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+                       
+                    
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-6">
+                                    Plantillas:
+                            </div>
+                            <div class="ui-grid-col-6">
+                                    <p-dropdown [options]="plantillas" [(ngModel)]="selectedPlantilla" placeholder="Seleccione Plantilla" optionLabel="nombre" [showClear]="true"></p-dropdown>
+                            </div>
+
+                        </div>
+                    </div>
+                   
+         
+        <p-footer>
+           
+            <button type="button" pButton icon="pi pi-check" (click)="asignaPlantilla()" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="displayPlantillas=false" label="No" class="ui-button-secondary"></button>
         </p-footer>
 </p-dialog>

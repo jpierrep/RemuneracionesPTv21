@@ -17,5 +17,6 @@ api.get('/generaProceso',PerController.generaProcesoSueldo);
 api.post('/generaProcesoUpload',md_upload,PerController.generaProcesoSueldoUpdload);
 api.get('/getArchivo',PerController.downoloadFIle);
 api.get('/getPersona/:rut_id',PerController.getPersonalSoftOne);
+api.get('/cargaDatos',PerController.cargaDatos);
 
 module.exports=api;
