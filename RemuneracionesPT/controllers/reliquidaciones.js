@@ -43,7 +43,8 @@ async function generaReliquidacionUpdload(req,res){
    // let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
     let optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'Reliquidaciones', value:'Reliquida'},variables:vars};
     console.log(optionProcess);
-  
+   
+    let pathFile='uploads/reliquidaciones/reliqucmpc.xlsx'
       
     
   //  Realiza la carga al servidor del archivo
@@ -51,7 +52,7 @@ async function generaReliquidacionUpdload(req,res){
    
 
 
-    let persAsist= await getPersonalArchivo();
+    let persAsist= await getPersonalArchivo(pathFile);
     //res.status(200).send(persAsist);
    // let persAgrupa=await getAgrupaPers(persAsist);
   
@@ -74,10 +75,12 @@ async function generaReliquidacionUpdload(req,res){
   
 
 
-  function getPersonalArchivo (req,res){
+  function getPersonalArchivo (pathFile){
+    //path: 'uploads/reliquidaciones/reliqucmpc.xlsx'
+
     return new Promise(resolve=>{
       //readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
-      readXlsxFile('uploads/reliquidaciones/reliqucmpc.xlsx',).then((rows) => {
+      readXlsxFile(pathFile,).then((rows) => {
      //let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
     
       //result=JSON.parse(result);
@@ -251,9 +254,156 @@ function getPersonalBD(persAsist,persRRHH){
     
 }
 
+async function generaPartReliquidacionUpdload(req,res){
+
+
+  // let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
+  let optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'ReliquidacionesPartime', value:'ReliquidaPartime'}};
+  
+  console.log(optionProcess);
+
+  let pathFile='uploads/reliquidaciones/part-time/reliquida-partime.xlsx'
+  let persAsist= await getPersonalArchivo(pathFile);
+  let persRRHH=await personaController.getPersonalSoft(optionProcess);
+   
+  let persDiff=await getPersonalBD(persAsist,persRRHH);   
+
+  let calulaValores=await calculaValoresReliquida(persDiff);
+  res.status(200).send(calulaValores);
+
+
+  console.log("marca");
+  //res.status(200).send(valores);
+
+}
+
+ async function calculaValoresReliquida(persDiff){
+
+  let mappingvars=[{16:[7,8]},{17:[9,10]},{18:[11,12]},{19:[13,14]}];
+  let var8horas=[7,9,11,13];
+  let var12horas=[8,10,12,14];
+
+  let valores= await generaMapeoCalculo(mappingvars);
+
+   persDiff.forEach(persona=>{
+    
+    if (persona.IN_BD="true"){
+
+   let mappingPersona=valores;
+   
+ 
+
+   if (persona["HH TURNO"]=12){
+    let cantTurnos=persona["CANT TURNOS"];
+ 
+  
+    mappingPersona.valores.forEach(valor=>{
+
+    if(var12horas.find(x=>x==valor.ID))
+      valor.TOTAL=cantTurnos*parseInt(valor.VALOR);
+
+
+      });
+  
+   persona.ESTRUCT_PAGO=mappingPersona;
+
+
+  }
 
 
 
-  module.exports={generaReliquidacionUpdload,getPersonalArchivo,getRemuneracionesMes,getFechasRemuneracArchivo}
+
+
+    }else{
+     persona.ESTRUCT_PAGO=null
+
+    }
+   
+
+   });
+
+   return persDiff;
+
+
+ }
+
+
+
+
+ async function generaMapeoCalculo(mappingvars){
+   
+    let cantturnos12=2
+    let cantturnos8=3
+    let otros=4
+
+
+
+  let parametrosPago= await  personaController.getParametrosPago();
+
+
+  let calcula=mappingvars.map(value=>{
+      console.log(Object.keys(value))
+      let keynombre=Object.keys(value)[0];
+
+      //Extrae la key del valor calculado (codigo variable softland)
+    let nombre=  parametrosPago.find(x=>x.ID==keynombre) 
+    
+      //Extrae los valores que irán en las variables 
+    let valores= value[keynombre].map(valueVar=>{
+    let valueVarDesc=  parametrosPago.find(x=>x.ID==valueVar)
+
+         return {valores:valueVarDesc}
+      });
+
+      
+    
+  return {nombre:nombre,valores:valores}
+
+  
+
+    //si es de 8 horas var8horas
+
+    //si es de 12 horas var12horas
+
+    //si es de otro tipo hora proporcionar a la de 12
+
+    
+   
+
+  });
+
+   console.log(calcula);
+
+   return calcula;
+
+
+/*
+   let varValue8=parametrosPago.filter(value=>{
+    return var8horas.find(x=>x==value.ID)
+   });
+
+
+
+
+
+   let varValue12=parametrosPago.filter(value=>{
+    return var12horas.find(x=>x==value.ID)
+
+   });
+
+   */
+
+   
+   //console.log(varValue8,varValue12);
+
+
+
+
+
+ }
+
+
+
+  module.exports={generaReliquidacionUpdload,getPersonalArchivo,getRemuneracionesMes,getFechasRemuneracArchivo,generaPartReliquidacionUpdload}
 
    

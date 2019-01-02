@@ -66,8 +66,6 @@ function home (req,res){
 
 /*
     function getPersonalAsist (){
-
-
     readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
         // `rows` is an array of rows
         // each row being an array of cells.
@@ -91,9 +89,10 @@ async function generaProcesoSueldoUpdload(req,res){
 
   let sueldoBaseVar="";
   let liquidoPagoVar="";
+  //reliquidacionVar='';
   if(parametrosPago.find(x=>x.ID==3).VALOR) sueldoBaseVar=parametrosPago.find(x=>x.ID==3).VALOR;  //valor para el turno de 12
   if(parametrosPago.find(x=>x.ID==4).VALOR) liquidoPagoVar=parametrosPago.find(x=>x.ID==4).VALOR;   //valor para el turno de 8
-  if(parametrosPago.find(x=>x.ID==4).VALOR) reliquidacionVar=parametrosPago.find(x=>x.ID==6).VALOR;   //valor para el turno de 8
+  //if(parametrosPago.find(x=>x.ID==4).VALOR) reliquidacionVar=parametrosPago.find(x=>x.ID==6).VALOR;   //valor para el turno de 8
   let vars=`'`+sueldoBaseVar+`','`+liquidoPagoVar+`'`;  
 
   let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso),variables:vars}
@@ -375,14 +374,11 @@ function getCalculaSueldo(optionProcess,persDiff,parametrosPago){
   console.log("proceso es");
   console.log(proceso);
   return new Promise(resolve=>{
-
-
     persDiff.forEach((element,index,array)=>{
       element.SUELDO_MONTO=0;
       element.DESCUENTO=0;
       element.OTROS_DESCUENTOS=0;
   
-
       
       if(element.IN_BD=="true"){
         if(element.CARGO_CODI=='122') {
@@ -410,7 +406,6 @@ function getCalculaSueldo(optionProcess,persDiff,parametrosPago){
           }else{
             element.SUELDO_MONTO=-1;
           }
-
         if(liquidoPago&&proceso=='2a'){  //tienen que haber liquido a pago y el proceso debe ser segunda quincena
           if (liquidoPago<0 && liquidoPago*-1>=SUELDO_MONTO) element.DESCUENTO= SUELDO_MONTO+liquidoPago;  
        
@@ -422,9 +417,7 @@ function getCalculaSueldo(optionProcess,persDiff,parametrosPago){
      });
   
     resolve(persDiff);
-
   });
-
 } */
 
 function getVariablesSueldoPers(optionsProcess,persDiff){
@@ -498,12 +491,10 @@ function getVariablesSueldoPers(optionsProcess,persDiff){
        
        
       });
-
       //getVariablesSueldo(element.FICHA,'aaa',`'H303','P001'`,(result)=>{
       //  console.log(result);
       
      //      });
-
      }
     });
    */
@@ -821,15 +812,12 @@ request.bulk(table, (err, result) => {
 
 /*
 const table = new sql.Table('RRHH_Mapeo_Variables') // or temporary table, e.g. #temptable
-
 table.columns.add('columna_nombre', sql.VarChar(255), {nullable: false})
 table.columns.add('columna_variable', sql.VarChar(50), {nullable: false})
 table.columns.add('activo', sql.Bit, {nullable: false})
-
 table.rows.add('test', 'test',1)
 table.rows.add('test', 'test',1)
  
-
    // connect to your database
    sql.connect(config).then((pool)=>{
     return pool.request().bulk(table)
@@ -839,11 +827,7 @@ table.rows.add('test', 'test',1)
    }).catch(err=>{
     console.log(err);
   });
-
-
   });
-
-
   */
 
  const table = new sql.Table('RRHH_Mapeo_Variables') // or temporary table, e.g. #temptable
