@@ -284,35 +284,38 @@ async function generaPartReliquidacionUpdload(req,res){
   let var12horas=[8,10,12,14];
 
   let valores= await generaMapeoCalculo(mappingvars);
+  //return valores;
 
    persDiff.forEach(persona=>{
     
     if (persona.IN_BD="true"){
 
    let mappingPersona=valores;
-   
- 
-
-   if (persona["HH TURNO"]=12){
-    let cantTurnos=persona["CANT TURNOS"];
- 
   
-    mappingPersona.valores.forEach(valor=>{
+ 
 
-    if(var12horas.find(x=>x==valor.ID))
-      valor.TOTAL=cantTurnos*parseInt(valor.VALOR);
+   if (persona["HH TURNO"]==12){
+    let cantTurnos=persona["CANT TURNOS"];
+     console.log("es 12",cantTurnos)
+  
+    mappingPersona.forEach(mapping=>{
+      mapping.valores.forEach((valor,index)=>{
+        if(var12horas.find(x=>x==valor.ID))
+        valor.TOTAL=cantTurnos*parseInt(valor.VALOR);
+        else
+        mapping.valores.splice(index,1);
+
+      });
 
 
       });
-  
-   persona.ESTRUCT_PAGO=mappingPersona;
+      persona.ESTRUCT_PAGO=mappingPersona;
 
-
-  }
-
+  }  
 
 
 
+ 
 
     }else{
      persona.ESTRUCT_PAGO=null
@@ -352,12 +355,12 @@ async function generaPartReliquidacionUpdload(req,res){
     let valores= value[keynombre].map(valueVar=>{
     let valueVarDesc=  parametrosPago.find(x=>x.ID==valueVar)
 
-         return {valores:valueVarDesc}
+         return valueVarDesc
       });
 
       
     
-  return {nombre:nombre,valores:valores}
+  return {variable:nombre,valores:valores}
 
   
 
