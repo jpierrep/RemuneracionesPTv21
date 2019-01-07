@@ -1,0 +1,65 @@
+<p>
+  reliquidaciones-pt works!
+</p>
+<p-table [value]="reliquidacionesPTResumen">
+  <ng-template pTemplate="header">
+      <tr>
+          <th>RUT</th>
+          <th>CENCO2_DESC</th>
+          <th>CANT. TURNOS</th>
+          <th>TOTALHABERES</th>
+          
+          
+
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-resumen>
+      <tr>
+          <td>{{resumen.RUT}}</td>
+          <td>{{resumen.CENCO2_DESC}}</td>
+          <td>{{resumen["CANT TURNOS"]}}</td>
+          <td>{{resumen.TOTAL_HABERES}}</td>
+          <td>
+              <button  pButton icon="fa fa-eye" class="ui-button-success" (click)="getPersonaEstructura(resumen)"></button>
+  
+        </td>
+
+      </tr>
+  </ng-template>
+
+</p-table>
+
+<p-dialog header="Detalle " [(visible)]="displayEstructura" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+  
+        <p-table [columns]="colsResumen" [value]="estructuraPersona" >
+
+  
+
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+            
+          
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        {{rowData[col.field]}}
+                </td>
+
+          
+                </tr>
+            </ng-template>
+          
+          </p-table>
+          
+  
+        <p-footer>
+            <button type="button" pButton icon="pi pi-check" (click)="saveDiasTrabajados()" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="displayEstructura=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
+</p-dialog>

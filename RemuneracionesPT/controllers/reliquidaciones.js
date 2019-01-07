@@ -277,7 +277,117 @@ async function generaPartReliquidacionUpdload(req,res){
 
 }
 
- async function calculaValoresReliquida(persDiff){
+
+async function calculaValoresReliquida(persDiff){
+
+  let var8horas=[7,9,11,13];
+  let var12horas=[8,10,12,14];
+  let parametrosPago= await  personaController.getParametrosPago();
+
+
+ 
+  //return valores;
+
+   persDiff.forEach(persona=>{
+    
+    if (persona.IN_BD="true"){
+
+      if (persona["HH TURNO"]==12){
+        let cantTurnos=persona["CANT TURNOS"];
+        let parametrosTurno=parametrosPago.filter(parametro=>{
+         if(var12horas.find(x=>x==parametro.ID)) 
+          return parametro
+
+        });
+        persona.ESTRUCT_PAGO=parametrosTurno;
+      }
+      if (persona["HH TURNO"]==8){
+        let cantTurnos=persona["CANT TURNOS"];
+        let parametrosTurno=parametrosPago.filter(parametro=>{
+         if(var8horas.find(x=>x==parametro.ID)) 
+          return parametro
+
+        });
+        persona.ESTRUCT_PAGO=parametrosTurno;
+      }
+
+      else{
+        
+        //turnos de otra hora
+        let cantTurnos=persona["CANT TURNOS"];
+        let horasTurnos=persona["HH TURNO"].toString();
+       
+
+//array desde un objeto clonar copia
+
+      // let parametrosOtros=Array.from(Object.assign({},parametrosPago));
+      let parametrosOtros = JSON.parse(JSON.stringify(parametrosPago));
+        let parametrosTurno=parametrosOtros.filter(parametro=>{
+         if(var12horas.find(x=>x==parametro.ID)) {
+
+          parametro.VALOR=parseInt(parseInt(parametro.VALOR)*parseInt(persona["HH TURNO"])/12);
+          parametro.NOMBRE=parametro.NOMBRE.replace("12",horasTurnos);
+
+          return parametro
+         }
+
+        });
+
+        persona.ESTRUCT_PAGO=parametrosTurno;
+        
+
+      }
+
+  
+ 
+
+    }else{
+     persona.ESTRUCT_PAGO=null
+
+    }
+   
+
+   });
+
+   //calcula totales por persona
+
+
+  persDiff.forEach(persona=>{
+
+    var total = persona.ESTRUCT_PAGO.reduce((a, b) => ({VALOR: parseInt(a.VALOR) + parseInt(b.VALOR)}));
+    persona.TOTAL_DIARIO=total.VALOR;
+    persona.TOTAL_HABERES=total.VALOR*persona["CANT TURNOS"];
+
+  }); 
+
+
+
+   return persDiff;
+
+
+ }
+
+
+//retornaArray
+ function cloneArray(objeto) {
+  let dia =[];
+  for (let prop in objeto) {
+      dia[prop] = objeto[prop];
+  }
+  return dia;
+}
+//retornaObjeto
+function cloneObject(objeto) {
+  let dia = new Object();
+  for (let prop in objeto) {
+      dia[prop] = objeto[prop];
+  }
+  return dia;
+}
+
+
+
+ async function calculaValoresReliquida2(persDiff){
 
   let mappingvars=[{16:[7,8]},{17:[9,10]},{18:[11,12]},{19:[13,14]}];
   let var8horas=[7,9,11,13];

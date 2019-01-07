@@ -27,6 +27,8 @@ import { CalendarioTurnosComponent } from './components/calendario-turnos/calend
 import {FullCalendarModule} from 'primeng/fullcalendar';
 import { ReliquidacionesDetalleComponent } from './components/reliquidaciones-detalle/reliquidaciones-detalle.component';
 import { ReliquidacionesComponent } from './components/reliquidaciones/reliquidaciones.component';
+import { ReliquidacionesPTComponent } from './components/reliquidaciones-pt/reliquidaciones-pt.component';
+import { ReliquidacionesPTDetalleComponent } from './components/reliquidaciones-pt-detalle/reliquidaciones-pt-detalle.component';
 
 
 @NgModule ({
@@ -39,7 +41,9 @@ import { ReliquidacionesComponent } from './components/reliquidaciones/reliquida
     PersonalAsistComponent,
     CalendarioTurnosComponent,
     ReliquidacionesDetalleComponent,
-    ReliquidacionesComponent
+    ReliquidacionesComponent,
+    ReliquidacionesPTComponent,
+    ReliquidacionesPTDetalleComponent
 
   ],
   imports: [

@@ -5,6 +5,7 @@ import {PersonalAsistComponent } from '../components/personal-asist/personal-asi
 import {CalendarioTurnosComponent } from '../components/calendario-turnos/calendario-turnos.component';
 import {ReliquidacionesDetalleComponent} from '../components/reliquidaciones-detalle/reliquidaciones-detalle.component';
 import {ReliquidacionesComponent} from '../components/reliquidaciones/reliquidaciones.component';
+import {ReliquidacionesPTComponent} from '../components/reliquidaciones-pt/reliquidaciones-pt.component';
 
 export const routes:Routes=[
 {  path:'cars',component:CarsListComponent},
@@ -13,5 +14,6 @@ export const routes:Routes=[
 {  path:'resumenTurnos',component:PersonalAsistComponent},
 {  path:'calendarioTurnos',component:CalendarioTurnosComponent},
 {  path:'reliquidacion',component:ReliquidacionesComponent},
-{  path:'reliquidacionDetalle',component:ReliquidacionesDetalleComponent}
+{  path:'reliquidacionDetalle',component:ReliquidacionesDetalleComponent},
+{  path:'reliquidacionPT',component:ReliquidacionesPTComponent}
 ];

@@ -17,7 +17,8 @@ export class ReliquidacionesService {
   urlRemuneracionesArch: string='http://localhost:3800/reliquida/getRemuneracionesArchivo';
   urlFechasRemuneracionesArch: string='http://localhost:3800/reliquida/getFechasRemuneracionesArchivo';
   urlPlantillas:string='http://localhost:3800/varSoft/getPlantillas';
-  urlPlantillasVariablesOne:string='http://localhost:3800/varSoft/getPlantillaVarsOne'
+  urlPlantillasVariablesOne:string='http://localhost:3800/varSoft/getPlantillaVarsOne';
+  urlRemuneracionesPT:string='http://localhost:3800/reliquida/generaProcesoReliquidaPartTime';
 
   
   
@@ -72,6 +73,11 @@ export class ReliquidacionesService {
 
          getPlantillasVarsOne(id_plantilla){
             return this.http.get<any[]>(this.urlPlantillasVariablesOne+'/'+id_plantilla);
+
+          }
+
+          getRemuneracionesPT(){
+         return   this.http.get<any[]>(this.urlRemuneracionesPT);
 
           }
 
