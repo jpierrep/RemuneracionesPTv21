@@ -282,6 +282,14 @@ async function calculaValoresReliquida(persDiff){
 
   let var8horas=[7,9,11,13];
   let var12horas=[8,10,12,14];
+  // agrupacion de variables
+  let mappingvars=[
+    {idVar:16,vars:[7,8]},
+    {idVar:17,vars:[9,10]},
+    {idVar:18,vars:[11,12]},
+    {idVar:19,vars:[13,14]}
+  ];
+
   let parametrosPago= await  personaController.getParametrosPago();
 
 
@@ -294,11 +302,14 @@ async function calculaValoresReliquida(persDiff){
 
       if (persona["HH TURNO"]==12){
         let cantTurnos=persona["CANT TURNOS"];
+        
         let parametrosTurno=parametrosPago.filter(parametro=>{
          if(var12horas.find(x=>x==parametro.ID)) 
           return parametro
 
         });
+
+
         persona.ESTRUCT_PAGO=parametrosTurno;
       }
       if (persona["HH TURNO"]==8){
@@ -349,7 +360,56 @@ async function calculaValoresReliquida(persDiff){
 
    });
 
-   //calcula totales por persona
+
+//añade info de turno y totales parciales al json
+   persDiff.forEach(personaTurno=>{
+    
+    let cantTurnos=personaTurno["CANT TURNOS"];
+
+    if (personaTurno.IN_BD="true"){
+
+      personaTurno.ESTRUCT_PAGO.forEach(estrucPago=>{
+        estrucPago.VALOR=estrucPago.VALOR*cantTurnos;
+        estrucPago.CANT_TURNOS=cantTurnos;
+
+          //mappingvars
+    //parametrosPago
+    //obtenemos el id de la variable mapeada correspondiente: sueldo base, gratificacion, etc segun el id de estruct pago
+    let filtraVariable= mappingvars.filter(variable=>{
+      
+      /*   let mappingvars=[
+      {idVar:16,vars:[7,8]},
+      {idVar:17,vars:[9,10]},
+      {idVar:18,vars:[11,12]},
+      {idVar:19,vars:[13,14]}
+    ];
+  
+    */
+        return variable.vars.find(x=>x==estrucPago.ID);
+      });
+  
+      let idVariable=filtraVariable[0].idVar;
+      let variableDetalle=parametrosPago.find(x=>x.ID==idVariable);
+
+      estrucPago.VARIABLE_CODI=variableDetalle.VALOR;
+      estrucPago.VARIABLE_DESC=variableDetalle.NOMBRE;
+
+
+
+
+
+
+      
+      });
+
+
+    
+    }
+  });
+
+
+
+   //calcula totales generales por persona
 
 
   persDiff.forEach(persona=>{
@@ -358,7 +418,9 @@ async function calculaValoresReliquida(persDiff){
     persona.TOTAL_DIARIO=total.VALOR;
     persona.TOTAL_HABERES=total.VALOR*persona["CANT TURNOS"];
 
+    
   }); 
+    
 
 
 
@@ -387,58 +449,6 @@ function cloneObject(objeto) {
 
 
 
- async function calculaValoresReliquida2(persDiff){
-
-  let mappingvars=[{16:[7,8]},{17:[9,10]},{18:[11,12]},{19:[13,14]}];
-  let var8horas=[7,9,11,13];
-  let var12horas=[8,10,12,14];
-
-  let valores= await generaMapeoCalculo(mappingvars);
-  //return valores;
-
-   persDiff.forEach(persona=>{
-    
-    if (persona.IN_BD="true"){
-
-   let mappingPersona=valores;
-  
- 
-
-   if (persona["HH TURNO"]==12){
-    let cantTurnos=persona["CANT TURNOS"];
-     console.log("es 12",cantTurnos)
-  
-    mappingPersona.forEach(mapping=>{
-      mapping.valores.forEach((valor,index)=>{
-        if(var12horas.find(x=>x==valor.ID))
-        valor.TOTAL=cantTurnos*parseInt(valor.VALOR);
-        else
-        mapping.valores.splice(index,1);
-
-      });
-
-
-      });
-      persona.ESTRUCT_PAGO=mappingPersona;
-
-  }  
-
-
-
- 
-
-    }else{
-     persona.ESTRUCT_PAGO=null
-
-    }
-   
-
-   });
-
-   return persDiff;
-
-
- }
 
 
 

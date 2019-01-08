@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ReliquidacionesService} from '../../services/reliquidaciones.service';
+import { Angular5Csv } from 'angular5-csv/Angular5-csv';
 
 @Component({
   selector: 'app-reliquidaciones-pt',
@@ -69,6 +70,7 @@ export class ReliquidacionesPTComponent implements OnInit {
 
       //base para presentacion de resultado
      let personaFind=JSON.parse(JSON.stringify(personas.find(x=>x.RUT==rutPersona)));
+     
      //todos los turnos
      let personaTurnos=personas.filter(x=>x.RUT==rutPersona);
   
@@ -91,6 +93,81 @@ export class ReliquidacionesPTComponent implements OnInit {
 
 
      }
+
+     muestraPersonaEstructura(personaBuscar){
+       //obtiene forma para tabla
+       let nuevaForma=this.getPersonaEstructura(personaBuscar);
+      this.estructuraPersona=nuevaForma;
+
+      //añade nombre a las columnas de la tabla segun tipos de turno
+      this.colsResumen= Object.keys(nuevaForma[0]);
+      
+      this.colsResumen=this.colsResumen.map(value=>{
+        return{field:value,header:value};
+      
+      });
+      this.displayEstructura=true;
+
+     }
+
+
+     getEstructuraArchivo(){
+       
+
+      let personas=this.reliquidacionesPT.filter(persona=>{
+        if(persona.IN_BD="true"&&persona.RUT){
+          return persona
+        }
+  
+       });
+
+      //crea arreglo con todos los valores por ficha x variable
+      let resumen=[];
+
+       personas.forEach(turnoPersona=>{
+        turnoPersona.ESTRUCT_PAGO.forEach(estruct=>{
+           let obj= {VARIABLE:estruct.VARIABLE_CODI,FICHA:turnoPersona.FICHA,MONTO:estruct.VALOR,KEY:turnoPersona.FICHA+estruct.VARIABLE_CODI}
+           resumen.push(obj);
+
+          }); 
+       
+      });
+     
+      
+      //Agrupa segun ficha variable
+      //https://stackoverflow.com/questions/29364262/how-to-group-by-and-sum-array-of-object
+      let result=[];
+      result=resumen.reduce(function(res, value) {
+        if (!res[value.KEY]) {
+          res[value.KEY] = { FICHA: value.FICHA,VARIABLE:value.VARIABLE, MONTO: 0 };
+          result.push(res[value.KEY])
+        }
+        res[value.KEY].MONTO += value.MONTO;
+        return res;
+      }, {}); 
+
+
+
+/*
+      let result=[];
+      result=resumen.reduce(function(res, value) {
+        if (!res[value.KEY]) {
+          res[value.KEY] = { KEY: value.KEY, MONTO: 0 };
+          result.push(res[value.KEY])
+        }
+        res[value.KEY].MONTO += value.MONTO;
+        return res;
+      }, {}); 
+*/
+     // console.log(resumen)
+     // console.log(result)
+
+      //iterar sobre objetos, trae solo los valores como arreglo
+      console.log(Object.values(result))
+
+      return Object.values(result);
+     
+    }
 
 
      getPersonaEstructura(personaBuscar){
@@ -125,6 +202,9 @@ export class ReliquidacionesPTComponent implements OnInit {
          objNuevo=JSON.parse(`{`+obj+`}`)
 
          }
+
+
+
         nuevaForma.push (objNuevo);
     
 
@@ -136,32 +216,106 @@ export class ReliquidacionesPTComponent implements OnInit {
     */
 
       }
+
+              //añade cantidad de turnos
+              let j;
+              let obj="";
+              for (j = 0; j <tiposTurno.length; j++){
+                if (obj=="")
+                obj=`"turno`+tiposTurno[j]+`":`+personaTurnos[j]["CANT TURNOS"];
+                else
+                obj=obj+`,"turno`+tiposTurno[j]+`":`+personaTurnos[j]["CANT TURNOS"];
+                objNuevo=JSON.parse(`{`+obj+`}`)
+         
+                }
+
+                nuevaForma.push (objNuevo); 
       
 
       //ordenamos segun indice de arreglos  ESTRUCT_PAGO
         
       //crea arreglo con nombres variables
-      let nombres=['SUELDO BASE','GRATIFICACION','MOVILIZACION','COLACION']
+      let nombres=['SUELDO BASE','GRATIFICACION','MOVILIZACION','COLACION','CANT TURNOS']
       for (i = 0; i <nombres.length; i++) {
         nuevaForma[i].TIPO=nombres[i];
         
       }
 
-
+     
       console.log(nuevaForma);
-      this.estructuraPersona=nuevaForma;
-
-      //añade nombre a las columnas de la tabla segun tipos de turno
-      this.colsResumen= Object.keys(nuevaForma[0]);
-      
-      this.colsResumen=this.colsResumen.map(value=>{
-        return{field:value,header:value};
-      
-      });
-      this.displayEstructura=true;
+      return nuevaForma;
+  
 
 
      }
+
+     descargaCSVProceso(){
+ 
+     //var today = new Date();
+     //var dd = today.getDate();
+     //var mm = today.getMonth()+1; //January is 0!
+     //var yyyy = today.getFullYear();
+
+     var data=this.getEstructuraArchivo();
+
+     var options = { 
+      //fieldSeparator: ',',
+      //quoteStrings: '"',
+      quoteStrings: '"'
+      //decimalseparator: '.',
+      //showLabels: true, 
+      //showTitle: true,
+      //useBom: true,
+      //noDownload: true,
+      //headers: ["First Name", "Last Name", "ID"]
+    };
+     
+  var csv =new Angular5Csv(data, 'Archivo_Softland_REliquidaPT',options);
+
+
+
+  /*
+ 
+    fichero={  FICHA :element.FICHA,
+     VARIABLE:variable,
+     MES:fecha,
+    VALOR :element.SUELDO_MONTO-element.DESCUENTO-element.OTROS_DESCUENTOS+montoOtroPago};
+ 
+  
+      return fichero;
+    });
+    //console.log(data);
+ 
+     var dataTest = [
+       {
+         name: "Test 1",
+         age: 13,
+         average: 8.2,
+         approved: true,
+         description: "using 'Content here, content here' "
+       },
+       {
+         name: 'Test 2',
+         age: 11,
+         average: 8.2,
+         approved: true,
+         description: "using 'Content here, content here' "
+       },
+       {
+         name: 'Test 4',
+         age: 10,
+         average: 8.2,
+         approved: true,
+         description: "using 'Content here, content here' "
+       },
+     ];
+ */
+
+   
+   
+
+  
+ }
    
 
      

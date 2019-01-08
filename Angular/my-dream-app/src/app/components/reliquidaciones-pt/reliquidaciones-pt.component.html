@@ -1,6 +1,7 @@
 <p>
   reliquidaciones-pt works!
 </p>
+<button  pButton icon="fa fa-eye" class="ui-button-success" (click)="descargaCSVProceso()"></button>
 <p-table [value]="reliquidacionesPTResumen">
   <ng-template pTemplate="header">
       <tr>
@@ -20,7 +21,7 @@
           <td>{{resumen["CANT TURNOS"]}}</td>
           <td>{{resumen.TOTAL_HABERES}}</td>
           <td>
-              <button  pButton icon="fa fa-eye" class="ui-button-success" (click)="getPersonaEstructura(resumen)"></button>
+              <button  pButton icon="fa fa-eye" class="ui-button-success" (click)="muestraPersonaEstructura(resumen)"></button>
   
         </td>
 
@@ -29,7 +30,7 @@
 
 </p-table>
 
-<p-dialog header="Detalle " [(visible)]="displayEstructura" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70" 
+<p-dialog header="Detalle " [(visible)]="displayEstructura" [modal]="modal" [responsive]="true" [width]="650" [minWidth]="500" [minY]="370" 
         [maximizable]="true" [baseZIndex]="10000">
   
         <p-table [columns]="colsResumen" [value]="estructuraPersona" >

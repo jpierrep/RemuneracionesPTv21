@@ -249,7 +249,6 @@ console.log(variablesDB);
 
   
 
-
   this.variables.forEach((element)=>{
     let encuentra=variablesDB.find(x=>x.columna_nombre==element.field)
 
