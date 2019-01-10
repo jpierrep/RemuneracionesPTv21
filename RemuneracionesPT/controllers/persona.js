@@ -711,22 +711,25 @@ function entrega_resultDB2(queryDB, callback){
  
          //request trae archivos si es que son subidos
        if(req.files){
+         // console.log('archivos',req.files)
+      
            //campo path del campo imagen enviado por post
          var file_path=req.files.file.path;
          //obtneemos el nombre del archivo
          var file_split=file_path.split('\\');
-         console.log(file_split);
+         
          //[ 'uploads', 'users', 'LmkbKFCxtEqb4Ij6eeppHipB.jpg' ]
-         //en la posicion 2 entrega el nombre del archivo
-         var file_name=file_split[2]
+         //en la ultima posicion del arreglo entrega el nombre del archivo
+         var file_name=file_split[file_split.length-1]
          //seteamos la variable global con el nombre del archivo a leer
          ExcelFilename=file_name;
+         console.log('filename',file_name);
          //extencion del archivo
          var ext_split=file_name.split('\.');
          var file_ext=ext_split[1];
          //comprobar que las extenciones son correctas
  //puede subir usuarios solamente el dueño de la cuenta
-
+        console.log("la extencion", file_ext)
          if(  file_ext=='xls'||file_ext=='xlsx'){
             //Actualizar documento de usuario logeado
           
@@ -768,6 +771,9 @@ function entrega_resultDB2(queryDB, callback){
             }
           });
 
+        }
+        function getExcelFilename(){
+          return ExcelFilename;
         }
 
       
@@ -859,7 +865,7 @@ table.rows.add('test', 'test',1);
 
 
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID,getVariablesSueldoPers,getParametrosPago,entrega_resultDB,cargaDatos}
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID,getVariablesSueldoPers,getParametrosPago,entrega_resultDB,cargaDatos,getExcelFilename}
 
    
      

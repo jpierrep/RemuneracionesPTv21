@@ -1,7 +1,31 @@
 <p>
   reliquidaciones-pt works!
 </p>
+
+<button type="button" pButton icon="fa fa-plus" iconPos="left" label="Nuevo Proceso" (click)="displayNewProcess=true"></button>
+
+<p-dialog header="Nuevo Proceso" [(visible)]="displayNewProcess" [modal]="modal" [responsive]="true" [width]="350" [minWidth]="250" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+
+      
+         
+            <p-dropdown [options]="optionMeses" [(ngModel)]="optionSelectedMes" placeholder="Seleccione el Mes" optionLabel="name" [showClear]="true"></p-dropdown>
+
+            <p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
+        
+            <p-footer>
+                <div *ngIf="loadigProcess"> 
+                    <p-progressBar mode="indeterminate"></p-progressBar>
+                </div>
+            <button type="button" pButton icon="pi pi-check" (click)="newProcess()" label="Yes"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="displayNewProcess=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
+</p-dialog>
+
+
+
 <button  pButton icon="fa fa-eye" class="ui-button-success" (click)="descargaCSVProceso()"></button>
+<button  pButton icon="fa fa-eye" class="ui-button-success" (click)="descargaDetalleCSV()"></button>
 <p-table [value]="reliquidacionesPTResumen">
   <ng-template pTemplate="header">
       <tr>

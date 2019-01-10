@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ReliquidacionesService} from '../../services/reliquidaciones.service';
 import { Angular5Csv } from 'angular5-csv/Angular5-csv';
+import {ProgressBarModule} from 'primeng/progressbar';
 
 @Component({
   selector: 'app-reliquidaciones-pt',
@@ -12,16 +13,66 @@ export class ReliquidacionesPTComponent implements OnInit {
   constructor(private ReliquidacionesService:ReliquidacionesService) { }
 
   ngOnInit() {
-
-    this.getRemuneracionesPT();
+    
+    this.optionMeses=[{name:'2018-Diciembre', value:'12/2018'},{name:'2019-Enero', value:'01/2019'}];
+    
+   // this.getRemuneracionesPT();
   }
 
+
+  
+  optionMeses:any[];
   reliquidacionesPT:any[];
   reliquidacionesPTResumen: any[];
   estructuraPersona:any[];
   displayEstructura:boolean;
    //columnas dinamicas tabla tipo de turno
   colsResumen:any[];
+  displayNewProcess:boolean;
+  loadigProcess:boolean;
+  optionSelectedMes:String;
+  uploadedFiles: any[] = [];
+  optionRequestedMes:String; //mes confirmado para el proceso
+  optionProcess;
+
+
+  async newProcess(){
+ 
+    //this.diasTrabajadosOtrosOne=personaEditar // la original para saber la posicion
+    //this.diasTrabajadosOneSelected=this.cloneDias(personaEditar);  // la copia para editar y luego reasignar
+    this.loadigProcess=true;
+
+   this.optionProcess= {'fecha':this.optionSelectedMes};
+   await this.FilesgetAllDiasTrabajados();
+  this.optionRequestedMes=this.optionSelectedMes;
+
+  this.optionSelectedMes=null;
+
+   this.loadigProcess=false;
+   this.displayNewProcess=false;
+
+  
+  
+  }
+
+  async FilesgetAllDiasTrabajados(){
+    return new Promise(resolve=>{
+      // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
+       this.ReliquidacionesService.getAllDiasTrabFile(this.uploadedFiles[0],this.optionProcess).subscribe(  
+      data=> {
+
+        this.reliquidacionesPT=data;
+      console.log(this.reliquidacionesPT);
+      this.reliquidacionesPTResumen= this.getRemuneracionesPTResumen();
+
+
+                resolve();
+   
+               }
+         
+       )
+      });
+     }
 
 
 
@@ -111,63 +162,7 @@ export class ReliquidacionesPTComponent implements OnInit {
      }
 
 
-     getEstructuraArchivo(){
-       
-
-      let personas=this.reliquidacionesPT.filter(persona=>{
-        if(persona.IN_BD="true"&&persona.RUT){
-          return persona
-        }
-  
-       });
-
-      //crea arreglo con todos los valores por ficha x variable
-      let resumen=[];
-
-       personas.forEach(turnoPersona=>{
-        turnoPersona.ESTRUCT_PAGO.forEach(estruct=>{
-           let obj= {VARIABLE:estruct.VARIABLE_CODI,FICHA:turnoPersona.FICHA,MONTO:estruct.VALOR,KEY:turnoPersona.FICHA+estruct.VARIABLE_CODI}
-           resumen.push(obj);
-
-          }); 
-       
-      });
-     
-      
-      //Agrupa segun ficha variable
-      //https://stackoverflow.com/questions/29364262/how-to-group-by-and-sum-array-of-object
-      let result=[];
-      result=resumen.reduce(function(res, value) {
-        if (!res[value.KEY]) {
-          res[value.KEY] = { FICHA: value.FICHA,VARIABLE:value.VARIABLE, MONTO: 0 };
-          result.push(res[value.KEY])
-        }
-        res[value.KEY].MONTO += value.MONTO;
-        return res;
-      }, {}); 
-
-
-
-/*
-      let result=[];
-      result=resumen.reduce(function(res, value) {
-        if (!res[value.KEY]) {
-          res[value.KEY] = { KEY: value.KEY, MONTO: 0 };
-          result.push(res[value.KEY])
-        }
-        res[value.KEY].MONTO += value.MONTO;
-        return res;
-      }, {}); 
-*/
-     // console.log(resumen)
-     // console.log(result)
-
-      //iterar sobre objetos, trae solo los valores como arreglo
-      console.log(Object.values(result))
-
-      return Object.values(result);
-     
-    }
+ 
 
 
      getPersonaEstructura(personaBuscar){
@@ -249,6 +244,79 @@ export class ReliquidacionesPTComponent implements OnInit {
 
      }
 
+
+     getEstructuraArchivo(){
+       
+
+      let personas=this.reliquidacionesPT.filter(persona=>{
+        if(persona.IN_BD="true"&&persona.RUT){
+          return persona
+        }
+  
+       });
+
+      //crea arreglo con todos los valores por ficha x variable
+      let resumen=[];
+
+       personas.forEach(turnoPersona=>{
+        turnoPersona.ESTRUCT_PAGO.forEach(estruct=>{
+           let obj= {VARIABLE:estruct.VARIABLE_CODI,FICHA:turnoPersona.FICHA,MONTO:estruct.VALOR,KEY:turnoPersona.FICHA+estruct.VARIABLE_CODI}
+           resumen.push(obj);
+
+          }); 
+       
+      });
+     
+      
+      //Agrupa segun ficha variable
+      //https://stackoverflow.com/questions/29364262/how-to-group-by-and-sum-array-of-object
+      let result=[];
+      result=resumen.reduce(function(res, value) {
+        if (!res[value.KEY]) {
+          res[value.KEY] = { FICHA: value.FICHA,VARIABLE:value.VARIABLE, MONTO: 0 };
+          result.push(res[value.KEY])
+        }
+        res[value.KEY].MONTO += value.MONTO;
+        return res;
+      }, {}); 
+
+
+
+/*
+      let result=[];
+      result=resumen.reduce(function(res, value) {
+        if (!res[value.KEY]) {
+          res[value.KEY] = { KEY: value.KEY, MONTO: 0 };
+          result.push(res[value.KEY])
+        }
+        res[value.KEY].MONTO += value.MONTO;
+        return res;
+      }, {}); 
+*/
+     // console.log(resumen)
+     // console.log(result)
+
+      //iterar sobre objetos, trae solo los valores como arreglo
+      console.log(Object.values(result))
+
+      return Object.values(result);
+     
+    }
+
+    evento(event) {
+      //eliminamos los archivos anteriores
+      this.uploadedFiles=[];
+  
+      console.log("on Uploaded");
+      console.log(event);
+      for(let file of event.files) {
+          this.uploadedFiles.push(file);
+      }
+    console.log("se subio");
+    console.log(this.uploadedFiles[0]);
+    
+    }
+
      descargaCSVProceso(){
  
      //var today = new Date();
@@ -316,6 +384,48 @@ export class ReliquidacionesPTComponent implements OnInit {
 
   
  }
+
+ descargaDetalleCSV(){
+  let personas=this.reliquidacionesPT.filter(persona=>{
+    if(persona.IN_BD="true"&&persona.RUT){
+      return persona
+    }
+
+   });
+
+   let resumen=[];
+
+   personas.forEach(turnoPersona=>{
+    turnoPersona.ESTRUCT_PAGO.forEach(estruct=>{
+       let obj= {FICHA:turnoPersona.FICHA,RUT:turnoPersona.RUT,NOMBRE:turnoPersona.NOMBRE,HORAS_TURNO:turnoPersona["HH TURNO"],VARIABLE:estruct.VARIABLE_DESC,MONTO:estruct.VALOR}
+       resumen.push(obj);
+
+      }); 
+   
+  });
+
+  var data=resumen;
+
+  var options = { 
+   //fieldSeparator: ',',
+   //quoteStrings: '"',
+   quoteStrings: '"'
+   //decimalseparator: '.',
+   //showLabels: true, 
+   //showTitle: true,
+   //useBom: true,
+   //noDownload: true,
+   //headers: ["First Name", "Last Name", "ID"]
+ };
+  
+var csv =new Angular5Csv(data, 'Archivo_Softland_REliquidaPT',options);
+
+
+
+
+
+
+}
    
 
      

@@ -25,9 +25,17 @@ const schema = {
 
 async function generaReliquidacionUpdload(req,res){
   
+  let optionProcess={fecha:JSON.parse(req.body.fecha)};
+  console.log(optionProcess);
+
+  
+  await personaController.uploadFile(req,res);
+  let pathFile='uploads/reliquidaciones/'+personaController.getExcelFilename;
    
     //obtiene parametros para el pago de sueldo
    let parametrosPago= await  personaController.getParametrosPago();
+   //una vez subido pondemos obtener el nombre del archivo
+
 
    let sueldoBaseVar="";
    let liquidoPagoVar="";
@@ -44,13 +52,12 @@ async function generaReliquidacionUpdload(req,res){
     let optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'Reliquidaciones', value:'Reliquida'},variables:vars};
     console.log(optionProcess);
    
-    let pathFile='uploads/reliquidaciones/reliqucmpc.xlsx'
+    
       
     
   //  Realiza la carga al servidor del archivo
   //  await uploadFile(req,res);
    
-
 
     let persAsist= await getPersonalArchivo(pathFile);
     //res.status(200).send(persAsist);
@@ -75,12 +82,12 @@ async function generaReliquidacionUpdload(req,res){
   
 
 
-  function getPersonalArchivo (pathFile){
+  function getPersonalArchivo (filename){
     //path: 'uploads/reliquidaciones/reliqucmpc.xlsx'
 
     return new Promise(resolve=>{
       //readXlsxFile('testPT.xlsx',{schema}).then((rows) => {
-      readXlsxFile(pathFile,).then((rows) => {
+      readXlsxFile(filename,).then((rows) => {
      //let result= JSON.stringify(rows.rows); //la consulta trae un campo rows y uno errors, por eso enviamos el rows
     
       //result=JSON.parse(result);
@@ -256,13 +263,19 @@ function getPersonalBD(persAsist,persRRHH){
 
 async function generaPartReliquidacionUpdload(req,res){
 
-
+  let optionProcess={fecha:JSON.parse(req.body.fecha)};
   // let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
-  let optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'ReliquidacionesPartime', value:'ReliquidaPartime'}};
+  optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'ReliquidacionesPartime', value:'ReliquidaPartime'}};
   
+
+
   console.log(optionProcess);
 
-  let pathFile='uploads/reliquidaciones/part-time/reliquida-partime.xlsx'
+  
+  await personaController.uploadFile(req,res);
+  let pathFile='uploads/reliquidaciones/part-time/'+personaController.getExcelFilename();
+  console.log("el file paht es",pathFile);
+
   let persAsist= await getPersonalArchivo(pathFile);
   let persRRHH=await personaController.getPersonalSoft(optionProcess);
    
@@ -428,25 +441,6 @@ async function calculaValoresReliquida(persDiff){
 
 
  }
-
-
-//retornaArray
- function cloneArray(objeto) {
-  let dia =[];
-  for (let prop in objeto) {
-      dia[prop] = objeto[prop];
-  }
-  return dia;
-}
-//retornaObjeto
-function cloneObject(objeto) {
-  let dia = new Object();
-  for (let prop in objeto) {
-      dia[prop] = objeto[prop];
-  }
-  return dia;
-}
-
 
 
 
