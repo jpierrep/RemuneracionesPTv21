@@ -12,7 +12,8 @@ var md_uploadpt=multipart({uploadDir:'./uploads/reliquidaciones/part-time'})
 
 
 //api.get('/leeArchivoReliq',md_upload,ReliqController.getFileReliquida);
-api.get('/generaProcesoReliquida',md_upload,ReliqController.generaReliquidacionUpdload);
+//api.get('/generaProcesoReliquida',md_upload,ReliqController.generaReliquidacionUpdload);
+api.post('/generaProcesoReliquida',md_upload,ReliqController.generaReliquidacionUpdload);
 api.get('/getRemuneracionesArchivo/:fecha?',ReliqController.getRemuneracionesMes);
 api.get('/getFechasRemuneracionesArchivo/:fecha?',ReliqController.getFechasRemuneracArchivo);
 //api.get('/generaProcesoReliquidaPartTime',md_upload,ReliqController.generaPartReliquidacionUpdload);

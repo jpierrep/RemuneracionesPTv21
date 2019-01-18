@@ -25,12 +25,15 @@ const schema = {
 
 async function generaReliquidacionUpdload(req,res){
   
-  let optionProcess={fecha:JSON.parse(req.body.fecha)};
-  console.log(optionProcess);
-
+  //let optionProcess={fecha:JSON.parse(req.body.fecha)};
+  //console.log("la optionProcess",optionProcess)
   
+  // optionProcess={fecha:JSON.parse(req.body.fecha)};
+  //console.log(optionProcess);
+
+
   await personaController.uploadFile(req,res);
-  let pathFile='uploads/reliquidaciones/'+personaController.getExcelFilename;
+  let pathFile='uploads/reliquidaciones/'+personaController.getExcelFilename();
    
     //obtiene parametros para el pago de sueldo
    let parametrosPago= await  personaController.getParametrosPago();
@@ -51,8 +54,12 @@ async function generaReliquidacionUpdload(req,res){
    // let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
     let optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'Reliquidaciones', value:'Reliquida'},variables:vars};
     console.log(optionProcess);
+
+  optionProcess={fecha:JSON.parse(req.body.fecha),variables:vars};
+  console.log("la optionProcess",optionProcess)
    
-    
+       
+
       
     
   //  Realiza la carga al servidor del archivo
@@ -196,6 +203,7 @@ function getPersonalBD(persAsist,persRRHH){
     let fecha= req.params.fecha;
     console.log("la fecha parametro es"+fecha)
    if (fecha){
+    console.log("viene fecha")
        //si viene fecha
        let  query=`SELECT distinct [ficha] ,[codVariable] ,[valor] ,[empresa],convert(date,fecha_Registro) as fecha_Registro from inteligencias.dbo.RRHH_APP_REG_VAR where convert(date,fecha_Registro)='`+fecha+`'`
        personaController.entrega_resultDB(query,(resultFinal)=>{
@@ -205,20 +213,23 @@ function getPersonalBD(persAsist,persRRHH){
     });
    
     }else{
+      console.log("No viene fecha")
        //si no viene fecha, extraer el ultimo día del mes en curso
    //extrae la info del mes actual, pues no se puede pagar en relacion a meses pasados
   let  query=`select convert(date,max(Fecha_Registro)) as MaxFecha from inteligencias.dbo.RRHH_APP_REG_VAR`
   
 //return new Promise(resolve=>{
-    personaController.entrega_resultDB(query,(result)=>{
-
+  personaController.entrega_resultDB2(query,null).then(result=>{
+   // personaController.entrega_resultDB(query,(result)=>{
+     console.log("dentro 2a query" )
       console.log(result[0].MaxFecha)
       let maxFecha=result[0].MaxFecha;
       maxFecha=moment.utc(maxFecha).format("YYYY-MM-DD");
       query=`SELECT  [ficha] ,[codVariable] ,[valor] ,[empresa],[Fecha_Registro]
       FROM [Inteligencias].[dbo].[RRHH_APP_REG_VAR] where convert(date,fecha_Registro)='`+maxFecha+`'`
       
-      personaController.entrega_resultDB(query,(resultFinal)=>{
+   //   personaController.entrega_resultDB(query,(resultFinal)=>{
+    personaController.entrega_resultDB2(query,null).then(resultFinal=>{
      
         res.status(200).send(resultFinal);
       //   resolve ( resultFinal);
@@ -264,12 +275,11 @@ function getPersonalBD(persAsist,persRRHH){
 async function generaPartReliquidacionUpdload(req,res){
 
   let optionProcess={fecha:JSON.parse(req.body.fecha)};
+  console.log("la optionProcess",optionProcess)
   // let optionProcess={fecha:JSON.parse(req.body.fecha),proceso:JSON.parse(req.body.proceso)}
-  optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'ReliquidacionesPartime', value:'ReliquidaPartime'}};
   
-
-
-  console.log(optionProcess);
+  //optionProcess={fecha:{name:'Noviembre', value:'11/2018'},proceso:{name:'ReliquidacionesPartime', value:'ReliquidaPartime'}};
+  
 
   
   await personaController.uploadFile(req,res);
@@ -311,7 +321,7 @@ async function calculaValoresReliquida(persDiff){
 
    persDiff.forEach(persona=>{
     
-    if (persona.IN_BD="true"){
+    if (persona.IN_BD=="true"){
 
       if (persona["HH TURNO"]==12){
         let cantTurnos=persona["CANT TURNOS"];
@@ -379,7 +389,7 @@ async function calculaValoresReliquida(persDiff){
     
     let cantTurnos=personaTurno["CANT TURNOS"];
 
-    if (personaTurno.IN_BD="true"){
+    if (personaTurno.IN_BD=="true"){
 
       personaTurno.ESTRUCT_PAGO.forEach(estrucPago=>{
         estrucPago.VALOR=estrucPago.VALOR*cantTurnos;
@@ -426,10 +436,12 @@ async function calculaValoresReliquida(persDiff){
 
 
   persDiff.forEach(persona=>{
-
+    if(persona.ESTRUCT_PAGO){
     var total = persona.ESTRUCT_PAGO.reduce((a, b) => ({VALOR: parseInt(a.VALOR) + parseInt(b.VALOR)}));
     persona.TOTAL_DIARIO=total.VALOR;
-    persona.TOTAL_HABERES=total.VALOR*persona["CANT TURNOS"];
+    persona.TOTAL_HABERES=total.VALOR*persona["CANT TURNOS"];  
+  }
+   
 
     
   }); 

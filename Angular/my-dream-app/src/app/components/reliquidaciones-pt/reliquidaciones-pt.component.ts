@@ -15,12 +15,27 @@ export class ReliquidacionesPTComponent implements OnInit {
   ngOnInit() {
     
     this.optionMeses=[{name:'2018-Diciembre', value:'12/2018'},{name:'2019-Enero', value:'01/2019'}];
+    this.getDatesArray();
+
+    if(localStorage.getItem('optionsProcessReliquidaPT')){
+      console.log("existe el proceso");
+   this.optionRequestedMes=(JSON.parse(localStorage.getItem('optionsProcessReliquidaPT'))["fecha"]);
+    //this.optionRequestedProceso=(JSON.parse(localStorage.getItem('optionsProcess'))["proceso"]);
+    }
+
+    if(localStorage.getItem('reliquidaPT')){
+      console.log("existe el objeto");
+  
+      this.reliquidacionesPT=JSON.parse(localStorage.getItem('reliquidaPT'));
+      this.reliquidacionesPTResumen= this.getRemuneracionesPTResumen();
+
+     }
     
    // this.getRemuneracionesPT();
   }
 
 
-  
+  display:boolean;
   optionMeses:any[];
   reliquidacionesPT:any[];
   reliquidacionesPTResumen: any[];
@@ -36,6 +51,7 @@ export class ReliquidacionesPTComponent implements OnInit {
   optionProcess;
 
 
+
   async newProcess(){
  
     //this.diasTrabajadosOtrosOne=personaEditar // la original para saber la posicion
@@ -44,6 +60,11 @@ export class ReliquidacionesPTComponent implements OnInit {
 
    this.optionProcess= {'fecha':this.optionSelectedMes};
    await this.FilesgetAllDiasTrabajados();
+
+   localStorage.setItem('optionsProcessReliquidaPT',JSON.stringify(this.optionProcess));
+           
+   localStorage.setItem('reliquidaPT', JSON.stringify(this.reliquidacionesPT));
+
   this.optionRequestedMes=this.optionSelectedMes;
 
   this.optionSelectedMes=null;
@@ -74,6 +95,21 @@ export class ReliquidacionesPTComponent implements OnInit {
       });
      }
 
+     getNoExistentes(){
+      if(this.reliquidacionesPT){
+     let noExistentes=this.reliquidacionesPT.filter(value=>{
+      return value.IN_BD=="false";
+     });
+
+
+          console.log("noexitentes",noExistentes);
+     console.log("todos",this.reliquidacionesPT);
+     
+     return noExistentes.slice(1,noExistentes.length);
+    
+    }
+    }
+
 
 
   getRemuneracionesPT(){
@@ -96,7 +132,7 @@ export class ReliquidacionesPTComponent implements OnInit {
       //obtiene array con los ruts vigentes distintos 
 
       let personas=this.reliquidacionesPT.filter(persona=>{
-       if(persona.IN_BD="true"&&persona.RUT){
+       if(persona.IN_BD=="true"&&persona.RUT){
          return persona
        }
 
@@ -249,7 +285,7 @@ export class ReliquidacionesPTComponent implements OnInit {
        
 
       let personas=this.reliquidacionesPT.filter(persona=>{
-        if(persona.IN_BD="true"&&persona.RUT){
+        if(persona.IN_BD=="true"&&persona.RUT){
           return persona
         }
   
@@ -385,9 +421,11 @@ export class ReliquidacionesPTComponent implements OnInit {
   
  }
 
+
+
  descargaDetalleCSV(){
   let personas=this.reliquidacionesPT.filter(persona=>{
-    if(persona.IN_BD="true"&&persona.RUT){
+    if(persona.IN_BD=="true"&&persona.RUT){
       return persona
     }
 
@@ -426,6 +464,43 @@ var csv =new Angular5Csv(data, 'Archivo_Softland_REliquidaPT',options);
 
 
 }
+
+
+getDatesArray(){
+  //  this.optionMeses=[{name:'2018-Diciembre', value:'12/2018'},{name:'2019-Enero', value:'01/2019'}];
+  
+  var d = new Date();
+  var curr_date = d.getDate();
+  
+  var months = new Array("Ene", "Feb", "Mar",
+    "Abr", "May", "Jun", "Jul", "Ago", "Sep",
+    "Oct", "Nov", "Dic");  
+  var optionsMeses=[]
+  let i
+    for (i = 1; i <=12; i++) {
+      //los id del mes empiezan del 0
+      var curr_month = d.getMonth()+1;
+      var curr_year = d.getFullYear();
+      //console .log(d);
+      let nameDate=curr_year+' - '+months[curr_month-1];
+      let valueDate=curr_month.toString();
+      if(curr_month<10)
+      valueDate='0'+curr_month.toString();
+      valueDate=valueDate+'/'+curr_year
+  
+  let today ={name: nameDate, value:valueDate}
+     optionsMeses.push(today);
+      //d= d.setMonth(curr_month-1);
+      //i debe empezar en 1 para restar 1 mes, si no se restara 0 
+      d=new Date(new Date().setMonth(new Date().getMonth() -i));
+  
+    }
+    console.log(optionsMeses)
+  this.optionMeses=optionsMeses;
+  
+  
+  
+  }
    
 
      

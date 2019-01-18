@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ReliquidacionesService} from '../../services/reliquidaciones.service';
 import {DropdownModule} from 'primeng/dropdown';
+import {ProgressBarModule} from 'primeng/progressbar';
 
 @Component({
   selector: 'app-reliquidaciones',
@@ -13,11 +14,28 @@ export class ReliquidacionesComponent implements OnInit {
 
   ngOnInit() {
 
+
+    if(localStorage.getItem('optionsProcessReliquida')){
+      console.log("existe el proceso");
+   this.optionRequestedMes=(JSON.parse(localStorage.getItem('optionsProcessReliquida'))["fecha"]);
+    //this.optionRequestedProceso=(JSON.parse(localStorage.getItem('optionsProcess'))["proceso"]);
+    }
+
+    if(localStorage.getItem('reliquida')){
+      console.log("existe el objeto");
+  
+      this.reliquidacionDetalle=JSON.parse(localStorage.getItem('reliquida'));
+      this.getRemuneracionesArchivo(null);
+
+     }
+
     this.display=false;
     this.displayNuevaPlantilla=false;
     this.displayPlantillas=false
 
-    this.getReliquidaciones();
+    this.optionMeses=[{name:'2018-Diciembre', value:'12/2018'},{name:'2019-Enero', value:'01/2019'}];
+
+   // this.getReliquidaciones();
     
     
     this.colsDynamic = [
@@ -42,6 +60,7 @@ this.cities = [
 
 */
 this.getFechasRemuneracionesArchivo();
+this.getDatesArray();
 
 
 
@@ -65,6 +84,99 @@ this.getFechasRemuneracionesArchivo();
   plantillas:any[];
   plantillaVarsOne:any[];
   selectedPlantilla:any;
+
+  displayNewProcess:boolean;
+  loadigProcess:boolean;
+  optionSelectedMes:String;
+  uploadedFiles: any[] = [];
+  optionRequestedMes:String; //mes confirmado para el proceso
+  optionProcess;
+  optionMeses:any[];
+
+
+  async newProcess(){
+ 
+    //this.diasTrabajadosOtrosOne=personaEditar // la original para saber la posicion
+    //this.diasTrabajadosOneSelected=this.cloneDias(personaEditar);  // la copia para editar y luego reasignar
+    this.loadigProcess=true;
+
+   this.optionProcess= {'fecha':this.optionSelectedMes};
+   await this.FilesgetAllDiasTrabajados();
+  this.optionRequestedMes=this.optionSelectedMes;
+
+  this.optionSelectedMes=null;
+
+   this.loadigProcess=false;
+   this.displayNewProcess=false;
+
+  
+  
+  }
+
+  evento(event) {
+    //eliminamos los archivos anteriores
+    this.uploadedFiles=[];
+
+    console.log("on Uploaded");
+    console.log(event);
+    for(let file of event.files) {
+        this.uploadedFiles.push(file);
+    }
+  console.log("se subio");
+  console.log(this.uploadedFiles[0]);
+  
+  }
+
+
+  async FilesgetAllDiasTrabajados(){
+    return new Promise(resolve=>{
+      // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
+       this.ReliquidacionesService.getAllDiasTrabReliquidaciones(this.uploadedFiles[0],this.optionProcess).subscribe(  
+      data=> {
+
+        this.reliquidacionDetalle=data;
+      console.log(this.reliquidacionDetalle);
+     
+      this.reliquidacionDetalle=this.reliquidacionDetalle.map(registro=>{
+        registro.LIQUIDO_PAGO=0;
+        registro.RELIQUIDACION=0;  
+
+        if(registro.SUELDO){
+
+         registro.SUELDO.forEach(var_sueldo=>{
+           if(var_sueldo.VARIABLE_CODI=='H303') registro.LIQUIDO_PAGO=var_sueldo.VARIABLE_MONTO;
+           if(var_sueldo.VARIABLE_CODI=='H068') registro.RELIQUIDACION=var_sueldo.VARIABLE_MONTO;
+
+         });
+                              
+
+             
+         }
+         
+
+        
+        return registro;
+
+      });
+
+
+
+      console.log(this.reliquidacionDetalle);
+      this.getRemuneracionesArchivo(null);
+
+           
+      localStorage.setItem('optionsProcessReliquida',JSON.stringify(this.optionProcess));
+           
+      localStorage.setItem('reliquida', JSON.stringify(this.reliquidacionDetalle));
+
+
+                resolve();
+   
+               }
+         
+       )
+      });
+     }
 
 
   getReliquidaciones(){
@@ -160,6 +272,10 @@ this.getFechasRemuneracionesArchivo();
                   console.log(this.cols);
                   console.log("variables");
                   console.log(this.variables);
+
+      
+           
+      
                   
 
 
@@ -203,14 +319,18 @@ this.getFechasRemuneracionesArchivo();
   }
 
   getNoExistentes(){
+    let noExistentes;
     if(this.reliquidacionDetalle){
-   let noExistentes=this.reliquidacionDetalle.filter(value=>{
-    return value.IN_BD="false";
+   noExistentes= this.reliquidacionDetalle.filter(value=>{
+    return value.IN_BD=="false";
    });
-   console.log(noExistentes)
+ 
    return noExistentes;
   
   }
+
+  console.log("noexitentes",noExistentes)
+  console.log("todos",this.reliquidacionDetalle)
   }
 
   creaPlantillaVariables(){
@@ -261,6 +381,43 @@ console.log(variablesDB);
   });
 
   this.displayPlantillas=false;
+
+}
+
+
+getDatesArray(){
+//  this.optionMeses=[{name:'2018-Diciembre', value:'12/2018'},{name:'2019-Enero', value:'01/2019'}];
+
+var d = new Date();
+var curr_date = d.getDate();
+
+var months = new Array("Ene", "Feb", "Mar",
+  "Abr", "May", "Jun", "Jul", "Ago", "Sep",
+  "Oct", "Nov", "Dic");  
+var optionsMeses=[]
+let i
+  for (i = 1; i <=12; i++) {
+    //los id del mes empiezan del 0
+    var curr_month = d.getMonth()+1;
+    var curr_year = d.getFullYear();
+    //console .log(d);
+    let nameDate=curr_year+' - '+months[curr_month-1];
+    let valueDate=curr_month.toString();
+    if(curr_month<10)
+    valueDate='0'+curr_month.toString();
+    valueDate=valueDate+'/'+curr_year
+
+let today ={name: nameDate, value:valueDate}
+   optionsMeses.push(today);
+    //d= d.setMonth(curr_month-1);
+    //i debe empezar en 1 para restar 1 mes, si no se restara 0 
+    d=new Date(new Date().setMonth(new Date().getMonth() -i));
+
+  }
+  console.log(optionsMeses)
+this.optionMeses=optionsMeses;
+
+
 
 }
 

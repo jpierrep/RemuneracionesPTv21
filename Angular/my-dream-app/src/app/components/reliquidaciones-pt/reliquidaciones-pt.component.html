@@ -11,7 +11,7 @@
          
             <p-dropdown [options]="optionMeses" [(ngModel)]="optionSelectedMes" placeholder="Seleccione el Mes" optionLabel="name" [showClear]="true"></p-dropdown>
 
-            <p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)"  (onError)="evento($event)" ></p-fileUpload>
+            <p-fileUpload mode="basic" name="demo[]" chooseLabel="Seleccione Archivo" (onUpload)="evento($event)" auto="auto"  (onError)="evento($event)" ></p-fileUpload>
         
             <p-footer>
                 <div *ngIf="loadigProcess"> 
@@ -26,6 +26,7 @@
 
 <button  pButton icon="fa fa-eye" class="ui-button-success" (click)="descargaCSVProceso()"></button>
 <button  pButton icon="fa fa-eye" class="ui-button-success" (click)="descargaDetalleCSV()"></button>
+<button type="button" pButton icon="fa fa-plus" iconPos="left" label="Ver No Existentes" (click)="display=true"></button>
 <p-table [value]="reliquidacionesPTResumen">
   <ng-template pTemplate="header">
       <tr>
@@ -86,5 +87,37 @@
         <p-footer>
             <button type="button" pButton icon="pi pi-check" (click)="saveDiasTrabajados()" label="Yes"></button>
             <button type="button" pButton icon="pi pi-close" (click)="displayEstructura=false" label="No" class="ui-button-secondary"></button>
+        </p-footer>
+</p-dialog>
+
+
+<p-dialog header="Personal No Existente" [(visible)]="display" [modal]="modal" [responsive]="true" [width]="800" [minWidth]="200" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+        <p-table [value]="getNoExistentes()">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>FICHA</th>
+                    <th>HH TURNO</th>
+                    <th>CANT. TURNOS</th>
+                  
+                    
+                    
+          
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-resumen>
+                <tr>
+                    <td>{{resumen.FICHA}}</td>
+                    <td>{{resumen["CANT TURNOS"]}}</td>
+                    <td>{{resumen["HH TURNO"]}}</td>
+
+          
+                </tr>
+            </ng-template>
+          
+          </p-table>
+        <p-footer>
+            <button type="button" pButton icon="pi pi-check" (click)="display=false" label="Ok"></button>
+       
         </p-footer>
 </p-dialog>

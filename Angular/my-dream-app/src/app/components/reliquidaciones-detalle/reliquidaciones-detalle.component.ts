@@ -13,7 +13,15 @@ export class ReliquidacionesDetalleComponent implements OnInit {
 
   ngOnInit() {
 
-    this.getReliquidaciones();
+    if(localStorage.getItem('reliquida')){
+      console.log("existe el objeto");
+  
+      this.reliquidacionDetalle=JSON.parse(localStorage.getItem('reliquida'));
+      this.getRemuneracionesArchivo(null);
+
+     }
+
+    //this.getReliquidaciones();
     
     this.cols = [
       

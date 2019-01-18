@@ -202,6 +202,7 @@ function getPersonalSoft(optionsProcess){
  let año=fecha.substr(3,4);
 
  let fechaquery=año+'-'+mes+'-01'
+ console.log("la fecha_query es",fechaquery);
 
   //si trae fecha se saca la info de la fecha, si no la del ultimo mes
 
@@ -865,7 +866,7 @@ table.rows.add('test', 'test',1);
 
 
 
-     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID,getVariablesSueldoPers,getParametrosPago,entrega_resultDB,cargaDatos,getExcelFilename}
+     module.exports={home,getPersonalSoft,getPersonalAsist,generaProcesoSueldo,uploadFile,generaProcesoSueldoUpdload,downoloadFIle,getPersonalSoftOne,convierteRutID,getVariablesSueldoPers,getParametrosPago,entrega_resultDB2,entrega_resultDB,cargaDatos,getExcelFilename}
 
    
      
