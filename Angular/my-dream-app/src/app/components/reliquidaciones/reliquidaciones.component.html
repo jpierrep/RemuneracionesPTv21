@@ -1,5 +1,6 @@
 
 <h3>Archivo Reliquidacion </h3>
+<h3>{{optionRequestedMes? optionRequestedMes.name : ''}} </h3>
 
 
 
@@ -31,10 +32,11 @@
 <button type="button" routerLink="/reliquidacionDetalle" pButton icon="fa fa-plus" iconPos="left" label="Ver Detalle"></button>
 <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Ver No Existentes" (click)="display=true"></button>
 <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Mapear Variables" (click)="displayMapping=true"></button>
+<button  pButton icon="fa fa-eye" class="ui-button-success" (click)="descargaCSVProceso()"></button>
 
 
 
-<p-table [columns]="cols"  [value]="reliquidacionDetalle" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
+<p-table [columns]="cols"  [value]="getExistentes()" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
         <col *ngFor="let col of columns" style="width:300px">

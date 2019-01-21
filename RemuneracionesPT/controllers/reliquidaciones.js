@@ -200,13 +200,18 @@ function getPersonalBD(persAsist,persRRHH){
 
   
   function getRemuneracionesMes (req,res){
+    
+    
     let fecha= req.params.fecha;
     console.log("la fecha parametro es"+fecha)
+    let  query="";
+
    if (fecha){
     console.log("viene fecha")
        //si viene fecha
-       let  query=`SELECT distinct [ficha] ,[codVariable] ,[valor] ,[empresa],convert(date,fecha_Registro) as fecha_Registro from inteligencias.dbo.RRHH_APP_REG_VAR where convert(date,fecha_Registro)='`+fecha+`'`
-       personaController.entrega_resultDB(query,(resultFinal)=>{
+      query= `SELECT distinct [ficha] ,[codVariable] ,[valor] ,[empresa],convert(date,fecha_Registro) as fecha_Registro from inteligencias.dbo.RRHH_APP_REG_VAR where convert(date,fecha_Registro)='`+fecha+`'`
+     
+       personaController.entrega_resultDB2(query,null).then(resultFinal=>{
      
         res.status(200).send(resultFinal);
       //   resolve ( resultFinal);
@@ -216,8 +221,9 @@ function getPersonalBD(persAsist,persRRHH){
       console.log("No viene fecha")
        //si no viene fecha, extraer el ultimo día del mes en curso
    //extrae la info del mes actual, pues no se puede pagar en relacion a meses pasados
-  let  query=`select convert(date,max(Fecha_Registro)) as MaxFecha from inteligencias.dbo.RRHH_APP_REG_VAR`
-  
+    query=`select convert(date,max(Fecha_Registro)) as MaxFecha from inteligencias.dbo.RRHH_APP_REG_VAR`
+   
+    }
 //return new Promise(resolve=>{
   personaController.entrega_resultDB2(query,null).then(result=>{
    // personaController.entrega_resultDB(query,(result)=>{
@@ -246,20 +252,37 @@ function getPersonalBD(persAsist,persRRHH){
   //});
     }
 
-  }
+
 
   function getFechasRemuneracArchivo (req,res){
+
+    let fecha= req.params.fecha;
+    console.log("la fecha parametro es"+fecha)
+  
+    
+    
+    let  query="" ;
+
+   if (fecha){
+ 
+
+    query=`    select distinct convert(date,Fecha_Registro) as FechaRegistro from   [Inteligencias].[dbo].[RRHH_APP_REG_VAR]
+    where    
+    DATEADD(m, DATEDIFF(m,0,Fecha_Registro), 0) ='`+fecha+`' order by convert(date,Fecha_Registro) desc `
+
+   }else {
     
     //como se trabaja con el ultimo registro, este ultimo deberia apuntar a los ultimos dias del mes anterior
        
-       let  query=`--obtiene todos los registros de fecha del mes actual
+       query=`--obtiene todos los registros de fecha del mes actual
 
        select distinct convert(date,Fecha_Registro) as FechaRegistro from   [Inteligencias].[dbo].[RRHH_APP_REG_VAR]
        where    
        DATEADD(m, DATEDIFF(m,0,Fecha_Registro), 0) = (select top 1 DATEADD(m, DATEDIFF(m,0,Fecha_Registro), 0)  from  [Inteligencias].[dbo].[RRHH_APP_REG_VAR] order by Fecha_Registro desc) 
-         order by convert(date,Fecha_Registro) desc`
+         order by convert(date,Fecha_Registro) desc`;
 
-       personaController.entrega_resultDB(query,(resultFinal)=>{
+   }
+       personaController.entrega_resultDB2(query,null).then(resultFinal=>{
           
       resultFinal.forEach(row=>{
             row.FechaRegistro=moment.utc(row.FechaRegistro).format("YYYY-MM-DD");

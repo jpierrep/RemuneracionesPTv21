@@ -1,12 +1,14 @@
 
 <h3>Archivo Reliquidacion </h3>
+<h3>{{optionRequestedMes? optionRequestedMes.name : ''}} </h3>
+
 <p-dropdown [options]="fechasRemArchivo" [(ngModel)]="selectedFechaRemArchivo" placeholder="Seleccione Fecha" optionLabel="name" (onChange)="cambiaFechaRemunArchivo($event)"></p-dropdown>
 <p>fecha Seleccionada: {{selectedFechaRemArchivo ? selectedFechaRemArchivo.code : 'ninguna'}}</p>
 
 
 
 
-<p-table   [value]="reliquidacionDetalle" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
+<p-table   [value]="getExistentes()" [frozenColumns]="frozenCols"   [scrollable]="true" frozenWidth="300px" scrollHeight="200px" [style]="{'width':'100%','overflow':'auto!important'}" >
   <ng-template pTemplate="colgroup" >
     <colgroup>
         <col *ngFor="let col of cols" style="width:300px">

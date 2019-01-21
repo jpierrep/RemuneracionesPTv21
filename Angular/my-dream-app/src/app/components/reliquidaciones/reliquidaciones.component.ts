@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {ReliquidacionesService} from '../../services/reliquidaciones.service';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressBarModule} from 'primeng/progressbar';
+import { Angular5Csv } from 'angular5-csv/Angular5-csv';
+import { variable } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-reliquidaciones',
@@ -59,7 +61,7 @@ this.cities = [
 ];
 
 */
-this.getFechasRemuneracionesArchivo();
+//this.getFechasRemuneracionesArchivo();
 this.getDatesArray();
 
 
@@ -289,26 +291,7 @@ this.getDatesArray();
 
 
 
-  getFechasRemuneracionesArchivo(){
 
-    
-
-    // this.InfoDiasTrabajadosService.getAllDiasTrab(this.uploadedFiles).subscribe(
-     this.ReliquidacionesService.getFechasRemuneracionesArchivo().subscribe(
-    data=> {
-    
-             
-              this.fechasRemArchivo= data.map(row=>{
-                return{name:row.FechaRegistro,code:row.FechaRegistro}
-              });
-
-              console.log(this.fechasRemArchivo);
-               
-    });
-
- 
-
-  }
 
   cambiaFechaRemunArchivo(event){
      console.log(" la fecha es"+this.selectedFechaRemArchivo.code)
@@ -329,9 +312,26 @@ this.getDatesArray();
   
   }
 
+ 
+
   console.log("noexitentes",noExistentes)
   console.log("todos",this.reliquidacionDetalle)
   }
+
+  getExistentes(){
+    let Existentes;
+    if(this.reliquidacionDetalle){
+   Existentes= this.reliquidacionDetalle.filter(value=>{
+    return value.IN_BD=="true";
+   });
+ 
+   return Existentes;
+  
+  }
+
+  }
+
+  
 
   creaPlantillaVariables(){
  
@@ -416,6 +416,62 @@ let today ={name: nameDate, value:valueDate}
   }
   console.log(optionsMeses)
 this.optionMeses=optionsMeses;
+
+
+
+}
+
+descargaCSVProceso(){
+  let personas=this.reliquidacionDetalle.filter(persona=>{
+    if(persona.IN_BD=="true"&&persona.RUT){
+      return persona
+    }
+
+   });
+
+   let resumen=[];
+  console.log("variables",this.variables)
+   personas.forEach(turnoPersona=>{
+     console.log("turnoPersona",turnoPersona)
+   
+    
+    
+     this.variables.forEach(input_variable=>{
+      let obj={FICHA:"",variable_codi:"",variable_desc:""};
+      if(input_variable.variable!="") {
+      obj.FICHA=turnoPersona.FICHA; 
+      obj.variable_codi=input_variable.variable;
+     obj.variable_desc=turnoPersona[input_variable.field];
+      resumen.push(obj);
+
+      }
+
+       });
+  
+    
+      
+
+   
+  });
+
+  var data=resumen;
+
+  var options = { 
+   //fieldSeparator: ',',
+   //quoteStrings: '"',
+   quoteStrings: '"'
+   //decimalseparator: '.',
+   //showLabels: true, 
+   //showTitle: true,
+   //useBom: true,
+   //noDownload: true,
+   //headers: ["First Name", "Last Name", "ID"]
+ };
+  
+var csv =new Angular5Csv(data, 'Archivo_Softland_REliquida',options);
+
+
+
 
 
 

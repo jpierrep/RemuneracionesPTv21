@@ -38,8 +38,15 @@ export class ReliquidacionesService {
 
       }
 
-      getFechasRemuneracionesArchivo(){
-        return this.http.get<any[]>(this.urlFechasRemuneracionesArch);
+      getFechasRemuneracionesArchivo(fecha){
+        console.log("la fecha getFechas",fecha)
+        let urlParameter=this.urlFechasRemuneracionesArch;
+        if (fecha){
+          urlParameter=this.urlFechasRemuneracionesArch+'/'+fecha
+
+        }
+
+        return this.http.get<any[]>(urlParameter);
 
           }
 
