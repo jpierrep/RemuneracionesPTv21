@@ -29,6 +29,7 @@ import { ReliquidacionesDetalleComponent } from './components/reliquidaciones-de
 import { ReliquidacionesComponent } from './components/reliquidaciones/reliquidaciones.component';
 import { ReliquidacionesPTComponent } from './components/reliquidaciones-pt/reliquidaciones-pt.component';
 import { ReliquidacionesPTDetalleComponent } from './components/reliquidaciones-pt-detalle/reliquidaciones-pt-detalle.component';
+import { ReliquidacionesAllComponent } from './components/reliquidaciones-all/reliquidaciones-all.component';
 
 
 @NgModule ({
@@ -43,7 +44,8 @@ import { ReliquidacionesPTDetalleComponent } from './components/reliquidaciones-
     ReliquidacionesDetalleComponent,
     ReliquidacionesComponent,
     ReliquidacionesPTComponent,
-    ReliquidacionesPTDetalleComponent
+    ReliquidacionesPTDetalleComponent,
+    ReliquidacionesAllComponent
 
   ],
   imports: [

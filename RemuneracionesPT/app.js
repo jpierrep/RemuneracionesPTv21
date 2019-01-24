@@ -9,6 +9,7 @@ var app=express();
   var user_routes=require('./routes/persona');
   var per_asist_routes=require('./routes/persona_asistencias');
   var reliquidaciones_routes=require('./routes/reliquidaciones');
+  var softland_routes=require('./routes/softland');
 
   var parameter_routes=require('./routes/parametros_pago');
   var VarSoft=require('./routes/variables_softland');
@@ -27,6 +28,7 @@ app.use('/api/parameters',parameter_routes);
 app.use('/api/asistencias',per_asist_routes);
 app.use('/reliquida',reliquidaciones_routes);
 app.use('/varSoft',VarSoft);
+app.use('/softland',softland_routes);
 
 //app.use('/api',follow_routes);
 

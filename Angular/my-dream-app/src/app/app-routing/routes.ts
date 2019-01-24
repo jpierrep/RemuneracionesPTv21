@@ -6,7 +6,7 @@ import {CalendarioTurnosComponent } from '../components/calendario-turnos/calend
 import {ReliquidacionesDetalleComponent} from '../components/reliquidaciones-detalle/reliquidaciones-detalle.component';
 import {ReliquidacionesComponent} from '../components/reliquidaciones/reliquidaciones.component';
 import {ReliquidacionesPTComponent} from '../components/reliquidaciones-pt/reliquidaciones-pt.component';
-
+import {ReliquidacionesAllComponent} from '../components/reliquidaciones-all/reliquidaciones-all.component';
 export const routes:Routes=[
 {  path:'cars',component:CarsListComponent},
 {  path:'diasTrabajados/:id',component:DiasTrabajadosComponent},
@@ -15,5 +15,6 @@ export const routes:Routes=[
 {  path:'calendarioTurnos',component:CalendarioTurnosComponent},
 {  path:'reliquidacion',component:ReliquidacionesComponent},
 {  path:'reliquidacionDetalle',component:ReliquidacionesDetalleComponent},
-{  path:'reliquidacionPT',component:ReliquidacionesPTComponent}
+{  path:'reliquidacionPT',component:ReliquidacionesPTComponent},
+{  path:'reliquidacionAll',component:ReliquidacionesAllComponent}
 ];
