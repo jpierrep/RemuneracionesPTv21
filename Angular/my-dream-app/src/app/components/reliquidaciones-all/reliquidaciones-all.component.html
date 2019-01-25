@@ -1,6 +1,8 @@
 <p>
   reliquidaciones-all works!
 </p>
+<p-dropdown [options]="fechasRemArchivo" [(ngModel)]="selectedFechaRemArchivo" placeholder="Seleccione Fecha" optionLabel="name" (onChange)="cambiaFechaRemunArchivo($event)"></p-dropdown>
+<p>fecha Seleccionada: {{selectedFechaRemArchivo ? selectedFechaRemArchivo.code : 'ninguna'}}</p>
 
 <p-table [columns]="cols" [value]="reliquidacionesAll">
   <ng-template pTemplate="header" let-columns>

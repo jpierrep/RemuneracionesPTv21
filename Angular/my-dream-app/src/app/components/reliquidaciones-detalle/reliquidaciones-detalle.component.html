@@ -4,7 +4,7 @@
 
 <p-dropdown [options]="fechasRemArchivo" [(ngModel)]="selectedFechaRemArchivo" placeholder="Seleccione Fecha" optionLabel="name" (onChange)="cambiaFechaRemunArchivo($event)"></p-dropdown>
 <p>fecha Seleccionada: {{selectedFechaRemArchivo ? selectedFechaRemArchivo.code : 'ninguna'}}</p>
-
+<button type="button" routerLink="/reliquidacionAll" pButton icon="fa fa-plus" iconPos="left" label="Ver Todos"></button>
 
 
 

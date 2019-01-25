@@ -35,8 +35,7 @@ function getVariableMes(req,res){
   console.log(fecha,variable,empresa);
   let  query=`select FICHA,VARIABLE_CODI,VARIABLE_MONTO,EMP_CODI from [Inteligencias].[dbo].RRHH_ESTRUCTURA_SUELDO WHERE  
    VARIABLE_CODI='`+variable+`' and
-  emp_codi=`+empresa+` and fecha='`+fecha+`-01'
-    and DIA_DESC='HASTA MES EN CURSO'`;
+  emp_codi=`+empresa+` and fecha='`+fecha+`'   and DIA_DESC='HASTA MES EN CURSO'`;
 
   entrega_resultDB2(query,null).then(result=>{
     if (result.length>0){ 
@@ -67,15 +66,13 @@ let query;
   if(variable){
     query=`select FICHA,VARIABLE_CODI,VARIABLE_MONTO,EMP_CODI from [Inteligencias].[dbo].RRHH_ESTRUCTURA_SUELDO WHERE  
     VARIABLE_CODI='`+variable+`' and FICHA='`+ficha+`' and
-   emp_codi=`+empresa+` and fecha='`+fecha+`-01'
-     and DIA_DESC='HASTA MES EN CURSO'`;
+   emp_codi=`+empresa+` and fecha='`+fecha+`' and DIA_DESC='HASTA MES EN CURSO'`;
 
   }else{
 
     query=`select FICHA,VARIABLE_CODI,VARIABLE_MONTO,EMP_CODI from [Inteligencias].[dbo].RRHH_ESTRUCTURA_SUELDO WHERE  
     FICHA='`+ficha+`' and
-   emp_codi=`+empresa+` and fecha='`+fecha+`-01'
-     and DIA_DESC='HASTA MES EN CURSO'`;
+   emp_codi=`+empresa+` and fecha='`+fecha+`' and DIA_DESC='HASTA MES EN CURSO'`;
   }
 
 
